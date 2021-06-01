@@ -11,13 +11,22 @@
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+
+        <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
+
     </head>
-    <body class=" bg-dark">
+    <body class="bg-secondary">
     <div class="justify-content-center">
         <div class="h3 text-white text-center mt-4">
             Generuj plik JPK
 
         </div>
+        <form action="{{route('send')}}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="file" id="file" name="file[]" multiple>
+            <button class="btn btn-dark" type="submit">Wyślij</button>
+        </form>
+
     </div>
 
     </body>
