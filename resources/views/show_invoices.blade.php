@@ -56,7 +56,7 @@
                     <td>{{$invoice['NIP']}}</td>
                     <td>{{$invoice['product']}}</td>
                     <td></td>
-                    <td>{{$invoice['issue_date']}}</td>
+                    <td></td>
                     <td>{{$invoice['netto']}}</td>
                     <td>{{$invoice['vat']}}</td>
                     <td>{{$invoice['brutto']}}</td>
