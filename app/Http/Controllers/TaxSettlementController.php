@@ -49,6 +49,9 @@ class TaxSettlementController extends Controller{
             $i++;
         }
 
+        dd($values);
+
+
         $i=0;
         foreach ($values as $invoice){
             $j=0;
@@ -129,7 +132,6 @@ class TaxSettlementController extends Controller{
         }
 
 
-//        dd($values);
 //        dd($invoices);
 
 
