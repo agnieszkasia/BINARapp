@@ -52,6 +52,7 @@ class TaxSettlementController extends Controller{
         $i=0;
         foreach ($values as $invoice){
             $j=0;
+            $previousKey = 0;
             foreach ($invoice as $key => $row){
                 foreach ($row as  $cell){
 
@@ -76,42 +77,48 @@ class TaxSettlementController extends Controller{
 //
                         if (!is_numeric($invoices[$i]['NIP'])) $invoices[$i]['NIP'] = 'brak';
                     }
-                    elseif(str_contains($cell, 'Forma') and $j<=10) {
+                    elseif(str_contains($cell, 'Forma płatności') and $j<=10) {
                         $invoices[$i]['NIP'] = 'brak';
                     }
 
-                    if (str_contains($cell, 'LP') ) {
-                        $firstProduct = $key+2;
+                    if (str_contains($cell, 'Nazwa towaru') ) {
+                        $firstProduct[$i] = $key+2;
                     }
 
-//                    if (str_contains($cell, 'Wysy') ) {
-//                        $invoices[$i]['service'] = '123';
-//                        $invoices[$i]['product'] = $invoice[$key+2][1];
-//                        if (isset($invoice[$key+3][1])){
-//                            if (str_contains($invoice[$key+3][3] ,"usł")) {
-//                                $invoices[$i]['service'] = $invoice[$key + 3][1];
-//                            } else {
-//                                $invoices[$i]['service'] = "wiecej";
-//                            }
-//                        } else $invoices[$i]['service'] = "";
-
-                            //                        $invoices[$i]['vat'] = $invoice[$key][2];
-//                        $invoices[$i]['brutto'] = $invoice[$key][3];
-//                    } else $invoices[$i]['service'] = "0";
 
                     if (str_contains($cell, 'Wysyłka') ) {
                         $invoices[$i]['service'] = $invoice[$key][8];
-                        $lastProduct = $key-1;
+                        $lastProduct[$i] = $key-1;
                     } elseif (!isset($invoices[$i]['service'])){
                         $invoices[$i]['service'] = 0;
                     }
 
 
                     if (str_contains($cell, 'Razem') ) {
+                        if (!isset($lastProduct[$i])) $lastProduct[$i] = $previousKey;
                         $invoices[$i]['netto'] = $invoice[$key][1];
                         $invoices[$i]['vat'] = $invoice[$key][2];
                         $invoices[$i]['brutto'] = $invoice[$key][3];
                     }
+
+                    if (isset($firstProduct[$i]) && isset($lastProduct[$i]) && !isset($invoices[$i]['products_number'])){
+                        $invoices[$i]['products_number'] = $lastProduct[$i] - $firstProduct[$i] + 1;
+
+                        $invoices[$i]['products_names'] = $invoice[$firstProduct[$i]][1];
+                        $invoices[$i]['products'] = $invoice[$firstProduct[$i]][8];
+                        for ($k = $firstProduct[$i]+1; $k<= $lastProduct[$i]; $k++){
+                            if (str_contains($invoice[$k][3], 'usł')){
+                                $invoices[$i]['service'] = $invoices[$i]['service']+$invoice[$k][8];
+
+                            } else{
+                                $invoices[$i]['products_names'] = $invoices[$i]['products_names'].", ".$invoice[$k][1];
+                                $invoices[$i]['products'] = $invoices[$i]['products'] + $invoice[$k][8];
+                            }
+                        }
+                    }
+
+                    $previousKey = $key;
+
 
                 }
                 $j++;
@@ -122,7 +129,7 @@ class TaxSettlementController extends Controller{
         }
 
 
-        dd($values);
+//        dd($values);
 //        dd($invoices);
 
 

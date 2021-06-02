@@ -38,8 +38,9 @@
                     <th scope="col">Adres</th>
                     <th scope="col">NIP</th>
                     <th scope="col">Produkty</th>
-                    <th scope="col">Liczba wierszy faktury</th>
-                    <th scope="col">Wartości produktów</th>
+                    <th scope="col">Wartość produktów</th>
+                    <th scope="col">Liczba wierszy produktów</th>
+                    <th scope="col">Wysyłka</th>
                     <th scope="col">Netto</th>
                     <th scope="col">VAT</th>
                     <th scope="col">Brutto</th>
@@ -54,7 +55,9 @@
                     <td>{{$invoice['company']}}</td>
                     <td>{{$invoice['address']}}</td>
                     <td>{{$invoice['NIP']}}</td>
-{{--                    <td>{{$invoice['product']}}</td>--}}
+                    <td>{{$invoice['products_names']}}</td>
+                    <td>{{$invoice['products']}}</td>
+                    <td>{{$invoice['products_number']}}</td>
                     <td>{{$invoice['service']}}</td>
 {{--                    <td></td>--}}
 {{--                    <td></td>--}}
