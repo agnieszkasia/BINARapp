@@ -22,8 +22,6 @@ class TaxSettlementController extends Controller{
 
             foreach ($reader->getSheetIterator() as $sheet) {
 
-//                $values = array();
-
                 $j = 0;
                 foreach ($sheet->getRowIterator() as $row) {
 
@@ -41,51 +39,9 @@ class TaxSettlementController extends Controller{
                 $invoices[$i]['issue_date'] = $values[$i][1][2];
                 $invoices[$i]['due_date'] = $values[$i][2][2];
                 $invoices[$i]['invoice_number'] = $values[$i][5][1] . $values[$i][5][2];
-                $invoices[$i]['company'] = $values[$i][8][0];
 
 
 
-                $row = 0;
-                if (isset($values[$i][12+$row][0]) && str_contains($values[$i][12+$row][0], 'Forma')) {
-                        $invoices[$i]['address'] = $values[$i][10+$row][0];
-                    if (isset($values[$i][11+$row][0])){
-                        $invoices[$i]['NIP'] = $values[$i][11+$row][0];
-                    } else $invoices[$i]['NIP'] = 'brak';
-                } else{
-                        $invoices[$i]['address'] = $values[$i][10+$row][0] . " " . $values[$i][11+$row][0];
-                    if (isset($values[$i][12+$row][0])) {
-
-                        $invoices[$i]['NIP'] = $values[$i][12 + $row][0];
-                    } else $invoices[$i]['NIP'] = 'brak';
-                }
-                $invoices[$i]['NIP'] = str_replace(["NIP", ":", " ", "-", ","],"",$invoices[$i]['NIP']);
-//
-//
-                if (isset($values[$i][15+$row][0]) && $values[$i][15+$row][0] == 'LP') $row = $row +1;
-                elseif (isset($values[$i][16+$row][0]) && $values[$i][16+$row][0] == 'LP') $row = $row + 2;
-                elseif (isset($values[$i][17+$row][0]) && $values[$i][17+$row][0] == 'LP') $row = $row +3;
-//
-                $invoices[$i]['product'] = $values[$i][16+$row][8];
-//
-                if(isset($values[$i][17+$row][8])) {
-                    $invoices[$i]['product2'] = $values[$i][17 + $row][8];
-                }
-
-                if(isset($values[$i][18+$row][8])) {
-                    $invoices[$i]['product3'] = $values[$i][18 + $row][8];
-                } else $row = $row+1;
-
-                if(isset($values[$i][19+$row][8])) {
-                    $invoices[$i]['product4'] = $values[$i][19 + $row][8];
-                } else $row = $row+1;
-
-                if (isset($values[$i][28+$row][0]) && str_contains($values[$i][28+$row][0], 'Razem')) $invoices[$i]['netto'] = $values[$i][28+$row][1];
-                else $invoices[$i]['netto'] = 'brak';
-
-                    if (isset($values[$i][28+$row][2]))$invoices[$i]['vat'] = $values[$i][28+$row][2];
-                else $invoices[$i]['vat'] = 'brak';
-                    if (isset($values[$i][28+$row][3]))$invoices[$i]['brutto'] = $values[$i][28+$row][3];
-                else $invoices[$i]['brutto'] = 'brak';
 
             }
 
@@ -93,22 +49,88 @@ class TaxSettlementController extends Controller{
             $i++;
         }
 
-//        dd($values[25], $values[26],$values[90]);
-//        dd($values[30], $values[31]);
-//        dd($values);
+        $i=0;
+        foreach ($values as $invoice){
+            $j=0;
+            foreach ($invoice as $key => $row){
+                foreach ($row as  $cell){
+
+                    if (str_contains($cell, 'Nabywca') ) {
+                        $invoices[$i]['company'] = $invoice[$j+2][0];
+                    }
+
+                    if (str_contains($cell, 'Adres') ) {
+                        if (isset($invoice[$j+3][0])) {
+                            $numeric = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoice[$j+3][0]);
+                            if (!is_numeric($numeric)){
+                                $invoices[$i]['address'] = $invoice[$j+2][0]." ".$invoice[$j+3][0];
+                            } else $invoices[$i]['address'] = $invoice[$j+2][0];
+                        }
+                        else $invoices[$i]['address'] = $invoice[$j+2][0];
+                    }
+
+                    if (str_contains($cell, 'Forma') and $j>10) {
+
+                        $invoices[$i]['NIP'] = $invoice[$j][0];
+                        $invoices[$i]['NIP'] = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoices[$i]['NIP']);
+//
+                        if (!is_numeric($invoices[$i]['NIP'])) $invoices[$i]['NIP'] = 'brak';
+                    }
+                    elseif(str_contains($cell, 'Forma') and $j<=10) {
+                        $invoices[$i]['NIP'] = 'brak';
+                    }
+
+                    if (str_contains($cell, 'LP') ) {
+                        $firstProduct = $key+2;
+                    }
+
+//                    if (str_contains($cell, 'Wysy') ) {
+//                        $invoices[$i]['service'] = '123';
+//                        $invoices[$i]['product'] = $invoice[$key+2][1];
+//                        if (isset($invoice[$key+3][1])){
+//                            if (str_contains($invoice[$key+3][3] ,"usł")) {
+//                                $invoices[$i]['service'] = $invoice[$key + 3][1];
+//                            } else {
+//                                $invoices[$i]['service'] = "wiecej";
+//                            }
+//                        } else $invoices[$i]['service'] = "";
+
+                            //                        $invoices[$i]['vat'] = $invoice[$key][2];
+//                        $invoices[$i]['brutto'] = $invoice[$key][3];
+//                    } else $invoices[$i]['service'] = "0";
+
+                    if (str_contains($cell, 'Wysyłka') ) {
+                        $invoices[$i]['service'] = $invoice[$key][8];
+                        $lastProduct = $key-1;
+                    } elseif (!isset($invoices[$i]['service'])){
+                        $invoices[$i]['service'] = 0;
+                    }
+
+
+                    if (str_contains($cell, 'Razem') ) {
+                        $invoices[$i]['netto'] = $invoice[$key][1];
+                        $invoices[$i]['vat'] = $invoice[$key][2];
+                        $invoices[$i]['brutto'] = $invoice[$key][3];
+                    }
+
+                }
+                $j++;
+            }
+//            dd($invoice);
+            $i++;
+//            $nip[] = $invoice[$key[$i]];
+        }
+
+
+        dd($values);
+//        dd($invoices);
+
 
 //        generateDailySalesStatementFile();
 //        generateCSVFile();
 //        generateXMLfile();
 
         return view('show_invoices', compact('invoices'));
-    }
-
-    public function array_search_partial($arr, $keyword) {
-    foreach($arr as $index => $string) {
-        if (strpos($string, $keyword) !== FALSE)
-            return $index;
-        }
     }
 
 }

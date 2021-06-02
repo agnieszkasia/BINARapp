@@ -54,14 +54,16 @@
                     <td>{{$invoice['company']}}</td>
                     <td>{{$invoice['address']}}</td>
                     <td>{{$invoice['NIP']}}</td>
-                    <td>{{$invoice['product']}}</td>
-                    <td></td>
-                    <td></td>
+{{--                    <td>{{$invoice['product']}}</td>--}}
+                    <td>{{$invoice['service']}}</td>
+{{--                    <td></td>--}}
+{{--                    <td></td>--}}
                     <td>{{$invoice['netto']}}</td>
                     <td>{{$invoice['vat']}}</td>
                     <td>{{$invoice['brutto']}}</td>
                 </tr>
             @endforeach
+
             </tbody>
         </table>
 
