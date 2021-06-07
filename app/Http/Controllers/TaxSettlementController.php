@@ -109,9 +109,70 @@ class TaxSettlementController extends Controller{
 
     public function showAddPurchasesPage(Request $request){
         $invoices = json_decode($request['invoices'], true);
-        dd($request['products']);
+        foreach ($request['due_date'] as $key=> $product) {
+            $sales[$key]['due_date'] = $request['due_date'][$key];
+            $sales[$key]['products_names'] = $request['products_names'][$key];
+            $sales[$key]['netto'] = round($request['products'][$key] - ($request['products'][$key]*0.23),2);
+            $sales[$key]['vat'] = round($request['products'][$key] * 0.23,2);
+            $sales[$key]['brutto'] = $request['products'][$key];
+        }
 
-        return view('add_purchases', compact('invoices'));
+        return view('add_purchases', compact('invoices', 'sales'));
+    }
+
+    public function showSummaryPage(Request $request){
+        $sales = json_decode($request['sales'], true);
+        $invoices = json_decode($request['invoices'], true);
+
+        foreach ($request['issue_date'] as $key => $item){
+            $purchases[$key]['issue_date'] = $request['issue_date'][$key];
+            $purchases[$key]['due_date'] = $request['due_date'][$key];
+            $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
+            $purchases[$key]['company'] = $request['company'][$key];
+            $purchases[$key]['address'] = $request['address'][$key];
+            $purchases[$key]['NIP'] = $request['NIP'][$key];
+            $purchases[$key]['netto'] = $request['netto'][$key];
+            $purchases[$key]['vat'] = $request['vat'][$key];
+            $purchases[$key]['brutto'] = $request['brutto'][$key];
+        }
+
+        $purchasesNetto = 0;
+        $purchasesVat = 0;
+        $purchasesBrutto = 0;
+
+        foreach ($purchases as $purchase){
+            $purchasesNetto += $purchase['netto'];
+            $purchasesVat += $purchase['vat'];
+            $purchasesBrutto += $purchase['brutto'];
+        }
+
+        $salesNetto = 0;
+        $salesVat = 0;
+        $salesBrutto = 0;
+
+        foreach ($invoices as $invoice){
+            $salesNetto += $invoice['netto'];
+            $salesVat += $invoice['vat'];
+            $salesBrutto += $invoice['brutto'];
+        }
+
+        foreach ($sales as $sale) {
+            $salesNetto += $sale['netto'];
+            $salesVat += $sale['vat'];
+            $salesBrutto += $sale['brutto'];
+        }
+
+        $netto = $salesNetto - $purchasesNetto;
+        $vat = $salesVat - $purchasesVat;
+        $brutto = $salesBrutto - $purchasesBrutto;
+
+        return view('summary', compact('netto','vat', 'brutto',
+                            'purchasesNetto', 'purchasesVat',
+                                    'purchasesBrutto', 'salesNetto', 'salesVat', 'salesBrutto',
+                                    'invoices', 'sales','purchases'));
+
+//        dd($purchasesNetto, $purchasesVat, $purchasesBrutto,$salesNetto, $salesBrutto, $salesVat);
+
     }
 
     public function generateCSVFile(Request $request){
