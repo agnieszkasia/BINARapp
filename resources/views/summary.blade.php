@@ -19,8 +19,6 @@
     </head>
     <body class="bg-info">
     <div class="">
-        <form action="{{route('summary')}}" method="POST">
-            @csrf
             <div class="d-flex justify-content-between col-12">
 
                 <div class="d-flex float-right my-3">
@@ -32,10 +30,19 @@
                 </div>
 
                 <div class="d-flex float-right justify-content-end my-3">
-                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
-                    <input type="hidden" name="sales" value="{{json_encode($sales)}}">
-                    <input type="hidden" name="purchases" value="{{json_encode($purchases)}}">
-                    <button type="submit" class="btn btn-dark">Generuj CSV</button>
+                    <form action="{{route('generateCSV')}}" method="POST">
+                        @csrf
+                        <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
+                        <input type="hidden" name="sales" value="{{json_encode($sales)}}">
+                        <input type="hidden" name="purchases" value="{{json_encode($purchases)}}">
+                        <input type="hidden" name="salesVat" value="{{$salesVat}}">
+                        <input type="hidden" name="undefinedSalesNetto" value="{{$undefinedSalesNetto}}">
+                        <input type="hidden" name="undefinedSalesVat" value="{{$undefinedSalesVat}}">
+                        <input type="hidden" name="purchaseVat" value="{{$purchasesVat}}">
+
+                        <button type="submit" class="btn btn-dark">Generuj CSV</button>
+                    </form>
+
                     <button type="submit" class="btn btn-dark">Generuj XML</button>
                     <button type="submit" class="btn btn-dark">Generuj DZS</button>
                     <button type="submit" class="btn btn-dark">Generuj RZV</button>
@@ -54,16 +61,16 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>SPRZEDAŻ</td>
-                    <td>{{$purchasesNetto}}</td>
-                    <td>{{$purchasesVat}}</td>
-                    <td>{{$purchasesBrutto}}</td>
-                </tr>
-                <tr>
-                    <td>ZAKUPY (w tym nieudokumentowane)</td>
+                    <td>SPRZEDAŻ (w tym nieudokumentowane)</td>
                     <td>{{$salesNetto}} <small class="text-black-50">({{$undefinedSalesNetto}})</small></td>
                     <td>{{$salesVat}} <small class="text-black-50">({{$undefinedSalesVat}})</small></td>
                     <td>{{$salesBrutto}} <small class="text-black-50">({{$undefinedSalesBrutto}})</small></td>
+                </tr>
+                <tr>
+                    <td>ZAKUPY </td>
+                    <td>{{$purchasesNetto}}</td>
+                    <td>{{$purchasesVat}}</td>
+                    <td>{{$purchasesBrutto}}</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -74,7 +81,6 @@
 
             </tbody>
         </table>
-        </form>
 
     </div>
 

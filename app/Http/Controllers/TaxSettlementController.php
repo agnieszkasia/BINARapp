@@ -181,8 +181,6 @@ class TaxSettlementController extends Controller{
                             'salesNetto', 'salesVat', 'salesBrutto',
                             'invoices', 'sales','purchases'));
 
-//        dd($purchasesNetto, $purchasesVat, $purchasesBrutto,$salesNetto, $salesBrutto, $salesVat);
-
     }
 
     public function generateCSVFile(Request $request){
@@ -209,6 +207,9 @@ class TaxSettlementController extends Controller{
             $invoice['netto'] = str_replace(".",",",$invoice['netto']);
             $invoice['vat'] = str_replace(".",",",$invoice['vat']);
 
+            $invoice['company'] = str_replace("\"","",$invoice['company']);
+
+
             $lines[] = ";;;;;;;;;;;;".($key+1).";".
                 $invoice['NIP'].";".
                 $invoice['company'].";".
@@ -220,9 +221,30 @@ class TaxSettlementController extends Controller{
                 $invoice['vat'].";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
         }
 
-        $vat = str_replace(".",",",$vat);
+        $purchases = json_decode($request['purchases'], true);
 
+        foreach ($purchases as $key =>$purchase){
+            $purchase['issue_date'];
 
+            $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
+            $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
+
+            $dueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['due_date']);
+            $purchase['due_date'] = $dueDateTime->format('Y-m-d');
+
+            $purchase['netto'] = str_replace(".",",",$purchase['netto']);
+            $purchase['vat'] = str_replace(".",",",$purchase['vat']);
+
+            $purchaseLines[] = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;".($key+1).";".
+                $purchase['NIP'].";".
+                $purchase['company'].";".
+                $purchase['address'].";".
+                $purchase['invoice_number'].";".
+                $purchase['issue_date'].";".
+                $purchase['due_date'].";;;".
+                $purchase['netto'].";".
+                $purchase['vat'].";;;;;;";
+        }
 
         $fp = fopen('php://output', 'a'); // Configure fopen to write to the output buffer
 
@@ -235,7 +257,21 @@ class TaxSettlementController extends Controller{
             $data .= $line.PHP_EOL;
         }
 
-        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.count($invoices).';'.$vat.';;;;;;;;;;;;;;;;;'.PHP_EOL;
+        $undefinedSalesNetto = str_replace(".",",",$request['undefinedSalesNetto']);
+        $undefinedSalesVat = str_replace(".",",",$request['undefinedSalesVat']);
+        $salesVat = str_replace(".",",",$request['salesVat']);
+
+        $data .= ";;;;;;;;;;;;".(count($invoices)+1).";brak;sprzedaz bezrachunkowa miesiąc;brak;brak;;2021-04-30;;;;;;;;;;".$undefinedSalesNetto.";".$undefinedSalesVat.";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;".PHP_EOL;
+
+        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.(count($invoices)+1).';'.$salesVat.';;;;;;;;;;;;;;;;;'.PHP_EOL;
+
+        foreach ($purchaseLines as $line) {
+            $data .= $line.PHP_EOL;
+        }
+        $purchaseVat = str_replace(".",",",$request['purchaseVat']);
+        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.count($purchases).';'.$purchaseVat;
+
+
 
         fwrite($fp, print_r($data, TRUE));
 
