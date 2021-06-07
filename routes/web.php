@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::post('/show', [TaxSettlementController::class, 'show'])->name('send');
 Route::post('/generateCSV', [TaxSettlementController::class, 'generateCSVFile'])->name('generateCSV');
+Route::post('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
+Route::post('/add_purchases', [TaxSettlementController::class, 'showAddPurchasesPage'])->name('add_purchases');
 
 //Route::get('/{any}', function () {
 //    return redirect('/');

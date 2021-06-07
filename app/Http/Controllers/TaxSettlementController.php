@@ -98,14 +98,20 @@ class TaxSettlementController extends Controller{
             $invoices[$key]['vat'] = $values[$key][34][8];
             $invoices[$key]['brutto'] = $values[$key][34][9];
         }
-
-
-
-//        generateDailySalesStatementFile();
-//        generateCSVFile();
-//        generateXMLfile();
-
         return view('show_invoices', compact('invoices'));
+    }
+
+    public function showAddSalesPage(Request $request){
+        $invoices = json_decode($request['invoices'], true);
+
+        return view('add_sales', compact('invoices'));
+    }
+
+    public function showAddPurchasesPage(Request $request){
+        $invoices = json_decode($request['invoices'], true);
+        dd($request['products']);
+
+        return view('add_purchases', compact('invoices'));
     }
 
     public function generateCSVFile(Request $request){

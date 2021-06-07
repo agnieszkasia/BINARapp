@@ -15,23 +15,36 @@
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg-secondary">
+    <body class="bg-info">
     <div class="">
-        <div class="d-flex">
-            <div class="h3 text-white text-center mt-4 col-12">
-                FAKTURY
+        <div class="d-flex justify-content-between col-12">
 
+            <div class="d-flex float-right my-3">
+                <a class="btn btn-dark" href="">Wstecz</a>
             </div>
 
+            <div class="h3 text-white text-center mt-4">
+                FAKTURY
+            </div>
 
-            <div class="position-absolute justify-content-end">
-                <form action="{{route('generateCSV')}}" method="post">
+            <div class="d-flex float-right justify-content-end my-3">
+                <form action="{{route('add_sales')}}" method="POST">
                     @csrf
                     <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
-                    <button type="submit">Generuj CSV</button>
+                    <button type="submit" class="btn btn-dark">Dalej</button>
 
                 </form>
             </div>
+
+
+{{--            <div class="position-absolute justify-content-end">--}}
+{{--                <form action="{{route('generateCSV')}}" method="post">--}}
+{{--                    @csrf--}}
+{{--                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">--}}
+{{--                    <button type="submit">Generuj CSV</button>--}}
+
+{{--                </form>--}}
+{{--            </div>--}}
         </div>
 
 
