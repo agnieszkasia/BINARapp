@@ -44,7 +44,7 @@
 
 
         <table class="table table-light">
-            <thead class="thead-dark">
+            <thead class="table-dark">
                 <tr>
                     <th class="col-1"></th>
                     <th class="col-1">Netto</th>
@@ -60,10 +60,10 @@
                     <td>{{$purchasesBrutto}}</td>
                 </tr>
                 <tr>
-                    <td>ZAKUPY</td>
-                    <td>{{$salesNetto}}</td>
-                    <td>{{$salesVat}}</td>
-                    <td>{{$salesBrutto}}</td>
+                    <td>ZAKUPY (w tym nieudokumentowane)</td>
+                    <td>{{$salesNetto}} <small class="text-black-50">({{$undefinedSalesNetto}})</small></td>
+                    <td>{{$salesVat}} <small class="text-black-50">({{$undefinedSalesVat}})</small></td>
+                    <td>{{$salesBrutto}} <small class="text-black-50">({{$undefinedSalesBrutto}})</small></td>
                 </tr>
                 <tr>
                     <td></td>

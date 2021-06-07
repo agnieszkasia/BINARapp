@@ -40,7 +40,7 @@
 
 
         <table class="table table-light">
-            <thead class="thead-dark">
+            <thead class="table-dark">
                 <tr>
                     <th class="col-1">Data wystawienia</th>
                     <th class="col-1">Data sprzedaży</th>

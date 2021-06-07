@@ -146,30 +146,40 @@ class TaxSettlementController extends Controller{
             $purchasesBrutto += $purchase['brutto'];
         }
 
-        $salesNetto = 0;
-        $salesVat = 0;
-        $salesBrutto = 0;
+        $invoicesNetto = 0;
+        $invoicesVat = 0;
+        $invoicesBrutto = 0;
 
         foreach ($invoices as $invoice){
-            $salesNetto += $invoice['netto'];
-            $salesVat += $invoice['vat'];
-            $salesBrutto += $invoice['brutto'];
+            $invoicesNetto += $invoice['netto'];
+            $invoicesVat += $invoice['vat'];
+            $invoicesBrutto += $invoice['brutto'];
         }
 
+        $undefinedSalesNetto = 0;
+        $undefinedSalesVat = 0;
+        $undefinedSalesBrutto = 0;
+
         foreach ($sales as $sale) {
-            $salesNetto += $sale['netto'];
-            $salesVat += $sale['vat'];
-            $salesBrutto += $sale['brutto'];
+            $undefinedSalesNetto += $sale['netto'];
+            $undefinedSalesVat += $sale['vat'];
+            $undefinedSalesBrutto += $sale['brutto'];
         }
+
+        $salesNetto = $invoicesNetto + $undefinedSalesNetto;
+        $salesVat = $invoicesVat + $undefinedSalesVat;
+        $salesBrutto = $invoicesBrutto + $undefinedSalesBrutto;
 
         $netto = $salesNetto - $purchasesNetto;
         $vat = $salesVat - $purchasesVat;
         $brutto = $salesBrutto - $purchasesBrutto;
 
         return view('summary', compact('netto','vat', 'brutto',
-                            'purchasesNetto', 'purchasesVat',
-                                    'purchasesBrutto', 'salesNetto', 'salesVat', 'salesBrutto',
-                                    'invoices', 'sales','purchases'));
+                            'purchasesNetto', 'purchasesVat', 'purchasesBrutto',
+                            'invoicesNetto', 'invoicesVat', 'invoicesBrutto',
+                            'undefinedSalesNetto', 'undefinedSalesVat', 'undefinedSalesBrutto',
+                            'salesNetto', 'salesVat', 'salesBrutto',
+                            'invoices', 'sales','purchases'));
 
 //        dd($purchasesNetto, $purchasesVat, $purchasesBrutto,$salesNetto, $salesBrutto, $salesVat);
 

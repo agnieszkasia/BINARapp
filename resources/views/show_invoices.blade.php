@@ -49,7 +49,7 @@
 
 
         <table class="table-responsive table table-light">
-            <thead class="thead-dark">
+            <thead class="table-dark">
                 <tr >
                     <th scope="col">Data wystawienia</th>
                     <th scope="col">Data sprzedaży</th>

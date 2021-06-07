@@ -15,7 +15,7 @@
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg-secondary">
+    <body class="bg-info">
     <div class="justify-content-center">
         <div class="h3 text-white text-center mt-4">
             Generuj plik JPK
@@ -29,7 +29,7 @@
         @endif
         <form action="{{route('send')}}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="file" id="file" name="file[]" multiple>
+            <input type="file" id="file" name="file[]" multiple class="form-control">
             <button class="btn btn-dark" type="submit">Wyślij</button>
         </form>
 
