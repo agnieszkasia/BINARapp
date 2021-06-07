@@ -21,6 +21,12 @@
             Generuj plik JPK
 
         </div>
+        @if($errors->any())
+            <div class="col-12 alert alert-secondary" role="alert">
+                <h4>{{$errors->first()}}</h4>
+
+            </div>
+        @endif
         <form action="{{route('send')}}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="file" id="file" name="file[]" multiple>

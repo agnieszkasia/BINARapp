@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::post('/show', [TaxSettlementController::class, 'show'])->name('send');
+Route::post('/generateCSV', [TaxSettlementController::class, 'generateCSVFile'])->name('generateCSV');
+
+//Route::get('/{any}', function () {
+//    return redirect('/');
+//})->where('any', '.*');

@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Illuminate\Support\Facades\Redirect;
 
 
 class TaxSettlementController extends Controller{
 
-    public function show()
-    {
+    public function show(){
         $invoice = null;
+        $values = null;
 
-        $filespaths = $_FILES['file']['tmp_name'];
-        $i = 0;
-        foreach ($filespaths as $filepath) {
+        if ($_FILES['file']['tmp_name'][0] == "" ){
+            return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
+        }
+
+        $filesPaths = $_FILES['file']['tmp_name'];
+        foreach ($filesPaths as $key => $filePath) {
 
             $reader = ReaderEntityFactory::createODSReader();
+            $reader->setShouldPreserveEmptyRows(true);
 
-            $reader->open($filepath);
+            $reader->open($filePath);
 
             foreach ($reader->getSheetIterator() as $sheet) {
 
@@ -27,112 +34,71 @@ class TaxSettlementController extends Controller{
 
                     $cells = $row->getCells();
                     foreach ($cells as $cell) {
-                        $cell = $cell->getValue();
-                        if ($cell !== "" and $cell !== " ") {
-                            $values[$i][$j][] = $cell;
-                        }
+                        $values[$key][$j][] = $cell->getValue();
                     }
                     $j++;
-
                 }
-
-                $invoices[$i]['issue_date'] = $values[$i][1][2];
-                $invoices[$i]['due_date'] = $values[$i][2][2];
-                $invoices[$i]['invoice_number'] = $values[$i][5][1] . $values[$i][5][2];
-
-
-
-
             }
-
             $reader->close();
-            $i++;
         }
 
-        dd($values);
 
+        foreach ($values as $key => $invoice){
+            $invoices[$key]['issue_date'] = $values[$key][1][6];
+            $invoices[$key]['due_date'] = $values[$key][2][6];
 
-        $i=0;
-        foreach ($values as $invoice){
-            $j=0;
-            $previousKey = 0;
-            foreach ($invoice as $key => $row){
-                foreach ($row as  $cell){
+            $fileName = $_FILES['file']['name'][$key];
+            $invoices[$key]['invoice_number'] = substr($fileName, 4, 3).$values[$key][5][6];
 
-                    if (str_contains($cell, 'Nabywca') ) {
-                        $invoices[$i]['company'] = $invoice[$j+2][0];
+            $invoices[$key]['company'] = $values[$key][9][1];
+
+            $invoices[$key]['address'] = $values[$key][11][1];
+            if (isset($values[$key][12][1])) $invoices[$key]['address'] .= " ".$values[$key][12][1];
+
+            if (!empty($values[$key][13][1])) {
+                $invoices[$key]['NIP'] = $values[$key][13][1];
+                $invoices[$key]['NIP'] = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoices[$key]['NIP']);
+            }
+            else $invoices[$key]['NIP'] = "brak";
+
+            for ($i = 19; $i<=33; $i++) {
+                if (!empty($values[$key][$i][1]) && ($values[$key][$i][4] == 'szt' || str_contains($values[$key][$i][4], 'm'))) {
+                    if (empty($invoices[$key]['products_names'])) {
+                        $invoices[$key]['products_names'] = $values[$key][$i][3]."x ".$values[$key][$i][1];
+                        $invoices[$key]['products_number'] = 1;
+
+                    } else {
+                        $invoices[$key]['products_names'] .= ", ".$values[$key][$i][3]."x ". $values[$key][$i][1];
+                        $invoices[$key]['products_number']++;
                     }
 
-                    if (str_contains($cell, 'Adres') ) {
-                        if (isset($invoice[$j+3][0])) {
-                            $numeric = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoice[$j+3][0]);
-                            if (!is_numeric($numeric)){
-                                $invoices[$i]['address'] = $invoice[$j+2][0]." ".$invoice[$j+3][0];
-                            } else $invoices[$i]['address'] = $invoice[$j+2][0];
-                        }
-                        else $invoices[$i]['address'] = $invoice[$j+2][0];
-                    }
+                    if (empty($invoices[$key]['products'])) {
+                        $invoices[$key]['products'] = $values[$key][$i][9];
+                    } else $invoices[$key]['products'] += $values[$key][$i][9];
 
-                    if (str_contains($cell, 'Forma') and $j>10) {
+                } elseif (empty($invoices[$key]['products_names'])) {
+                    $invoices[$key]['products_names'] = "brak produktów";
+                    $invoices[$key]['products_number'] = 0;
+                    $invoices[$key]['products'] = 0;
+                }
 
-                        $invoices[$i]['NIP'] = $invoice[$j][0];
-                        $invoices[$i]['NIP'] = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoices[$i]['NIP']);
-//
-                        if (!is_numeric($invoices[$i]['NIP'])) $invoices[$i]['NIP'] = 'brak';
-                    }
-                    elseif(str_contains($cell, 'Forma płatności') and $j<=10) {
-                        $invoices[$i]['NIP'] = 'brak';
-                    }
+                if (!empty($values[$key][$i][1]) && str_contains($values[$key][$i][4], 'usł')) {
+                    if (empty($invoices[$key]['service'])) {
+                        $invoices[$key]['service'] = $values[$key][$i][9];
+                    } else $invoices[$key]['service'] += $values[$key][$i][9];
 
-                    if (str_contains($cell, 'Nazwa towaru') ) {
-                        $firstProduct[$i] = $key+2;
-                    }
-
-
-                    if (str_contains($cell, 'Wysyłka') ) {
-                        $invoices[$i]['service'] = $invoice[$key][8];
-                        $lastProduct[$i] = $key-1;
-                    } elseif (!isset($invoices[$i]['service'])){
-                        $invoices[$i]['service'] = 0;
-                    }
-
-
-                    if (str_contains($cell, 'Razem') ) {
-                        if (!isset($lastProduct[$i])) $lastProduct[$i] = $previousKey;
-                        $invoices[$i]['netto'] = $invoice[$key][1];
-                        $invoices[$i]['vat'] = $invoice[$key][2];
-                        $invoices[$i]['brutto'] = $invoice[$key][3];
-                    }
-
-                    if (isset($firstProduct[$i]) && isset($lastProduct[$i]) && !isset($invoices[$i]['products_number'])){
-                        $invoices[$i]['products_number'] = $lastProduct[$i] - $firstProduct[$i] + 1;
-
-                        $invoices[$i]['products_names'] = $invoice[$firstProduct[$i]][1];
-                        $invoices[$i]['products'] = $invoice[$firstProduct[$i]][8];
-                        for ($k = $firstProduct[$i]+1; $k<= $lastProduct[$i]; $k++){
-                            if (str_contains($invoice[$k][3], 'usł')){
-                                $invoices[$i]['service'] = $invoices[$i]['service']+$invoice[$k][8];
-
-                            } else{
-                                $invoices[$i]['products_names'] = $invoices[$i]['products_names'].", ".$invoice[$k][1];
-                                $invoices[$i]['products'] = $invoices[$i]['products'] + $invoice[$k][8];
-                            }
-                        }
-                    }
-
-                    $previousKey = $key;
-
+                } elseif (empty($invoices[$key]['service'])) {
+                    $invoices[$key]['service'] = "0";
 
                 }
-                $j++;
             }
-//            dd($invoice);
-            $i++;
-//            $nip[] = $invoice[$key[$i]];
+
+
+            $invoices[$key]['netto'] = $values[$key][34][6];
+            $invoices[$key]['vat'] = $values[$key][34][8];
+            $invoices[$key]['brutto'] = $values[$key][34][9];
         }
 
-
-//        dd($invoices);
 
 
 //        generateDailySalesStatementFile();
@@ -141,5 +107,63 @@ class TaxSettlementController extends Controller{
 
         return view('show_invoices', compact('invoices'));
     }
+
+    public function generateCSVFile(Request $request){
+
+        header('Content-type: application/csv');
+        header('Content-Disposition: attachment; filename=CSV.csv');
+        header("Content-Transfer-Encoding: UTF-8");
+
+        $invoices = json_decode($request['invoices'], true);
+
+        $vat = 0;
+
+        foreach ($invoices as $key =>$invoice){
+            $invoice['issue_date'];
+
+            $issueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['issue_date']);
+            $invoice['issue_date'] = $issueDateTime->format('Y-m-d');
+
+            $dueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['due_date']);
+            $invoice['due_date'] = $dueDateTime->format('Y-m-d');
+
+            $vat += $invoice['vat'];
+
+            $invoice['netto'] = str_replace(".",",",$invoice['netto']);
+            $invoice['vat'] = str_replace(".",",",$invoice['vat']);
+
+            $lines[] = ";;;;;;;;;;;;".($key+1).";".
+                $invoice['NIP'].";".
+                $invoice['company'].";".
+                $invoice['address'].";".
+                $invoice['invoice_number'].";".
+                $invoice['issue_date'].";".
+                $invoice['due_date'].";;;;;;;;;;".
+                $invoice['netto'].";".
+                $invoice['vat'].";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
+        }
+
+        $vat = str_replace(".",",",$vat);
+
+
+
+        $fp = fopen('php://output', 'a'); // Configure fopen to write to the output buffer
+
+        $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony'.PHP_EOL.
+                'JPK_VAT;JPK_VAT (3);1-1;3;0;2020-09-31T09:30:47;2021-04-01;2021-04-30;OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL.
+                ';;;;;;;;;7121553440;BINAR Jarosław Glinka;jarb23@wp.pl;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL.
+                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL;
+
+        foreach ($lines as $line) {
+            $data .= $line.PHP_EOL;
+        }
+
+        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.count($invoices).';'.$vat.';;;;;;;;;;;;;;;;;'.PHP_EOL;
+
+        fwrite($fp, print_r($data, TRUE));
+
+        fclose($fp);
+    }
+
 
 }

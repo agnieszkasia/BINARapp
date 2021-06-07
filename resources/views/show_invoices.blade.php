@@ -17,13 +17,20 @@
     </head>
     <body class="bg-secondary">
     <div class="">
-        <div class=" ">
+        <div class="d-flex">
             <div class="h3 text-white text-center mt-4 col-12">
                 FAKTURY
 
             </div>
-            <div class="position-absolute justify-content-end col-4 ri">
-                <button>Pobierz CSV</button>
+
+
+            <div class="position-absolute justify-content-end">
+                <form action="{{route('generateCSV')}}" method="post">
+                    @csrf
+                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
+                    <button type="submit">Generuj CSV</button>
+
+                </form>
             </div>
         </div>
 
@@ -59,8 +66,6 @@
                     <td>{{$invoice['products']}}</td>
                     <td>{{$invoice['products_number']}}</td>
                     <td>{{$invoice['service']}}</td>
-{{--                    <td></td>--}}
-{{--                    <td></td>--}}
                     <td>{{$invoice['netto']}}</td>
                     <td>{{$invoice['vat']}}</td>
                     <td>{{$invoice['brutto']}}</td>
