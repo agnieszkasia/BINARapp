@@ -35,18 +35,7 @@
 
                 </form>
             </div>
-
-
-{{--            <div class="position-absolute justify-content-end">--}}
-{{--                <form action="{{route('generateCSV')}}" method="post">--}}
-{{--                    @csrf--}}
-{{--                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">--}}
-{{--                    <button type="submit">Generuj CSV</button>--}}
-
-{{--                </form>--}}
-{{--            </div>--}}
         </div>
-
 
         <table class="table-responsive table table-light">
             <thead class="table-dark">

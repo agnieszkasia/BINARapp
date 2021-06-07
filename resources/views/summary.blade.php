@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="d-flex float-right justify-content-end my-3">
-                    <form action="{{route('generateCSV')}}" method="POST">
+                    <form action="{{route('generateFile')}}" method="POST">
                         @csrf
                         <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
                         <input type="hidden" name="sales" value="{{json_encode($sales)}}">
@@ -40,12 +40,12 @@
                         <input type="hidden" name="undefinedSalesVat" value="{{$undefinedSalesVat}}">
                         <input type="hidden" name="purchaseVat" value="{{$purchasesVat}}">
 
-                        <button type="submit" class="btn btn-dark">Generuj CSV</button>
+                        <button type="submit" class="btn btn-dark mx-2" name="generateCSV">Generuj CSV</button>
+                        <button type="submit" class="btn btn-dark mx-2" name="generateXML">Generuj XML</button>
                     </form>
 
-                    <button type="submit" class="btn btn-dark">Generuj XML</button>
-                    <button type="submit" class="btn btn-dark">Generuj DZS</button>
-                    <button type="submit" class="btn btn-dark">Generuj RZV</button>
+                    <button type="submit" class="btn btn-dark mx-2">Generuj DZS</button>
+                    <button type="submit" class="btn btn-dark mx-2">Generuj RZV</button>
                 </div>
             </div>
 

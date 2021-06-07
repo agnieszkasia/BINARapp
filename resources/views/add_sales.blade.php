@@ -39,7 +39,7 @@
 
 
         <table class="table table-light">
-            <thead class="thead-dark">
+            <thead class="table-dark">
                 <tr>
                     <th class="col-2">Data sprzedaży</th>
                     <th class="col-6">Produkty</th>
