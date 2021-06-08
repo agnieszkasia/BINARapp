@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Carbon\Carbon;
 use DateTime;
 use DOMDocument;
@@ -9,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Support\Facades\Redirect;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use function PHPUnit\Framework\stringContains;
 
 
@@ -192,6 +196,10 @@ class TaxSettlementController extends Controller{
 
         if ($request->has('generateXML')) {
             $this->generateXMLFile($request);
+        }
+
+        if ($request->has('generateDZSV')) {
+            $this->generateDZSVFile($request);
         }
     }
 
@@ -453,7 +461,7 @@ class TaxSettlementController extends Controller{
         $JPK->appendChild($register);
 
         $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'],$register, $file);
-//        $this->getPurchaseInvoicesToXMLFormat($taxSettlement, $register, $file);
+        $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'],$register, $file);
 
 
         /*download file */
@@ -526,65 +534,90 @@ class TaxSettlementController extends Controller{
 
     }
 
-    public function getPurchaseInvoicesToXMLFormat($taxSettlement, $register, $file){
-        if ($taxSettlement->purchase_invoice_ids !== "") {
-            $purchaseInvoiceIds = explode(';', $taxSettlement->purchase_invoice_ids);
-            foreach ($purchaseInvoiceIds as $invoiceId) {
+    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file){
+        foreach ($purchases as $key => $purchase) {
 
-                $invoice = PurchaseInvoice::find($invoiceId);
 
-                /* tag - ZakupWiersz */
-                $purchaseRow = $file->createElement("ZakupWiersz");
-                $register->appendChild($purchaseRow);
+            /* tag - ZakupWiersz */
+            $purchaseRow = $file->createElement("ZakupWiersz");
+            $register->appendChild($purchaseRow);
 
-                /* tag - LpZakupu */
-                $sales = $file->createElement("LpZakupu", ($invoiceId + 1));
-                $purchaseRow->appendChild($sales);
+            /* tag - LpZakupu */
+            $sales = $file->createElement("LpZakupu", ($key + 1));
+            $purchaseRow->appendChild($sales);
 
-                /* tag - NrDostawcy */
-                $nip = $file->createElement("NrDostawcy", $invoice->nip);
-                $purchaseRow->appendChild($nip);
+            /* tag - NrDostawcy */
+            $nip = $file->createElement("NrDostawcy", $purchase['NIP']);
+            $purchaseRow->appendChild($nip);
 
-                /* tag - NazwaDostawcy */
-                $company = $file->createElement("NazwaDostawcy", $invoice->company);
-                $purchaseRow->appendChild($company);
+            /* tag - NazwaDostawcy */
+            $company = $file->createElement("NazwaDostawcy", $purchase['company']);
+            $purchaseRow->appendChild($company);
 
-                /* tag - DowodZakupu */
-                $invoiceNumber = $file->createElement("DowodZakupu", $invoice->invoice_number);
-                $purchaseRow->appendChild($invoiceNumber);
+            /* tag - DowodZakupu */
+            $invoiceNumber = $file->createElement("DowodZakupu", $purchase['invoice_number']);
+            $purchaseRow->appendChild($invoiceNumber);
 
-                /* tag - DataZakupu */
-                $issueDate = $file->createElement("DataZakupu", $invoice->issue_date);
-                $purchaseRow->appendChild($issueDate);
+            /* tag - DataZakupu */
+            $issueDate = $file->createElement("DataZakupu", $purchase['issue_date']);
+            $purchaseRow->appendChild($issueDate);
 
-                /* tag - DataWplywu */
-                $dueDate = $file->createElement("DataWplywu", $invoice->due_date);
-                $purchaseRow->appendChild($dueDate);
+            /* tag - DataWplywu */
+            $dueDate = $file->createElement("DataWplywu", $purchase['due_date']);
+            $purchaseRow->appendChild($dueDate);
 
-                /* tag - K_42 */
-                $netto = $file->createElement("K_42", $invoice->netto);
-                $purchaseRow->appendChild($netto);
+            /* tag - K_42 */
+            $netto = $file->createElement("K_42", $purchase['netto']);
+            $purchaseRow->appendChild($netto);
 
-                /* tag - K_43 */
-                $vat = $file->createElement("K_43", $invoice->vat);
-                $purchaseRow->appendChild($vat);
-
-            }
-
-            /* tag - ZakupCtrl */
-            $purchaseCtrl = $file->createElement("ZakupCtrl");
-            $register->appendChild($purchaseCtrl);
-
-            /* tag - LiczbaWierszyZakupow */
-            $rowNumber = $file->createElement("LiczbaWierszyZakupow", $taxSettlement->number_of_purchase_invoices);
-            $purchaseCtrl->appendChild($rowNumber);
-
-            /* tag - PodatekNaliczony */
-            $totalVAT = $file->createElement("PodatekNaliczony", $taxSettlement->purchase_vat);
-            $purchaseCtrl->appendChild($totalVAT);
+            /* tag - K_43 */
+            $vat = $file->createElement("K_43", $purchase['vat']);
+            $purchaseRow->appendChild($vat);
 
         }
 
+        /* tag - ZakupCtrl */
+        $purchaseCtrl = $file->createElement("ZakupCtrl");
+        $register->appendChild($purchaseCtrl);
+
+        /* tag - LiczbaWierszyZakupow */
+        $rowNumber = $file->createElement("LiczbaWierszyZakupow", count($purchases));
+        $purchaseCtrl->appendChild($rowNumber);
+
+        /* tag - PodatekNaliczony */
+        $totalVAT = $file->createElement("PodatekNaliczony", $purchasesVat);
+        $purchaseCtrl->appendChild($totalVAT);
+
     }
 
+    public function generateDZSVFile($request){
+
+        $invoices = json_decode($request['invoices'], true);
+
+        $writer = WriterEntityFactory::createODSWriter();
+
+        $writer->openToBrowser('DZSV.ods');
+
+        $styleNormal = (new StyleBuilder())
+            ->setFontSize(6)
+            ->setCellAlignment(CellAlignment::LEFT)
+            ->build();
+
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'Dzienne zestawienia sprzedaży VAT '], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'NAZWA XXXX'], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'ADRESS XXXX'], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'NIP: XXXX'], $styleNormal));
+
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'Data', '', '','Wartość', '','','   Sprzedaż wg stawek  VAT','','','','Wartość'], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['LP', 'powstania', 'Towar lub usługa', 'Nr faktury','sprzedaży', '','','','5%','','23%','sprzedaży','Podatek','Uwagi'], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'obozowisku', '', '','brutto', '','','','','','','netto','',''], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'księgowego', '', '','', '','','Netto','VAT','Netto','VAT','','',''], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', '', '', '','', '','','','','','','','',''], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['', '', '', '','       zł  | gr', '','','','','   zł  | gr','   zł  | gr','   zł  | gr','   zł  | gr',''], $styleNormal));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['1', '2', '3', '4','5', '6','7','8','9','10','11','12','13','14'], $styleNormal));
+
+
+        $writer->close();
+
+    }
 }

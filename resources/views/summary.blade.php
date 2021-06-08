@@ -38,13 +38,13 @@
                         <input type="hidden" name="salesVat" value="{{$salesVat}}">
                         <input type="hidden" name="undefinedSalesNetto" value="{{$undefinedSalesNetto}}">
                         <input type="hidden" name="undefinedSalesVat" value="{{$undefinedSalesVat}}">
-                        <input type="hidden" name="purchaseVat" value="{{$purchasesVat}}">
+                        <input type="hidden" name="purchasesVat" value="{{$purchasesVat}}">
 
                         <button type="submit" class="btn btn-dark mx-2" name="generateCSV">Generuj CSV</button>
                         <button type="submit" class="btn btn-dark mx-2" name="generateXML">Generuj XML</button>
+                        <button type="submit" class="btn btn-dark mx-2" name="generateDZSV">Generuj DZSV</button>
                     </form>
 
-                    <button type="submit" class="btn btn-dark mx-2">Generuj DZS</button>
                     <button type="submit" class="btn btn-dark mx-2">Generuj RZV</button>
                 </div>
             </div>
