@@ -9,5 +9,6 @@ Project is created with:
 * PHP 8.0.2
 * Laravel 8.44
 * Bootstrap 5
+* Spout Library
 
 
