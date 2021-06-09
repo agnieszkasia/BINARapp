@@ -17,7 +17,8 @@
         "laravel/ui": "^3.3",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.17",
-      "ext-dom": "*"
+      "ext-dom": "*",
+      "ext-fileinfo": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -8,11 +8,17 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Carbon\Carbon;
 use DateTime;
 use DOMDocument;
+use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Support\Facades\Redirect;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use function PHPUnit\Framework\stringContains;
 
 
@@ -591,33 +597,59 @@ class TaxSettlementController extends Controller{
     }
 
     public function generateDZSVFile($request){
-
         $invoices = json_decode($request['invoices'], true);
 
-        $writer = WriterEntityFactory::createODSWriter();
+        $spreadsheet = new Spreadsheet();
 
-        $writer->openToBrowser('DZSV.ods');
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('B1', 'Dzienne zestawienia sprzedaży VAT ')
+            ->setCellValue('E1', 'MISIĄC ROK');
 
-        $styleNormal = (new StyleBuilder())
-            ->setFontSize(6)
-            ->setCellAlignment(CellAlignment::LEFT)
-            ->build();
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('B2', 'FIRMA');
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'Dzienne zestawienia sprzedaży VAT '], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'NAZWA XXXX'], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'ADRESS XXXX'], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'NIP: XXXX'], $styleNormal));
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('B3', 'ADRES');
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'Data', '', '','Wartość', '','','   Sprzedaż wg stawek  VAT','','','','Wartość'], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['LP', 'powstania', 'Towar lub usługa', 'Nr faktury','sprzedaży', '','','','5%','','23%','sprzedaży','Podatek','Uwagi'], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'obozowisku', '', '','brutto', '','','','','','','netto','',''], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', 'księgowego', '', '','', '','','Netto','VAT','Netto','VAT','','',''], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', '', '', '','', '','','','','','','','',''], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['', '', '', '','       zł  | gr', '','','','','   zł  | gr','   zł  | gr','   zł  | gr','   zł  | gr',''], $styleNormal));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['1', '2', '3', '4','5', '6','7','8','9','10','11','12','13','14'], $styleNormal));
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('B4', 'NIP');
+
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('B5', 'Data');
+
+        $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('A6', 'LP');
+
+        $cell_st =[
+            'alignment' =>['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'borders' => array(
+                'outline' => array(
+                    'style' => Border::BORDER_THICK,
+                    'color' => array('argb' => 'FFFF0000'),
+                ),
+            ),
+        ];
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
+        $spreadsheet->getActiveSheet()->getRowDimension('10')->setRowHeight(10);
+        $spreadsheet->getActiveSheet()->getStyle('A5:N5')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);;
+
+        $spreadsheet->getActiveSheet()->getRowDimension('5')->setRowHeight(6);
+
+        $spreadsheet->getActiveSheet()->setTitle('Simple'); //set a title for Worksheet
+
+        $writer = new Ods($spreadsheet);
+
+        $writer->save('D.ods');
 
 
-        $writer->close();
+
+        $finfo = new finfo(FILEINFO_MIME);
+        header('Content-Type: ' . $finfo->file(public_path('D.ods')));
+
+//        header('Content-Type: application/vnd.oasis.opendocument.spreadsheet');
+        header('Content-Disposition: attachment; filename="DZSV.ods"');
+
+        readfile(public_path("D.ods"));
 
     }
 }
