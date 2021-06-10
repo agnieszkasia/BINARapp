@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Borders;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use function PHPUnit\Framework\stringContains;
@@ -598,11 +599,28 @@ class TaxSettlementController extends Controller{
 
     public function generateDZSVFile($request){
         $invoices = json_decode($request['invoices'], true);
+        $sales = json_decode($request['sales'], true);
+
+        $allSales = array_merge($invoices, $sales);
+
+//        $price = array();
+//        foreach ($allSales as $key => $row) {
+//            $price[$key] = $row['due_date'];
+//        }
+//        array_multisort($price, SORT_DESC, $allSales);
+
+        foreach ($allSales as $key => $sale) {
+            $sort[$key] = strtotime($sale['due_date']);
+        }
+        array_multisort($sort, SORT_ASC, $allSales);
+
+
+//        dd($allSales);
 
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('B1', 'Dzienne zestawienia sprzedaży VAT ')
+            ->setCellValue('A12', 'Dzienne zestawienia sprzedaży VAT ')
             ->setCellValue('E1', 'MISIĄC ROK');
 
         $spreadsheet->setActiveSheetIndex(0)
@@ -620,36 +638,48 @@ class TaxSettlementController extends Controller{
         $spreadsheet->setActiveSheetIndex(0)
             ->setCellValue('A6', 'LP');
 
-        $cell_st =[
-            'alignment' =>['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'borders' => array(
-                'outline' => array(
-                    'style' => Border::BORDER_THICK,
-                    'color' => array('argb' => 'FFFF0000'),
-                ),
-            ),
-        ];
-        $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
-        $spreadsheet->getActiveSheet()->getRowDimension('10')->setRowHeight(10);
-        $spreadsheet->getActiveSheet()->getStyle('A5:N5')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);;
+        $i=0;
+        foreach ($allSales as $key => $sale) {
 
-        $spreadsheet->getActiveSheet()->getRowDimension('5')->setRowHeight(6);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
 
-        $spreadsheet->getActiveSheet()->setTitle('Simple'); //set a title for Worksheet
+            if (isset($sale['company'])) {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['products']);
+
+            }
+
+            else {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['brutto']);
+            }
+
+            if (isset($sale['service']) && $sale['service'] !== "0"){
+                $i++;
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C'.($key+12+$i), $sale['company']." ".$sale['address']." ".$sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['service']);
+
+            }
+
+        }
+
+
 
         $writer = new Ods($spreadsheet);
-
-        $writer->save('D.ods');
-
-
+        $writer->save('DZSV.ods');
 
         $finfo = new finfo(FILEINFO_MIME);
-        header('Content-Type: ' . $finfo->file(public_path('D.ods')));
-
-//        header('Content-Type: application/vnd.oasis.opendocument.spreadsheet');
+        header('Content-Type: ' . $finfo->file(public_path('DZSV.ods')));
         header('Content-Disposition: attachment; filename="DZSV.ods"');
 
-        readfile(public_path("D.ods"));
+        readfile(public_path("DZSV.ods"));
+
+        unlink(public_path('DZSV.ods'));
 
     }
 }
