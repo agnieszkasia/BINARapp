@@ -44,8 +44,9 @@
             <thead class="table-dark">
                 <tr>
                     <th class="col-2">Data sprzedaży</th>
-                    <th class="col-6">Produkty</th>
-                    <th class="col-2">Łączna wartość produktów</th>
+                    <th class="col-5">Nazwa produktu</th>
+                    <th class="col-2">Ilość</th>
+                    <th class="col-2">Wartość jednego przedmiotu</th>
                     <th class="col-1"><a href="javascript:void(0)" class="btn btn-add addRow">+</a> </th>
                 </tr>
             </thead>
@@ -64,6 +65,15 @@
                         <input type="text" name="products_names[ ]" class="form-control @error('products_names[ ]') is-invalid @enderror">
 
                         @error('products_names[ ]')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </td>
+                    <td>
+                        <input type="text" name="quantity[ ]" class="form-control @error('quantity[ ]') is-invalid @enderror">
+
+                        @error('quantity[ ]')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>

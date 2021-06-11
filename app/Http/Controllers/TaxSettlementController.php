@@ -126,9 +126,10 @@ class TaxSettlementController extends Controller{
         foreach ($request['due_date'] as $key=> $product) {
             $sales[$key]['due_date'] = $request['due_date'][$key];
             $sales[$key]['products_names'] = $request['products_names'][$key];
-            $sales[$key]['netto'] = round($request['products'][$key] - ($request['products'][$key]*0.23),2);
-            $sales[$key]['vat'] = round($request['products'][$key] * 0.23,2);
-            $sales[$key]['brutto'] = $request['products'][$key];
+            $products = $request['products'][$key] * $request['quantity'][$key];
+            $sales[$key]['netto'] = round($products - ($products*0.23),2);
+            $sales[$key]['vat'] = round($products * 0.23,2);
+            $sales[$key]['brutto'] = $products;
         }
 
         return view('add_purchases', compact('invoices', 'sales'));
@@ -606,6 +607,8 @@ class TaxSettlementController extends Controller{
         $invoices = json_decode($request['invoices'], true);
         $sales = json_decode($request['sales'], true);
 
+        $sales = $this->sortUndocumentedSales($sales);
+
         $allSales = array_merge($invoices, $sales);
 
 
@@ -675,5 +678,29 @@ class TaxSettlementController extends Controller{
 
         unlink(public_path('DZSV.ods'));
 
+    }
+
+    public function sortUndocumentedSales($sales){
+        foreach ($sales as $key => $sale) {
+            $sort[$key] = strtotime($sale['due_date']);
+        }
+
+        array_multisort($sort, SORT_ASC, $sales);
+
+        foreach ($sales as $key => $sale){
+            if (isset($sales[$key-1])) $previousSale = $sales[$key-1];
+
+            if (isset($previousSale) && $previousSale['due_date'] == $sale['due_date']){
+                unset($sales[$key-1]);
+
+                $sales[$key]['products_names'] = $sale['products_names'].", ".$previousSale['products_names'];
+                $sales[$key]['netto'] = $sale['netto']+$previousSale['netto'];
+                $sales[$key]['vat'] = $sale['vat']+$previousSale['vat'];
+                $sales[$key]['brutto'] = $sale['brutto']+$previousSale['brutto'];
+            }
+
+        }
+
+        return $sales;
     }
 }
