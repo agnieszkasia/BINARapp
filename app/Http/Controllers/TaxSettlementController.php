@@ -26,8 +26,9 @@ use function PHPUnit\Framework\stringContains;
 class TaxSettlementController extends Controller{
 
     public function show(){
-        $invoice = null;
+        $invoices = null;
         $values = null;
+        $gtu = null;
 
         if ($_FILES['file']['tmp_name'][0] == "" ){
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
@@ -49,6 +50,11 @@ class TaxSettlementController extends Controller{
                     $cells = $row->getCells();
                     foreach ($cells as $cell) {
                         $values[$key][$j][] = $cell->getValue();
+                        if (str_contains( $cell->getValue(), 'GTU') or str_contains( $cell->getValue(), 'GTO') or
+                            str_contains( $cell->getValue(), 'gtu') or str_contains( $cell->getValue(), 'gto')){
+                            $gtuCode[$key] = 'GTU';
+                            $gtu++;
+                        }
                     }
                     $j++;
                 }
@@ -56,6 +62,7 @@ class TaxSettlementController extends Controller{
             $reader->close();
         }
 
+//        dd($invoices);
 
         foreach ($values as $key => $invoice){
             $invoices[$key]['issue_date'] = $values[$key][1][6];
@@ -111,8 +118,25 @@ class TaxSettlementController extends Controller{
             $invoices[$key]['netto'] = $values[$key][34][6];
             $invoices[$key]['vat'] = $values[$key][34][8];
             $invoices[$key]['brutto'] = $values[$key][34][9];
+
+            if (isset($gtuCode[$key])) $invoices[$key]['gtu'] = $gtuCode[$key];
+
         }
-        return view('show_invoices', compact('invoices'));
+
+        $warnings = 0;
+        foreach ($invoices as $key=>$invoice) {
+            if(isset($invoices[$key-1])){
+                $previousInvoice = $invoices[$key-1];
+
+                if (isset($invoice['company']) && ($previousInvoice['company'] == $invoice['company']) && ($previousInvoice['address'] == $invoice['address'])){
+                    $invoices[$key-1]['warning'] = 'same company';
+                    $invoices[$key]['warning'] = 'same company';
+                    $warnings++;
+                }
+            }
+        }
+
+        return view('show_invoices', compact('invoices', 'warnings', 'gtu'));
     }
 
     public function showAddSalesPage(Request $request){

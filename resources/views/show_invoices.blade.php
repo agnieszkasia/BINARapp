@@ -23,10 +23,16 @@
         @csrf
 
         <div class="h3 text-white bg-dark text-center pt-4 mb-0 pb-3">
-            FAKTURY
+            FAKTURY SPRZEDAŻY
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
                 <a class="btn btn-next" href="">WSTECZ</a>
+
+                <div class="fs-6 mt-2 ">
+                    @if($warnings!== 0) <div class="mx-2">Faktury do sprawdzenia: {{$warnings}} </div>@endif
+                    @if($gtu!== 0) <div class="mx-2">Faktury z kodem gtu: {{$gtu}}  </div>@endif
+                </div>
+
                 <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
                 <button type="submit" class="btn btn-next">DALEJ</button>
             </div>
@@ -57,7 +63,10 @@
             </thead>
             <tbody>
             @foreach($invoices as $invoice)
-                <tr>
+                <tr class="
+                    @if(isset($invoice['warning']) && !isset($invoice['gtu']))table-warning fw-bold
+                    @elseif(isset($invoice['gtu'])) table-danger fw-bold
+                    @endif">
                     <td>{{$invoice['issue_date']}}</td>
                     <td>{{$invoice['due_date']}}</td>
                     <td>{{$invoice['invoice_number']}}</td>
