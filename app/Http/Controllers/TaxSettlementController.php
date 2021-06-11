@@ -608,19 +608,12 @@ class TaxSettlementController extends Controller{
 
         $allSales = array_merge($invoices, $sales);
 
-//        $price = array();
-//        foreach ($allSales as $key => $row) {
-//            $price[$key] = $row['due_date'];
-//        }
-//        array_multisort($price, SORT_DESC, $allSales);
 
         foreach ($allSales as $key => $sale) {
             $sort[$key] = strtotime($sale['due_date']);
         }
+
         array_multisort($sort, SORT_ASC, $allSales);
-
-
-//        dd($allSales);
 
         $spreadsheet = new Spreadsheet();
 
@@ -644,21 +637,22 @@ class TaxSettlementController extends Controller{
             ->setCellValue('A6', 'LP');
 
         $i=0;
+
         foreach ($allSales as $key => $sale) {
 
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
-
-            if (isset($sale['company'])) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['products']);
-            }
-
-            else {
+            if ($sale['brutto'] !== null && !isset($sale['products']) && !isset($sale['service'])) {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['brutto']);
             }
+            elseif (isset($sale['products']) && $sale['products'] !== 0){
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C'.($key+12+$i), $sale['company']." ".$sale['address']." ".$sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['products']);
+            } elseif(isset($sale['products'])  && $sale['products'] == 0) $i--;
 
             if (isset($sale['service']) && $sale['service'] !== "0"){
                 $i++;
@@ -667,12 +661,8 @@ class TaxSettlementController extends Controller{
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C'.($key+12+$i), $sale['company']." ".$sale['address']." ".$sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['service']);
-
             }
-
         }
-
-
 
         $writer = new Ods($spreadsheet);
         $writer->save('DZSV.ods');
