@@ -216,6 +216,9 @@ class TaxSettlementController extends Controller{
         header('Content-Disposition: attachment; filename=CSV.csv');
         header("Content-Transfer-Encoding: UTF-8");
 
+        $lines = array();
+        $purchaseLines = array();
+
         $invoices = json_decode($request['invoices'], true);
 
         $vat = 0;
@@ -251,26 +254,28 @@ class TaxSettlementController extends Controller{
         $purchases = json_decode($request['purchases'], true);
 
         foreach ($purchases as $key =>$purchase){
-            $purchase['issue_date'];
 
-            $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
-            $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
+            if (isset($purchases['issue_date'])) {
 
-            $dueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['due_date']);
-            $purchase['due_date'] = $dueDateTime->format('Y-m-d');
+                $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
+                $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
 
-            $purchase['netto'] = str_replace(".",",",$purchase['netto']);
-            $purchase['vat'] = str_replace(".",",",$purchase['vat']);
+                $dueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['due_date']);
+                $purchase['due_date'] = $dueDateTime->format('Y-m-d');
 
-            $purchaseLines[] = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;".($key+1).";".
-                $purchase['NIP'].";".
-                $purchase['company'].";".
-                $purchase['address'].";".
-                $purchase['invoice_number'].";".
-                $purchase['issue_date'].";".
-                $purchase['due_date'].";;;".
-                $purchase['netto'].";".
-                $purchase['vat'].";;;;;;";
+                $purchase['netto'] = str_replace(".", ",", $purchase['netto']);
+                $purchase['vat'] = str_replace(".", ",", $purchase['vat']);
+
+                $purchaseLines[] = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . ($key + 1) . ";" .
+                    $purchase['NIP'] . ";" .
+                    $purchase['company'] . ";" .
+                    $purchase['address'] . ";" .
+                    $purchase['invoice_number'] . ";" .
+                    $purchase['issue_date'] . ";" .
+                    $purchase['due_date'] . ";;;" .
+                    $purchase['netto'] . ";" .
+                    $purchase['vat'] . ";;;;;;";
+            }
         }
 
         $fp = fopen('php://output', 'a'); // Configure fopen to write to the output buffer
@@ -648,7 +653,6 @@ class TaxSettlementController extends Controller{
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['products']);
-
             }
 
             else {

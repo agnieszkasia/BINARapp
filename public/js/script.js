@@ -27,7 +27,7 @@ $('thead').on('click', '.addPurchaseRow', function (){
         "<td><input type='text' name='netto[ ]' class='form-control'></td>" +
         "<td><input type='text' name='vat[ ]' class='form-control'></td>" +
         "<td><input type='text' name='brutto[ ]' class='form-control'></td>" +
-        "<th><a href='javascript:void(0)' class='btn btn-danger deleteRow'>Usuń</a> </th>" +
+        "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
         "</tr>"
 
     $('tbody').append(tr);

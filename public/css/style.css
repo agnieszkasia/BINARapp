@@ -1,0 +1,35 @@
+.btn-next {
+    color: #000;
+    background-color: #c8c8c8;
+    border-color: #c8c8c8;
+}
+.btn-next:hover {
+    color: #000000;
+    background-color: rgba(160, 160, 160, 0.8);
+    border-color: transparent;
+}
+
+.bg{
+    background-color: #9d928d;;
+}
+
+
+.form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #A0A0A0;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(160, 160, 160, 0.8);
+}
+
+.btn-add{
+    color: #000;
+    background-color: #497730;
+    border-color: #497730;
+}
+
+.btn-add:hover {
+    color: #000000;
+    background-color: rgba(95, 155, 63, 0.8);
+    border-color: transparent;
+}

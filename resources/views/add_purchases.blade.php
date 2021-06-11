@@ -7,35 +7,37 @@
         <title>Laravel</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">        <!-- Styles -->
 
-        <!-- Styles -->
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+        <link rel="stylesheet" href="{{asset('css/style.css')}}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg-info">
-    <div class="">
+    <body class="bg">
+    <div class="justify-content-center">
         <form action="{{route('summary')}}" method="POST">
             @csrf
-            <div class="d-flex justify-content-between col-12">
 
-                <div class="d-flex float-right my-3">
-                    <a class="btn btn-dark" href="">Wstecz</a>
-                </div>
+            <div class="h3 text-white bg-dark text-center pt-4 mb-0 pb-3">
+                DODAJ FAKTURY ZAKUPU
 
-                <div class="h3 text-white text-center mt-4">
-                    DODAJ FAKTURY ZAKUPU
-                </div>
+                <div class="d-flex float-right justify-content-between mx-5 mb-3">
+                    <a class="btn btn-next" href="">WSTECZ</a>
 
-                <div class="d-flex float-right justify-content-end my-3">
                     <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
                     <input type="hidden" name="sales" value="{{json_encode($sales)}}">
-                    <button type="submit" class="btn btn-dark">Podsumowanie</button>
+                    <button type="submit" class="btn btn-next">PODSUMOWANIE</button>
                 </div>
+
+                <div class="bg-white col-12 my-1 ">
+                    <div class="bg-secondary col-9 p-1"></div>
+                </div>
+
             </div>
 
 
@@ -51,7 +53,7 @@
                     <th class="col-1">Netto</th>
                     <th class="col-1">VAT</th>
                     <th class="col-1">Brutto</th>
-                    <th class="col-1"><a href="javascript:void(0)" class="btn btn-success addPurchaseRow">+</a> </th>
+                    <th class="col-1"><a href="javascript:void(0)" class="btn btn-add addPurchaseRow">+</a> </th>
                 </tr>
             </thead>
             <tbody>
@@ -145,7 +147,7 @@
                         </span>
                         @enderror
                     </td>
-                    <th><a href="javascript:void(0)" class="btn btn-danger deletePurchaseRow">Usuń</a> </th>
+                    <th><a href="javascript:void(0)" class="btn btn-next deletePurchaseRow">Usuń</a> </th>
                 </tr>
 
             </tbody>

@@ -7,35 +7,35 @@
         <title>Laravel</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">        <!-- Styles -->
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+        <link rel="stylesheet" href="{{asset('css/style.css')}}">
 
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg-info">
-    <div class="">
-        <div class="d-flex justify-content-between col-12">
+    <body class="bg">
+    <div class="justify-content-center">
+        <form action="{{route('add_sales')}}" method="POST">
+        @csrf
 
-            <div class="d-flex float-right my-3">
-                <a class="btn btn-dark" href="">Wstecz</a>
+        <div class="h3 text-white bg-dark text-center pt-4 mb-0 pb-3">
+            FAKTURY
+
+            <div class="d-flex float-right justify-content-between mx-5 mb-3">
+                <a class="btn btn-next" href="">WSTECZ</a>
+                <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
+                <button type="submit" class="btn btn-next">DALEJ</button>
             </div>
 
-            <div class="h3 text-white text-center mt-4">
-                FAKTURY
-            </div>
-
-            <div class="d-flex float-right justify-content-end my-3">
-                <form action="{{route('add_sales')}}" method="POST">
-                    @csrf
-                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
-                    <button type="submit" class="btn btn-dark">Dalej</button>
-
-                </form>
+            <div class="bg-white col-12 my-1 ">
+                <div class="bg-secondary col-3 p-1"></div>
             </div>
         </div>
+        </form>
 
         <table class="table-responsive table table-light">
             <thead class="table-dark">
