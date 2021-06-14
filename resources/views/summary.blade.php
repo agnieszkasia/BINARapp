@@ -19,9 +19,9 @@
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg">
+    <body class="bg-gray">
     <div class="justify-content-center">
-        <div class="h3 text-white bg-dark text-center pt-4 mb-0 pb-3">
+        <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             PODSUMOWANIE
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <div class="bg-white col-12 my-1 ">
+            <div class="bg-white col-12  ">
                 <div class="bg-secondary col-12 p-1"></div>
             </div>
 

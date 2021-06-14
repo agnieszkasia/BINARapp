@@ -33,3 +33,11 @@
     background-color: rgba(95, 155, 63, 0.8);
     border-color: transparent;
 }
+
+.bg-black{
+    background-color: #1a1a1a;
+}
+
+.bg-gray{
+    background-color: #343434;
+}

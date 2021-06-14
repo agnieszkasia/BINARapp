@@ -17,20 +17,20 @@
         <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     </head>
-    <body class="bg">
+    <body class="bg-gray">
     <div class="justify-content-center">
         <form action="{{route('add_sales')}}" method="POST">
         @csrf
 
-        <div class="h3 text-white bg-dark text-center pt-4 mb-0 pb-3">
+        <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             FAKTURY SPRZEDAŻY
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
                 <a class="btn btn-next" href="">WSTECZ</a>
 
                 <div class="fs-6 mt-2 ">
-                    @if($warnings!== 0) <div class="mx-2">Faktury do sprawdzenia: {{$warnings}} </div>@endif
-                    @if($gtu!== 0) <div class="mx-2">Faktury z kodem gtu: {{$gtu}}  </div>@endif
+                    @if($warnings!== 0) <div class="mx-2 text-warning">Faktury do sprawdzenia: {{$warnings}} </div>@endif
+                    @if($gtu!== 0) <div class="mx-2 text-danger">Faktury z kodem GTU: {{$gtu}}  </div>@endif
                 </div>
 
                 <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
@@ -43,8 +43,8 @@
         </div>
         </form>
 
-        <table class="table-responsive table table-light">
-            <thead class="table-dark">
+        <table class="table-responsive table ">
+            <thead class="text-white">
                 <tr >
                     <th scope="col">Data wystawienia</th>
                     <th scope="col">Data sprzedaży</th>
@@ -61,7 +61,7 @@
                     <th scope="col">Brutto</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="table-light">
             @foreach($invoices as $invoice)
                 <tr class="
                     @if(isset($invoice['warning']) && !isset($invoice['gtu']))table-warning fw-bold
