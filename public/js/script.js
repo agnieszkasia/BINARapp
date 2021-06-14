@@ -38,3 +38,18 @@ $('tbody').on('click', '.deletePurchaseRow', function (){
     console.log('ok');
     $(this).parent().parent().remove();
 })
+
+$('thead').on('click', '.addLink', function (){
+    console.log('ok');
+    var tr = "<tr id='group[ ]'>" +
+        "<td><input type='text' name='link[ ]' class='form-control'></td>" +
+        "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
+        "</tr>"
+
+    $('tbody').append(tr);
+});
+
+$('tbody').on('click', '.deleteLink', function (){
+    console.log('ok');
+    $(this).parent().parent().remove();
+})

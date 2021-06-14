@@ -30,6 +30,7 @@ class TaxSettlementController extends Controller{
         $values = null;
         $gtu = null;
 
+
         if ($_FILES['file']['tmp_name'][0] == "" ){
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
         }
@@ -146,11 +147,19 @@ class TaxSettlementController extends Controller{
     }
 
     public function showAddPurchasesPage(Request $request){
+
+
         $invoices = json_decode($request['invoices'], true);
-        foreach ($request['due_date'] as $key=> $product) {
+
+
+        foreach ($request['due_date'] as $key=> $sale) {
             $sales[$key]['due_date'] = $request['due_date'][$key];
-            $sales[$key]['products_names'] = $request['products_names'][$key];
-            $products = $request['products'][$key] * $request['quantity'][$key];
+            if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
+            else $sales[$key]['products_names'] = $request['products_names'][$key];
+
+            $price = str_replace(",",".",$request['products'][$key]);
+
+            $products = $price * $request['quantity'][$key];
             $sales[$key]['netto'] = round($products - ($products*0.23),2);
             $sales[$key]['vat'] = round($products * 0.23,2);
             $sales[$key]['brutto'] = $products;
