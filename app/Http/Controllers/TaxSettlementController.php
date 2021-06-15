@@ -771,7 +771,7 @@ class TaxSettlementController extends Controller
             $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1), $purchase['company']);
             $spreadsheet->setActiveSheetIndex(0)->setCellValue('F' . ($key + 1), $purchase['address']);
             $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['NIP']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['brutto']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('H' . ($key + 1), $purchase['brutto']);
         }
 
         $writer = new Ods($spreadsheet);
