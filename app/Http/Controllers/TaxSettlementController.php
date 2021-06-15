@@ -23,15 +23,17 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use function PHPUnit\Framework\stringContains;
 
 
-class TaxSettlementController extends Controller{
+class TaxSettlementController extends Controller
+{
 
-    public function show(){
+    public function show()
+    {
         $invoices = null;
         $values = null;
         $gtu = null;
 
 
-        if ($_FILES['file']['tmp_name'][0] == "" ){
+        if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
         }
 
@@ -51,8 +53,8 @@ class TaxSettlementController extends Controller{
                     $cells = $row->getCells();
                     foreach ($cells as $cell) {
                         $values[$key][$j][] = $cell->getValue();
-                        if (str_contains( $cell->getValue(), 'GTU') or str_contains( $cell->getValue(), 'GTO') or
-                            str_contains( $cell->getValue(), 'gtu') or str_contains( $cell->getValue(), 'gto')){
+                        if (str_contains($cell->getValue(), 'GTU') or str_contains($cell->getValue(), 'GTO') or
+                            str_contains($cell->getValue(), 'gtu') or str_contains($cell->getValue(), 'gto')) {
                             $gtuCode[$key] = 'GTU';
                             $gtu++;
                         }
@@ -65,32 +67,31 @@ class TaxSettlementController extends Controller{
 
 //        dd($invoices);
 
-        foreach ($values as $key => $invoice){
+        foreach ($values as $key => $invoice) {
             $invoices[$key]['issue_date'] = $values[$key][1][6];
             $invoices[$key]['due_date'] = $values[$key][2][6];
 
             $fileName = $_FILES['file']['name'][$key];
-            $invoices[$key]['invoice_number'] = substr($fileName, 4, 3).$values[$key][5][6];
+            $invoices[$key]['invoice_number'] = substr($fileName, 4, 3) . $values[$key][5][6];
 
             $invoices[$key]['company'] = $values[$key][9][1];
 
             $invoices[$key]['address'] = $values[$key][11][1];
-            if (isset($values[$key][12][1])) $invoices[$key]['address'] .= " ".$values[$key][12][1];
+            if (isset($values[$key][12][1])) $invoices[$key]['address'] .= " " . $values[$key][12][1];
 
             if (!empty($values[$key][13][1])) {
                 $invoices[$key]['NIP'] = $values[$key][13][1];
-                $invoices[$key]['NIP'] = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"],"",$invoices[$key]['NIP']);
-            }
-            else $invoices[$key]['NIP'] = "brak";
+                $invoices[$key]['NIP'] = str_replace(["NIP", ":", " ", "-", ",", "\xc2\xa0"], "", $invoices[$key]['NIP']);
+            } else $invoices[$key]['NIP'] = "brak";
 
-            for ($i = 19; $i<=33; $i++) {
+            for ($i = 19; $i <= 33; $i++) {
                 if (!empty($values[$key][$i][1]) && ($values[$key][$i][4] == 'szt' || str_contains($values[$key][$i][4], 'm'))) {
                     if (empty($invoices[$key]['products_names'])) {
-                        $invoices[$key]['products_names'] = $values[$key][$i][3]."x ".$values[$key][$i][1];
+                        $invoices[$key]['products_names'] = $values[$key][$i][3] . "x " . $values[$key][$i][1];
                         $invoices[$key]['products_number'] = 1;
 
                     } else {
-                        $invoices[$key]['products_names'] .= ", ".$values[$key][$i][3]."x ". $values[$key][$i][1];
+                        $invoices[$key]['products_names'] .= ", " . $values[$key][$i][3] . "x " . $values[$key][$i][1];
                         $invoices[$key]['products_number']++;
                     }
 
@@ -125,12 +126,12 @@ class TaxSettlementController extends Controller{
         }
 
         $warnings = 0;
-        foreach ($invoices as $key=>$invoice) {
-            if(isset($invoices[$key-1])){
-                $previousInvoice = $invoices[$key-1];
+        foreach ($invoices as $key => $invoice) {
+            if (isset($invoices[$key - 1])) {
+                $previousInvoice = $invoices[$key - 1];
 
-                if (isset($invoice['company']) && ($previousInvoice['company'] == $invoice['company']) && ($previousInvoice['address'] == $invoice['address'])){
-                    $invoices[$key-1]['warning'] = 'same company';
+                if (isset($invoice['company']) && ($previousInvoice['company'] == $invoice['company']) && ($previousInvoice['address'] == $invoice['address'])) {
+                    $invoices[$key - 1]['warning'] = 'same company';
                     $invoices[$key]['warning'] = 'same company';
                     $warnings++;
                 }
@@ -140,55 +141,59 @@ class TaxSettlementController extends Controller{
         return view('show_invoices', compact('invoices', 'warnings', 'gtu'));
     }
 
-    public function showAddSalesPage(Request $request){
+    public function showAddSalesPage(Request $request)
+    {
         $invoices = json_decode($request['invoices'], true);
 
         return view('add_sales', compact('invoices'));
     }
 
-    public function showAddPurchasesPage(Request $request){
+    public function showAddPurchasesPage(Request $request)
+    {
 
 
         $invoices = json_decode($request['invoices'], true);
 
+        if (isset($request['quantity'][0])) {
+            foreach ($request['due_date'] as $key => $sale) {
+                $sales[$key]['due_date'] = $request['due_date'][$key];
+                if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
+                else $sales[$key]['products_names'] = $request['products_names'][$key];
 
-        foreach ($request['due_date'] as $key=> $sale) {
-            $sales[$key]['due_date'] = $request['due_date'][$key];
-            if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
-            else $sales[$key]['products_names'] = $request['products_names'][$key];
+                $price = str_replace(",", ".", $request['products'][$key]);
 
-            $price = str_replace(",",".",$request['products'][$key]);
-
-            $products = $price * $request['quantity'][$key];
-            $sales[$key]['netto'] = round($products - ($products*0.23),2);
-            $sales[$key]['vat'] = round($products * 0.23,2);
-            $sales[$key]['brutto'] = $products;
-        }
+                $products = $price * $request['quantity'][$key];
+                $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
+                $sales[$key]['vat'] = round($products * 0.23, 2);
+                $sales[$key]['brutto'] = $products;
+            }
+        } else $sales = null;
 
         return view('add_purchases', compact('invoices', 'sales'));
     }
 
-    public function showSummaryPage(Request $request){
+    public function showSummaryPage(Request $request)
+    {
         $sales = json_decode($request['sales'], true);
         $invoices = json_decode($request['invoices'], true);
 
-        foreach ($request['issue_date'] as $key => $item){
+        foreach ($request['issue_date'] as $key => $item) {
             $purchases[$key]['issue_date'] = $request['issue_date'][$key];
             $purchases[$key]['due_date'] = $request['due_date'][$key];
             $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
             $purchases[$key]['company'] = $request['company'][$key];
             $purchases[$key]['address'] = $request['address'][$key];
             $purchases[$key]['NIP'] = $request['NIP'][$key];
-            $purchases[$key]['netto'] = $request['netto'][$key];
-            $purchases[$key]['vat'] = $request['vat'][$key];
-            $purchases[$key]['brutto'] = $request['brutto'][$key];
+            $purchases[$key]['netto'] = str_replace(",", ".", $request['netto'][$key]);
+            $purchases[$key]['vat'] = str_replace(",", ".", $request['vat'][$key]);
+            $purchases[$key]['brutto'] = str_replace(",", ".", $request['brutto'][$key]);
         }
 
         $purchasesNetto = 0;
         $purchasesVat = 0;
         $purchasesBrutto = 0;
 
-        foreach ($purchases as $purchase){
+        foreach ($purchases as $purchase) {
             $purchasesNetto += $purchase['netto'];
             $purchasesVat += $purchase['vat'];
             $purchasesBrutto += $purchase['brutto'];
@@ -198,7 +203,7 @@ class TaxSettlementController extends Controller{
         $invoicesVat = 0;
         $invoicesBrutto = 0;
 
-        foreach ($invoices as $invoice){
+        foreach ($invoices as $invoice) {
             $invoicesNetto += $invoice['netto'];
             $invoicesVat += $invoice['vat'];
             $invoicesBrutto += $invoice['brutto'];
@@ -208,10 +213,12 @@ class TaxSettlementController extends Controller{
         $undefinedSalesVat = 0;
         $undefinedSalesBrutto = 0;
 
-        foreach ($sales as $sale) {
-            $undefinedSalesNetto += $sale['netto'];
-            $undefinedSalesVat += $sale['vat'];
-            $undefinedSalesBrutto += $sale['brutto'];
+        if (isset($sales)) {
+            foreach ($sales as $sale) {
+                $undefinedSalesNetto += $sale['netto'];
+                $undefinedSalesVat += $sale['vat'];
+                $undefinedSalesBrutto += $sale['brutto'];
+            }
         }
 
         $salesNetto = $invoicesNetto + $undefinedSalesNetto;
@@ -222,15 +229,16 @@ class TaxSettlementController extends Controller{
         $vat = $salesVat - $purchasesVat;
         $brutto = $salesBrutto - $purchasesBrutto;
 
-        return view('summary', compact('netto','vat', 'brutto',
-                            'purchasesNetto', 'purchasesVat', 'purchasesBrutto',
-                            'invoicesNetto', 'invoicesVat', 'invoicesBrutto',
-                            'undefinedSalesNetto', 'undefinedSalesVat', 'undefinedSalesBrutto',
-                            'salesNetto', 'salesVat', 'salesBrutto',
-                            'invoices', 'sales','purchases'));
+        return view('summary', compact('netto', 'vat', 'brutto',
+            'purchasesNetto', 'purchasesVat', 'purchasesBrutto',
+            'invoicesNetto', 'invoicesVat', 'invoicesBrutto',
+            'undefinedSalesNetto', 'undefinedSalesVat', 'undefinedSalesBrutto',
+            'salesNetto', 'salesVat', 'salesBrutto',
+            'invoices', 'sales', 'purchases'));
     }
 
-    public function generateFile(Request $request){
+    public function generateFile(Request $request)
+    {
         if ($request->has('generateCSV')) {
             $this->generateCSVFile($request);
         }
@@ -242,9 +250,13 @@ class TaxSettlementController extends Controller{
         if ($request->has('generateDZSV')) {
             $this->generateDZSVFile($request);
         }
+        if ($request->has('generateRZV')) {
+            $this->generateRZVFile($request);
+        }
     }
 
-    public function generateCSVFile($request){
+    public function generateCSVFile($request)
+    {
 
         header('Content-type: application/csv');
         header('Content-Disposition: attachment; filename=CSV.csv');
@@ -257,7 +269,7 @@ class TaxSettlementController extends Controller{
 
         $vat = 0;
 
-        foreach ($invoices as $key =>$invoice){
+        foreach ($invoices as $key => $invoice) {
             $invoice['issue_date'];
 
             $issueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['issue_date']);
@@ -268,26 +280,26 @@ class TaxSettlementController extends Controller{
 
             $vat += $invoice['vat'];
 
-            $invoice['netto'] = str_replace(".",",",$invoice['netto']);
-            $invoice['vat'] = str_replace(".",",",$invoice['vat']);
+            $invoice['netto'] = str_replace(".", ",", $invoice['netto']);
+            $invoice['vat'] = str_replace(".", ",", $invoice['vat']);
 
-            $invoice['company'] = str_replace("\"","",$invoice['company']);
+            $invoice['company'] = str_replace("\"", "", $invoice['company']);
 
 
-            $lines[] = ";;;;;;;;;;;;".($key+1).";".
-                $invoice['NIP'].";".
-                $invoice['company'].";".
-                $invoice['address'].";".
-                $invoice['invoice_number'].";".
-                $invoice['issue_date'].";".
-                $invoice['due_date'].";;;;;;;;;;".
-                $invoice['netto'].";".
-                $invoice['vat'].";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
+            $lines[] = ";;;;;;;;;;;;" . ($key + 1) . ";" .
+                $invoice['NIP'] . ";" .
+                $invoice['company'] . ";" .
+                $invoice['address'] . ";" .
+                $invoice['invoice_number'] . ";" .
+                $invoice['issue_date'] . ";" .
+                $invoice['due_date'] . ";;;;;;;;;;" .
+                $invoice['netto'] . ";" .
+                $invoice['vat'] . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
         }
 
         $purchases = json_decode($request['purchases'], true);
 
-        foreach ($purchases as $key =>$purchase){
+        foreach ($purchases as $key => $purchase) {
 
             if (isset($purchases['issue_date'])) {
 
@@ -314,29 +326,28 @@ class TaxSettlementController extends Controller{
 
         $fp = fopen('php://output', 'a'); // Configure fopen to write to the output buffer
 
-        $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony'.PHP_EOL.
-                'JPK_VAT;JPK_VAT (3);1-1;3;0;2020-09-31T09:30:47;2021-04-01;2021-04-30;OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL.
-                ';;;;;;;;;7121553440;BINAR Jarosław Glinka;jarb23@wp.pl;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL.
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.PHP_EOL;
+        $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony' . PHP_EOL .
+            'JPK_VAT;JPK_VAT (3);1-1;3;0;2020-09-31T09:30:47;2021-04-01;2021-04-30;OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            ';;;;;;;;;7121553440;BINAR Jarosław Glinka;jarb23@wp.pl;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL;
 
         foreach ($lines as $line) {
-            $data .= $line.PHP_EOL;
+            $data .= $line . PHP_EOL;
         }
 
-        $undefinedSalesNetto = str_replace(".",",",$request['undefinedSalesNetto']);
-        $undefinedSalesVat = str_replace(".",",",$request['undefinedSalesVat']);
-        $salesVat = str_replace(".",",",$request['salesVat']);
+        $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
+        $undefinedSalesVat = str_replace(".", ",", $request['undefinedSalesVat']);
+        $salesVat = str_replace(".", ",", $request['salesVat']);
 
-        $data .= ";;;;;;;;;;;;".(count($invoices)+1).";brak;sprzedaz bezrachunkowa miesiąc;brak;brak;;2021-04-30;;;;;;;;;;".$undefinedSalesNetto.";".$undefinedSalesVat.";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;".PHP_EOL;
+        $data .= ";;;;;;;;;;;;" . (count($invoices) + 1) . ";brak;sprzedaz bezrachunkowa miesiąc;brak;brak;;2021-04-30;;;;;;;;;;" . $undefinedSalesNetto . ";" . $undefinedSalesVat . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . PHP_EOL;
 
-        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.(count($invoices)+1).';'.$salesVat.';;;;;;;;;;;;;;;;;'.PHP_EOL;
+        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . (count($invoices) + 1) . ';' . $salesVat . ';;;;;;;;;;;;;;;;;' . PHP_EOL;
 
         foreach ($purchaseLines as $line) {
-            $data .= $line.PHP_EOL;
+            $data .= $line . PHP_EOL;
         }
-        $purchaseVat = str_replace(".",",",$request['purchaseVat']);
-        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'.count($purchases).';'.$purchaseVat;
-
+        $purchaseVat = str_replace(".", ",", $request['purchaseVat']);
+        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . count($purchases) . ';' . $purchaseVat;
 
 
         fwrite($fp, print_r($data, TRUE));
@@ -344,7 +355,8 @@ class TaxSettlementController extends Controller{
         fclose($fp);
     }
 
-    public function generateXMLFile($request){
+    public function generateXMLFile($request)
+    {
 
         $invoices = json_decode($request['invoices'], true);
 
@@ -436,7 +448,7 @@ class TaxSettlementController extends Controller{
         $entity->appendChild($entityType);
 
         /* tag - etd:NIP */
-        $nip = $file->createElement("etd:NIP","NIP XXXXXX");
+        $nip = $file->createElement("etd:NIP", "NIP XXXXXX");
         $entityType->appendChild($nip);
 
         /* tag - etd:ImiePierwsze */
@@ -506,31 +518,32 @@ class TaxSettlementController extends Controller{
         $register = $file->createElement("Ewidencja");
         $JPK->appendChild($register);
 
-        $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'],$register, $file);
-        $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'],$register, $file);
+        $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'], $register, $file);
+        $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'], $register, $file);
 
 
         /*download file */
-        $filename = 'XML - zlozenie po raz pierwszy - '.'.xml';
+        $filename = 'XML - zlozenie po raz pierwszy - ' . '.xml';
         $file->save($filename);
 
         header("Content-Type: application/xml; charset=utf-8");
-        header('Content-Disposition: attachment; filename="'.basename($filename).'"');
+        header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
         readfile($filename);
         unlink($filename);
     }
 
-    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
+    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file)
+    {
 
 
-        foreach ($invoices as $key => $invoice){
+        foreach ($invoices as $key => $invoice) {
 
             /* tag - SprzedazWiersz */
             $salesRow = $file->createElement("SprzedazWiersz");
             $register->appendChild($salesRow);
 
             /* tag - LpSprzedazy */
-            $sales = $file->createElement("LpSprzedazy", ($key+1));
+            $sales = $file->createElement("LpSprzedazy", ($key + 1));
             $salesRow->appendChild($sales);
 
             /* tag - NrKontrahenta */
@@ -538,7 +551,7 @@ class TaxSettlementController extends Controller{
             $salesRow->appendChild($nip);
 
             /* tag - NazwaKontrahenta */
-            $invoice['company'] = str_replace('&', '&amp;',$invoice['company']);
+            $invoice['company'] = str_replace('&', '&amp;', $invoice['company']);
 //            if(str_contains($invoice['company'], "&")) dd($invoice['company']);
             $company = $file->createElement("NazwaKontrahenta", $invoice['company']);
             $salesRow->appendChild($company);
@@ -574,13 +587,14 @@ class TaxSettlementController extends Controller{
         $salesCtrl->appendChild($rowNumber);
 
         /* tag - PodatekNalezny */
-        $totalVAT = $file->createElement("PodatekNalezny",$salesVat);
+        $totalVAT = $file->createElement("PodatekNalezny", $salesVat);
         $salesCtrl->appendChild($totalVAT);
 
 
     }
 
-    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file){
+    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file)
+    {
         foreach ($purchases as $key => $purchase) {
 
 
@@ -636,7 +650,8 @@ class TaxSettlementController extends Controller{
 
     }
 
-    public function generateDZSVFile($request){
+    public function generateDZSVFile($request)
+    {
         $invoices = json_decode($request['invoices'], true);
         $sales = json_decode($request['sales'], true);
 
@@ -672,31 +687,30 @@ class TaxSettlementController extends Controller{
         $spreadsheet->setActiveSheetIndex(0)
             ->setCellValue('A6', 'LP');
 
-        $i=0;
+        $i = 0;
 
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['products']) && !isset($sale['service'])) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['brutto']);
-            }
-            elseif (isset($sale['products']) && $sale['products'] !== 0){
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C'.($key+12+$i), $sale['company']." ".$sale['address']." ".$sale['NIP']);
+            } elseif (isset($sale['products']) && $sale['products'] !== 0) {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['products']);
-            } elseif(isset($sale['products'])  && $sale['products'] == 0) $i--;
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['products']);
+            } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
 
-            if (isset($sale['service']) && $sale['service'] !== "0"){
+            if (isset($sale['service']) && $sale['service'] !== "0") {
                 $i++;
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A'.($key+12+$i), $key+1+$i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B'.($key+12+$i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C'.($key+12+$i), $sale['company']." ".$sale['address']." ".$sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E'.($key+12+$i), $sale['service']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['service']);
             }
         }
 
@@ -713,27 +727,63 @@ class TaxSettlementController extends Controller{
 
     }
 
-    public function sortUndocumentedSales($sales){
+    public function sortUndocumentedSales($sales)
+    {
         foreach ($sales as $key => $sale) {
             $sort[$key] = strtotime($sale['due_date']);
         }
 
         array_multisort($sort, SORT_ASC, $sales);
 
-        foreach ($sales as $key => $sale){
-            if (isset($sales[$key-1])) $previousSale = $sales[$key-1];
+        foreach ($sales as $key => $sale) {
+            if (isset($sales[$key - 1])) $previousSale = $sales[$key - 1];
 
-            if (isset($previousSale) && $previousSale['due_date'] == $sale['due_date']){
-                unset($sales[$key-1]);
+            if (isset($previousSale) && $previousSale['due_date'] == $sale['due_date']) {
+                unset($sales[$key - 1]);
 
-                $sales[$key]['products_names'] = $sale['products_names'].", ".$previousSale['products_names'];
-                $sales[$key]['netto'] = $sale['netto']+$previousSale['netto'];
-                $sales[$key]['vat'] = $sale['vat']+$previousSale['vat'];
-                $sales[$key]['brutto'] = $sale['brutto']+$previousSale['brutto'];
+                $sales[$key]['products_names'] = $sale['products_names'] . ", " . $previousSale['products_names'];
+                $sales[$key]['netto'] = $sale['netto'] + $previousSale['netto'];
+                $sales[$key]['vat'] = $sale['vat'] + $previousSale['vat'];
+                $sales[$key]['brutto'] = $sale['brutto'] + $previousSale['brutto'];
             }
 
         }
 
         return $sales;
+    }
+
+    public function generateRZVFile($request){
+        $purchases = json_decode($request['purchases'], true);
+
+        foreach ($purchases as $key => $purchase) {
+            $sort[$key] = strtotime($purchase['due_date']);
+        }
+
+        array_multisort($sort, SORT_ASC, $purchases);
+
+        $spreadsheet = new Spreadsheet();
+
+        foreach ($purchases as $key => $purchase) {
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1), $key + 1);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1), $purchase['invoice_number']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1), $purchase['due_date']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1), $purchase['issue_date']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1), $purchase['company']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('F' . ($key + 1), $purchase['address']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['NIP']);
+            $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['brutto']);
+        }
+
+        $writer = new Ods($spreadsheet);
+        $writer->save('RZV.ods');
+
+        $finfo = new finfo(FILEINFO_MIME);
+        header('Content-Type: ' . $finfo->file(public_path('RZV.ods')));
+        header('Content-Disposition: attachment; filename="RZV.ods"');
+
+        readfile(public_path("RZV.ods"));
+
+        unlink(public_path('RZV.ods'));
+
     }
 }
