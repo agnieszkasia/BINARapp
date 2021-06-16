@@ -687,9 +687,11 @@ class TaxSettlementController extends Controller{
         $invoices = json_decode($request['invoices'], true);
         $sales = json_decode($request['sales'], true);
 
-        $sales = $this->sortUndocumentedSales($sales);
+        if (isset($sales)) {
+            $sales = $this->sortUndocumentedSales($sales);
 
-        $allSales = array_merge($invoices, $sales);
+            $allSales = array_merge($invoices, $sales);
+        } else $allSales = $invoices;
 
 
         foreach ($allSales as $key => $sale) {
@@ -739,8 +741,7 @@ class TaxSettlementController extends Controller{
         unlink(public_path('DZSV.ods'));
     }
 
-    public function sortUndocumentedSales($sales)
-    {
+    public function sortUndocumentedSales($sales){
         foreach ($sales as $key => $sale) {
             $sort[$key] = strtotime($sale['due_date']);
         }
