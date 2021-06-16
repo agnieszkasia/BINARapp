@@ -10,13 +10,50 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 
 class TaxSettlementController extends Controller{
 
-    public function show(){
+    public function showWelcomePage(){
+        $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
+        $xml = simplexml_load_file($filename);
+        $data = array();
+        $lineCount = 0;
+
+        if ($xml) {
+            $lineCount = count($xml->children());
+            $data = $this->convertDataFromXmlToArray($xml, $lineCount);
+        } else {
+            echo 'Błąd ładowania pliku';
+        }
+
+        return view('welcome', compact('data', 'lineCount'));
+    }
+
+    function convertDataFromXmlToArray($xml, $lineCount){
+        $data = array();
+        for ($i = 0; $i < $lineCount; $i++) {
+            $data[$i] = (string)$xml->enumeration[$i]['value']." ".(string)$xml->enumeration[$i]->documentation;
+        }
+        return $data;
+    }
+
+    public function show(Request $request){
+
+        $company['companyName'] = $request['companyName'];
+        $company['firstname'] = $request['firstname'];
+        $company['lastname'] = $request['lastname'];
+        $company['birthDate'] = $request['birthDate'];
+        $company['email'] = $request['mail'];
+        $company['NIP'] = $request['NIP'];
+        $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
+
+        $_SESSION['company'] = $company;
+
+        Session::put('company', $company);
 
         $invoices = null;
         $values = null;
@@ -159,6 +196,8 @@ class TaxSettlementController extends Controller{
 
     public function showSummaryPage(Request $request){
 
+
+
         $sales = json_decode($request['sales'], true);
         $invoices = json_decode($request['invoices'], true);
 
@@ -178,10 +217,12 @@ class TaxSettlementController extends Controller{
         $purchasesVat = 0;
         $purchasesBrutto = 0;
 
-        foreach ($purchases as $purchase) {
-            $purchasesNetto += $purchase['netto'];
-            $purchasesVat += $purchase['vat'];
-            $purchasesBrutto += $purchase['brutto'];
+        if (isset($sales[0]['issue_date'])) {
+            foreach ($purchases as $purchase) {
+                $purchasesNetto += $purchase['netto'];
+                $purchasesVat += $purchase['vat'];
+                $purchasesBrutto += $purchase['brutto'];
+            }
         }
 
         $invoicesNetto = 0;
@@ -224,23 +265,26 @@ class TaxSettlementController extends Controller{
 
     public function generateFile(Request $request){
 
+        $company = Session::get('company');
+
         if ($request->has('generateCSV')) {
-            $this->generateCSVFile($request);
+            $this->generateCSVFile($request, $company);
         }
 
         if ($request->has('generateXML')) {
-            $this->generateXMLFile($request);
+            $this->generateXMLFile($request, $company);
         }
 
         if ($request->has('generateDZSV')) {
             $this->generateDZSVFile($request);
         }
+
         if ($request->has('generateRZV')) {
             $this->generateRZVFile($request);
         }
     }
 
-    public function generateCSVFile($request){
+    public function generateCSVFile($request, $company){
 
         header('Content-type: application/csv');
         header('Content-Disposition: attachment; filename=CSV.csv');
@@ -323,8 +367,8 @@ class TaxSettlementController extends Controller{
         $fp = fopen('php://output', 'a');
 
         $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony' . PHP_EOL .
-            'JPK_VAT;JPK_VAT (3);1-1;3;0;'.$lastDayOfMonth.'T09:30:47;'.$firstDayOfMonth.';'.$lastDayOfMonth.';OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
-            ';;;;;;;;;7121553440;BINAR Jarosław Glinka;jarb23@wp.pl;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            'JPK_VAT;JPK_VAT (3);1-1;3;0;'.$lastDayOfMonth.'T23:59:59;'.$firstDayOfMonth.';'.$lastDayOfMonth.';OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            ';;;;;;;;;'.$company["NIP"].';'.$company["companyName"].';'.$company["email"].';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
             ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL;
 
         foreach ($lines as $line) {
@@ -347,13 +391,17 @@ class TaxSettlementController extends Controller{
         fclose($fp);
     }
 
-    public function generateXMLFile($request){
+    public function generateXMLFile($request, $company){
 
         $invoices = json_decode($request['invoices'], true);
 
         $purchases = json_decode($request['purchases'], true);
 
         $file = new DOMDocument('1.0', 'UTF-8');
+
+        $stringDate = $invoices[count($invoices)-1]['due_date'];
+        $year = substr($invoices[count($invoices)-1]['due_date'],6,4);
+        $month = (int)substr($invoices[count($invoices)-1]['due_date'],3,2);
 
         /* Format XML to save indented tree rather than one line */
         $file->preserveWhiteSpace = true;
@@ -402,7 +450,7 @@ class TaxSettlementController extends Controller{
         $head->appendChild($formVariant);
 
         /* tag - DataWytworzeniaJPK */
-        $date = $file->createElement("DataWytworzeniaJPK", Carbon::now());
+        $date = $file->createElement("DataWytworzeniaJPK", str_replace(' ', 'T',Carbon::now()));
         $head->appendChild($date);
 
         /* tag - NazwaSystemu */
@@ -417,15 +465,15 @@ class TaxSettlementController extends Controller{
         $head->appendChild($purposeOfSubmission);
 
         /* tag - KodUrzedu */
-        $officeCode = $file->createElement("KodUrzedu", "KOD URZEDU XXXXXX");
+        $officeCode = $file->createElement("KodUrzedu", $company['taxOfficeCode']);
         $head->appendChild($officeCode);
 
         /* tag - Rok */
-        $year = $file->createElement("Rok", "ROK XXXX");
+        $year = $file->createElement("Rok", $year);
         $head->appendChild($year);
 
         /* tag - Miesiac */
-        $month = $file->createElement("Miesiac", "MIESIAC XXXX");
+        $month = $file->createElement("Miesiac", $month);
         $head->appendChild($month);
 
         /* tag - Podmiot1 */
@@ -439,23 +487,23 @@ class TaxSettlementController extends Controller{
         $entity->appendChild($entityType);
 
         /* tag - etd:NIP */
-        $nip = $file->createElement("etd:NIP", "NIP XXXXXX");
+        $nip = $file->createElement("etd:NIP", $company['NIP']);
         $entityType->appendChild($nip);
 
         /* tag - etd:ImiePierwsze */
-        $firstName = $file->createElement("etd:ImiePierwsze", "IMIE XXXXX");
+        $firstName = $file->createElement("etd:ImiePierwsze", $company['firstname']);
         $entityType->appendChild($firstName);
 
         /* tag - etd:Nazwisko */
-        $familyName = $file->createElement("etd:Nazwisko", "NAZWISKO XXXXX");
+        $familyName = $file->createElement("etd:Nazwisko", $company['lastname']);
         $entityType->appendChild($familyName);
 
         /* tag - etd:DataUrodzenia */
-        $birthDate = $file->createElement("etd:DataUrodzenia", "DATA URODZENIA XXXX");
+        $birthDate = $file->createElement("etd:DataUrodzenia", $company['birthDate']);
         $entityType->appendChild($birthDate);
 
         /* tag - Email */
-        $email = $file->createElement("Email", "EMAIL XXXX");
+        $email = $file->createElement("Email", $company['email']);
         $entityType->appendChild($email);
 
         /* tag - Deklaracja */

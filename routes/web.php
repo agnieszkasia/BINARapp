@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [TaxSettlementController::class, 'showWelcomePage'])->name('welcome');
 
 Route::post('/show', [TaxSettlementController::class, 'show'])->name('send');
 Route::post('/generate', [TaxSettlementController::class, 'generateFile'])->name('generateFile');

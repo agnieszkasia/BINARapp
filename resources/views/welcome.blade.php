@@ -41,10 +41,30 @@
                 </div>
             @endif
 
+            <div class="col-5 mx-auto mt-4 text-white">
+
+                <label for="companyName">Nazwa Firmy</label><input type="text" id="companyName" name="companyName" class="form-control mb-4">
+                <label for="firstname">Imię</label><input type="text" id="firstname" name="firstname" class="form-control mb-4">
+                <label for="lastname">Nazwisko</label><input type="text" id="lastname" name="lastname" class="form-control mb-4">
+                <label for="birthDate">Data Urodzenia</label><input type="date" id="birthDate" name="birthDate" class="form-control mb-4">
+                <label for="email">Email</label><input type="email" id="mail" name="mail" class="form-control mb-4">
+                <label for="NIP">NIP</label><input type="text" id="NIP" name="NIP" class="form-control mb-4">
+
+                <label for="taxOfficeCode">Kod Urzędu Skarbowego</label><input list="taxOfficeCodes" class="form-control mb-4 select" id="taxOfficeCode" name="taxOfficeCode" placeholder="Wybierz...">
+                <datalist id="taxOfficeCodes">
+                    @for($i=0; $i<$lineCount; $i++)
+                        <option value="{{ $data[$i] }}" class="form-control"></option>
+                    @endfor
+                </datalist>
+            </div>
+
+
             <div class="col-5 mx-auto mt-4">
 
-                <input type="file" id="file" name="file[]" multiple class="form-control">
+                <label for="file" class="text-white">Pliki Faktur VAT</label> <input type="file" id="file" name="file[]" multiple class="form-control">
             </div>
+
+
         </form>
 
     </div>
