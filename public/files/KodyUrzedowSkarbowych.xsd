@@ -1,0 +1,1140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simpleType name="TKodUS1">
+    <enumeration value="0202">
+        <documentation>URZĄD SKARBOWY W BOLESŁAWCU</documentation>
+    </enumeration>
+    <enumeration value="0203">
+        <documentation>URZĄD SKARBOWY W BYSTRZYCY KŁODZKIEJ</documentation>
+    </enumeration>
+    <enumeration value="0204">
+        <documentation>URZĄD SKARBOWY W DZIERŻONIOWIE</documentation>
+    </enumeration>
+    <enumeration value="0205">
+        <documentation>URZĄD SKARBOWY W GŁOGOWIE</documentation>
+    </enumeration>
+    <enumeration value="0206">
+        <documentation>URZĄD SKARBOWY W JAWORZE</documentation>
+    </enumeration>
+    <enumeration value="0207">
+        <documentation>URZĄD SKARBOWY W JELENIEJ GÓRZE</documentation>
+    </enumeration>
+    <enumeration value="0208">
+        <documentation>URZĄD SKARBOWY W KAMIENNEJ GÓRZE</documentation>
+    </enumeration>
+    <enumeration value="0209">
+        <documentation>URZĄD SKARBOWY W KŁODZKU</documentation>
+    </enumeration>
+    <enumeration value="0210">
+        <documentation>URZĄD SKARBOWY W LEGNICY</documentation>
+    </enumeration>
+    <enumeration value="0211">
+        <documentation>URZĄD SKARBOWY W LUBANIU</documentation>
+    </enumeration>
+    <enumeration value="0212">
+        <documentation>URZĄD SKARBOWY W LUBINIE</documentation>
+    </enumeration>
+    <enumeration value="0213">
+        <documentation>URZĄD SKARBOWY W LWÓWKU ŚLĄSKIM</documentation>
+    </enumeration>
+    <enumeration value="0214">
+        <documentation>URZĄD SKARBOWY W MILICZU</documentation>
+    </enumeration>
+    <enumeration value="0215">
+        <documentation>URZĄD SKARBOWY W NOWEJ RUDZIE</documentation>
+    </enumeration>
+    <enumeration value="0216">
+        <documentation>URZĄD SKARBOWY W OLEŚNICY</documentation>
+    </enumeration>
+    <enumeration value="0217">
+        <documentation>URZĄD SKARBOWY W OŁAWIE</documentation>
+    </enumeration>
+    <enumeration value="0218">
+        <documentation>URZĄD SKARBOWY W STRZELINIE</documentation>
+    </enumeration>
+    <enumeration value="0219">
+        <documentation>URZĄD SKARBOWY W ŚRODZIE ŚLĄSKIEJ</documentation>
+    </enumeration>
+    <enumeration value="0220">
+        <documentation>URZĄD SKARBOWY W ŚWIDNICY</documentation>
+    </enumeration>
+    <enumeration value="0221">
+        <documentation>URZĄD SKARBOWY W TRZEBNICY</documentation>
+    </enumeration>
+    <enumeration value="0222">
+        <documentation>URZĄD SKARBOWY W WAŁBRZYCHU</documentation>
+    </enumeration>
+    <enumeration value="0223">
+        <documentation>URZĄD SKARBOWY W WOŁOWIE</documentation>
+    </enumeration>
+    <enumeration value="0224">
+        <documentation>URZĄD SKARBOWY WROCŁAW-FABRYCZNA</documentation>
+    </enumeration>
+    <enumeration value="0225">
+        <documentation>URZĄD SKARBOWY WROCŁAW-KRZYKI</documentation>
+    </enumeration>
+    <enumeration value="0226">
+        <documentation>URZĄD SKARBOWY WROCŁAW-PSIE POLE</documentation>
+    </enumeration>
+    <enumeration value="0227">
+        <documentation>URZĄD SKARBOWY WROCŁAW-STARE MIASTO</documentation>
+    </enumeration>
+    <enumeration value="0228">
+        <documentation>URZĄD SKARBOWY WROCŁAW-ŚRÓDMIEŚCIE</documentation>
+    </enumeration>
+    <enumeration value="0229">
+        <documentation>PIERWSZY URZĄD SKARBOWY WE WROCŁAWIU</documentation>
+    </enumeration>
+    <enumeration value="0230">
+        <documentation>URZĄD SKARBOWY W ZĄBKOWICACH ŚLĄSKICH</documentation>
+    </enumeration>
+    <enumeration value="0231">
+        <documentation>URZĄD SKARBOWY W ZGORZELCU</documentation>
+    </enumeration>
+    <enumeration value="0232">
+        <documentation>URZĄD SKARBOWY W ZŁOTORYI</documentation>
+    </enumeration>
+    <enumeration value="0233">
+        <documentation>URZĄD SKARBOWY W GÓRZE</documentation>
+    </enumeration>
+    <enumeration value="0234">
+        <documentation>URZĄD SKARBOWY W POLKOWICACH</documentation>
+    </enumeration>
+    <enumeration value="0402">
+        <documentation>URZĄD SKARBOWY W ALEKSANDROWIE KUJAWSKIM</documentation>
+    </enumeration>
+    <enumeration value="0403">
+        <documentation>URZĄD SKARBOWY W BRODNICY</documentation>
+    </enumeration>
+    <enumeration value="0404">
+        <documentation>PIERWSZY URZĄD SKARBOWY W BYDGOSZCZY</documentation>
+    </enumeration>
+    <enumeration value="0405">
+        <documentation>DRUGI URZĄD SKARBOWY W BYDGOSZCZY</documentation>
+    </enumeration>
+    <enumeration value="0406">
+        <documentation>TRZECI URZĄD SKARBOWY W BYDGOSZCZY</documentation>
+    </enumeration>
+    <enumeration value="0407">
+        <documentation>URZĄD SKARBOWY W CHEŁMNIE</documentation>
+    </enumeration>
+    <enumeration value="0408">
+        <documentation>URZĄD SKARBOWY W GRUDZIĄDZU</documentation>
+    </enumeration>
+    <enumeration value="0409">
+        <documentation>URZĄD SKARBOWY W INOWROCŁAWIU</documentation>
+    </enumeration>
+    <enumeration value="0410">
+        <documentation>URZĄD SKARBOWY W LIPNIE</documentation>
+    </enumeration>
+    <enumeration value="0411">
+        <documentation>URZĄD SKARBOWY W MOGILNIE</documentation>
+    </enumeration>
+    <enumeration value="0412">
+        <documentation>URZĄD SKARBOWY W NAKLE NAD NOTECIĄ</documentation>
+    </enumeration>
+    <enumeration value="0413">
+        <documentation>URZĄD SKARBOWY W RADZIEJOWIE</documentation>
+    </enumeration>
+    <enumeration value="0414">
+        <documentation>URZĄD SKARBOWY W RYPINIE</documentation>
+    </enumeration>
+    <enumeration value="0415">
+        <documentation>URZĄD SKARBOWY W ŚWIECIU</documentation>
+    </enumeration>
+    <enumeration value="0416">
+        <documentation>PIERWSZY URZĄD SKARBOWY W TORUNIU</documentation>
+    </enumeration>
+    <enumeration value="0417">
+        <documentation>DRUGI URZĄD SKARBOWY W TORUNIU</documentation>
+    </enumeration>
+    <enumeration value="0418">
+        <documentation>URZĄD SKARBOWY W TUCHOLI</documentation>
+    </enumeration>
+    <enumeration value="0419">
+        <documentation>URZĄD SKARBOWY W WĄBRZEŹNIE</documentation>
+    </enumeration>
+    <enumeration value="0420">
+        <documentation>URZĄD SKARBOWY WE WŁOCŁAWKU</documentation>
+    </enumeration>
+    <enumeration value="0421">
+        <documentation>URZĄD SKARBOWY W ŻNINIE</documentation>
+    </enumeration>
+    <enumeration value="0422">
+        <documentation>URZĄD SKARBOWY W GOLUBIU-DOBRZYNIU</documentation>
+    </enumeration>
+    <enumeration value="0423">
+        <documentation>URZĄD SKARBOWY W SĘPÓLNIE KRAJEŃSKIM</documentation>
+    </enumeration>
+    <enumeration value="0602">
+        <documentation>URZĄD SKARBOWY W BIAŁEJ PODLASKIEJ</documentation>
+    </enumeration>
+    <enumeration value="0603">
+        <documentation>URZĄD SKARBOWY W BIŁGORAJU</documentation>
+    </enumeration>
+    <enumeration value="0604">
+        <documentation>URZĄD SKARBOWY W CHEŁMIE</documentation>
+    </enumeration>
+    <enumeration value="0605">
+        <documentation>URZĄD SKARBOWY W HRUBIESZOWIE</documentation>
+    </enumeration>
+    <enumeration value="0606">
+        <documentation>URZĄD SKARBOWY W JANOWIE LUBELSKIM</documentation>
+    </enumeration>
+    <enumeration value="0607">
+        <documentation>URZĄD SKARBOWY W KRASNYMSTAWIE</documentation>
+    </enumeration>
+    <enumeration value="0608">
+        <documentation>URZĄD SKARBOWY W KRAŚNIKU</documentation>
+    </enumeration>
+    <enumeration value="0609">
+        <documentation>URZĄD SKARBOWY W LUBARTOWIE</documentation>
+    </enumeration>
+    <enumeration value="0610">
+        <documentation>PIERWSZY URZĄD SKARBOWY W LUBLINIE</documentation>
+    </enumeration>
+    <enumeration value="0611">
+        <documentation>DRUGI URZĄD SKARBOWY W LUBLINIE</documentation>
+    </enumeration>
+    <enumeration value="0612">
+        <documentation>TRZECI URZĄD SKARBOWY W LUBLINIE</documentation>
+    </enumeration>
+    <enumeration value="0613">
+        <documentation>URZĄD SKARBOWY W ŁUKOWIE</documentation>
+    </enumeration>
+    <enumeration value="0614">
+        <documentation>URZĄD SKARBOWY W OPOLU LUBELSKIM</documentation>
+    </enumeration>
+    <enumeration value="0615">
+        <documentation>URZĄD SKARBOWY W PARCZEWIE</documentation>
+    </enumeration>
+    <enumeration value="0616">
+        <documentation>URZĄD SKARBOWY W PUŁAWACH</documentation>
+    </enumeration>
+    <enumeration value="0617">
+        <documentation>URZĄD SKARBOWY W RADZYNIU PODLASKIM</documentation>
+    </enumeration>
+    <enumeration value="0618">
+        <documentation>URZĄD SKARBOWY W TOMASZOWIE LUBELSKIM</documentation>
+    </enumeration>
+    <enumeration value="0619">
+        <documentation>URZĄD SKARBOWY WE WŁODAWIE</documentation>
+    </enumeration>
+    <enumeration value="0620">
+        <documentation>URZĄD SKARBOWY W ZAMOŚCIU</documentation>
+    </enumeration>
+    <enumeration value="0621">
+        <documentation>URZĄD SKARBOWY W ŁĘCZNEJ</documentation>
+    </enumeration>
+    <enumeration value="0622">
+        <documentation>URZĄD SKARBOWY W RYKACH</documentation>
+    </enumeration>
+    <enumeration value="0802">
+        <documentation>URZĄD SKARBOWY W GORZOWIE WIELKOPOLSKIM</documentation>
+    </enumeration>
+    <enumeration value="0803">
+        <documentation>URZĄD SKARBOWY W KROŚNIE ODRZAŃSKIM</documentation>
+    </enumeration>
+    <enumeration value="0804">
+        <documentation>URZĄD SKARBOWY W MIĘDZYRZECZU</documentation>
+    </enumeration>
+    <enumeration value="0805">
+        <documentation>URZĄD SKARBOWY W NOWEJ SOLI</documentation>
+    </enumeration>
+    <enumeration value="0806">
+        <documentation>URZĄD SKARBOWY W SŁUBICACH</documentation>
+    </enumeration>
+    <enumeration value="0807">
+        <documentation>URZĄD SKARBOWY W ŚWIEBODZINIE</documentation>
+    </enumeration>
+    <enumeration value="0808">
+        <documentation>PIERWSZY URZĄD SKARBOWY W ZIELONEJ GÓRZE</documentation>
+    </enumeration>
+    <enumeration value="0809">
+        <documentation>DRUGI URZĄD SKARBOWY W ZIELONEJ GÓRZE</documentation>
+    </enumeration>
+    <enumeration value="0810">
+        <documentation>URZĄD SKARBOWY W ŻAGANIU</documentation>
+    </enumeration>
+    <enumeration value="0811">
+        <documentation>URZĄD SKARBOWY W ŻARACH</documentation>
+    </enumeration>
+    <enumeration value="0812">
+        <documentation>URZĄD SKARBOWY W DREZDENKU</documentation>
+    </enumeration>
+    <enumeration value="0813">
+        <documentation>URZĄD SKARBOWY W SULĘCINIE</documentation>
+    </enumeration>
+    <enumeration value="0814">
+        <documentation>URZĄD SKARBOWY WE WSCHOWIE</documentation>
+    </enumeration>
+    <enumeration value="1002">
+        <documentation>URZĄD SKARBOWY W BEŁCHATOWIE</documentation>
+    </enumeration>
+    <enumeration value="1003">
+        <documentation>URZĄD SKARBOWY W BRZEZINACH</documentation>
+    </enumeration>
+    <enumeration value="1004">
+        <documentation>URZĄD SKARBOWY W GŁOWNIE</documentation>
+    </enumeration>
+    <enumeration value="1005">
+        <documentation>URZĄD SKARBOWY W KUTNIE</documentation>
+    </enumeration>
+    <enumeration value="1006">
+        <documentation>URZĄD SKARBOWY W ŁASKU</documentation>
+    </enumeration>
+    <enumeration value="1007">
+        <documentation>URZĄD SKARBOWY W ŁOWICZU</documentation>
+    </enumeration>
+    <enumeration value="1008">
+        <documentation>PIERWSZY URZĄD SKARBOWY ŁÓDŹ-BAŁUTY</documentation>
+    </enumeration>
+    <enumeration value="1009">
+        <documentation>DRUGI URZĄD SKARBOWY ŁÓDŹ-BAŁUTY</documentation>
+    </enumeration>
+    <enumeration value="1010">
+        <documentation>PIERWSZY URZĄD SKARBOWY ŁÓDŹ-GÓRNA</documentation>
+    </enumeration>
+    <enumeration value="1011">
+        <documentation>DRUGI URZĄD SKARBOWY ŁÓDŹ-GÓRNA</documentation>
+    </enumeration>
+    <enumeration value="1012">
+        <documentation>URZĄD SKARBOWY ŁÓDŹ-POLESIE</documentation>
+    </enumeration>
+    <enumeration value="1013">
+        <documentation>URZĄD SKARBOWY ŁÓDŹ-ŚRÓDMIEŚCIE</documentation>
+    </enumeration>
+    <enumeration value="1014">
+        <documentation>URZĄD SKARBOWY ŁÓDŹ-WIDZEW</documentation>
+    </enumeration>
+    <enumeration value="1015">
+        <documentation>URZĄD SKARBOWY W OPOCZNIE</documentation>
+    </enumeration>
+    <enumeration value="1016">
+        <documentation>URZĄD SKARBOWY W PABIANICACH</documentation>
+    </enumeration>
+    <enumeration value="1017">
+        <documentation>URZĄD SKARBOWY W PIOTRKOWIE TRYBUNALSKIM</documentation>
+    </enumeration>
+    <enumeration value="1018">
+        <documentation>URZĄD SKARBOWY W PODDĘBICACH</documentation>
+    </enumeration>
+    <enumeration value="1019">
+        <documentation>URZĄD SKARBOWY W RADOMSKU</documentation>
+    </enumeration>
+    <enumeration value="1020">
+        <documentation>URZĄD SKARBOWY W RAWIE MAZOWIECKIEJ</documentation>
+    </enumeration>
+    <enumeration value="1021">
+        <documentation>URZĄD SKARBOWY W SIERADZU</documentation>
+    </enumeration>
+    <enumeration value="1022">
+        <documentation>URZĄD SKARBOWY W SKIERNIEWICACH</documentation>
+    </enumeration>
+    <enumeration value="1023">
+        <documentation>URZĄD SKARBOWY W TOMASZOWIE MAZOWIECKIM</documentation>
+    </enumeration>
+    <enumeration value="1024">
+        <documentation>URZĄD SKARBOWY W WIELUNIU</documentation>
+    </enumeration>
+    <enumeration value="1025">
+        <documentation>URZĄD SKARBOWY W ZDUŃSKIEJ WOLI</documentation>
+    </enumeration>
+    <enumeration value="1026">
+        <documentation>URZĄD SKARBOWY W ZGIERZU</documentation>
+    </enumeration>
+    <enumeration value="1027">
+        <documentation>URZĄD SKARBOWY W WIERUSZOWIE</documentation>
+    </enumeration>
+    <enumeration value="1028">
+        <documentation>URZĄD SKARBOWY W ŁĘCZYCY</documentation>
+    </enumeration>
+    <enumeration value="1029">
+        <documentation>URZĄD SKARBOWY W PAJĘCZNIE</documentation>
+    </enumeration>
+    <enumeration value="1202">
+        <documentation>URZĄD SKARBOWY W BOCHNI</documentation>
+    </enumeration>
+    <enumeration value="1203">
+        <documentation>URZĄD SKARBOWY W BRZESKU</documentation>
+    </enumeration>
+    <enumeration value="1204">
+        <documentation>URZĄD SKARBOWY W CHRZANOWIE</documentation>
+    </enumeration>
+    <enumeration value="1205">
+        <documentation>URZĄD SKARBOWY W DĄBROWIE TARNOWSKIEJ</documentation>
+    </enumeration>
+    <enumeration value="1206">
+        <documentation>URZĄD SKARBOWY W GORLICACH</documentation>
+    </enumeration>
+    <enumeration value="1207">
+        <documentation>PIERWSZY URZĄD SKARBOWY KRAKÓW</documentation>
+    </enumeration>
+    <enumeration value="1208">
+        <documentation>URZĄD SKARBOWY KRAKÓW-KROWODRZA</documentation>
+    </enumeration>
+    <enumeration value="1209">
+        <documentation>URZĄD SKARBOWY KRAKÓW-NOWA HUTA</documentation>
+    </enumeration>
+    <enumeration value="1210">
+        <documentation>URZĄD SKARBOWY KRAKÓW-PODGÓRZE</documentation>
+    </enumeration>
+    <enumeration value="1211">
+        <documentation>URZĄD SKARBOWY KRAKÓW-PRĄDNIK</documentation>
+    </enumeration>
+    <enumeration value="1212">
+        <documentation>URZĄD SKARBOWY KRAKÓW-STARE MIASTO</documentation>
+    </enumeration>
+    <enumeration value="1213">
+        <documentation>URZĄD SKARBOWY KRAKÓW-ŚRÓDMIEŚCIE</documentation>
+    </enumeration>
+    <enumeration value="1214">
+        <documentation>URZĄD SKARBOWY W LIMANOWEJ</documentation>
+    </enumeration>
+    <enumeration value="1215">
+        <documentation>URZĄD SKARBOWY W MIECHOWIE</documentation>
+    </enumeration>
+    <enumeration value="1216">
+        <documentation>URZĄD SKARBOWY W MYŚLENICACH</documentation>
+    </enumeration>
+    <enumeration value="1217">
+        <documentation>URZĄD SKARBOWY W NOWYM SĄCZU</documentation>
+    </enumeration>
+    <enumeration value="1218">
+        <documentation>URZĄD SKARBOWY W NOWYM TARGU</documentation>
+    </enumeration>
+    <enumeration value="1219">
+        <documentation>URZĄD SKARBOWY W OLKUSZU</documentation>
+    </enumeration>
+    <enumeration value="1220">
+        <documentation>URZĄD SKARBOWY W OŚWIĘCIMIU</documentation>
+    </enumeration>
+    <enumeration value="1221">
+        <documentation>URZĄD SKARBOWY W PROSZOWICACH</documentation>
+    </enumeration>
+    <enumeration value="1222">
+        <documentation>URZĄD SKARBOWY W SUCHEJ BESKIDZKIEJ</documentation>
+    </enumeration>
+    <enumeration value="1223">
+        <documentation>PIERWSZY URZĄD SKARBOWY W TARNOWIE</documentation>
+    </enumeration>
+    <enumeration value="1224">
+        <documentation>DRUGI URZĄD SKARBOWY W TARNOWIE</documentation>
+    </enumeration>
+    <enumeration value="1225">
+        <documentation>URZĄD SKARBOWY W WADOWICACH</documentation>
+    </enumeration>
+    <enumeration value="1226">
+        <documentation>URZĄD SKARBOWY W WIELICZCE</documentation>
+    </enumeration>
+    <enumeration value="1227">
+        <documentation>URZĄD SKARBOWY W ZAKOPANEM</documentation>
+    </enumeration>
+    <enumeration value="1228">
+        <documentation>DRUGI URZĄD SKARBOWY KRAKÓW</documentation>
+    </enumeration>
+    <enumeration value="1402">
+        <documentation>URZĄD SKARBOWY W BIAŁOBRZEGACH</documentation>
+    </enumeration>
+    <enumeration value="1403">
+        <documentation>URZĄD SKARBOWY W CIECHANOWIE</documentation>
+    </enumeration>
+    <enumeration value="1404">
+        <documentation>URZĄD SKARBOWY W GARWOLINIE</documentation>
+    </enumeration>
+    <enumeration value="1405">
+        <documentation>URZĄD SKARBOWY W GOSTYNINIE</documentation>
+    </enumeration>
+    <enumeration value="1406">
+        <documentation>URZĄD SKARBOWY W GRODZISKU MAZOWIECKIM</documentation>
+    </enumeration>
+    <enumeration value="1407">
+        <documentation>URZĄD SKARBOWY W GRÓJCU</documentation>
+    </enumeration>
+    <enumeration value="1408">
+        <documentation>URZĄD SKARBOWY W KOZIENICACH</documentation>
+    </enumeration>
+    <enumeration value="1409">
+        <documentation>URZĄD SKARBOWY W LEGIONOWIE</documentation>
+    </enumeration>
+    <enumeration value="1410">
+        <documentation>URZĄD SKARBOWY W ŁOSICACH</documentation>
+    </enumeration>
+    <enumeration value="1411">
+        <documentation>URZĄD SKARBOWY W MAKOWIE MAZOWIECKIM</documentation>
+    </enumeration>
+    <enumeration value="1412">
+        <documentation>URZĄD SKARBOWY W MIŃSKU MAZOWIECKIM</documentation>
+    </enumeration>
+    <enumeration value="1413">
+        <documentation>URZĄD SKARBOWY W MŁAWIE</documentation>
+    </enumeration>
+    <enumeration value="1414">
+        <documentation>URZĄD SKARBOWY W NOWYM DWORZE MAZOWIECKIM</documentation>
+    </enumeration>
+    <enumeration value="1415">
+        <documentation>URZĄD SKARBOWY W OSTROŁĘCE</documentation>
+    </enumeration>
+    <enumeration value="1416">
+        <documentation>URZĄD SKARBOWY W OSTROWI MAZOWIECKIEJ</documentation>
+    </enumeration>
+    <enumeration value="1417">
+        <documentation>URZĄD SKARBOWY W OTWOCKU</documentation>
+    </enumeration>
+    <enumeration value="1418">
+        <documentation>URZĄD SKARBOWY W PIASECZNIE</documentation>
+    </enumeration>
+    <enumeration value="1419">
+        <documentation>URZĄD SKARBOWY W PŁOCKU</documentation>
+    </enumeration>
+    <enumeration value="1420">
+        <documentation>URZĄD SKARBOWY W PŁOŃSKU</documentation>
+    </enumeration>
+    <enumeration value="1421">
+        <documentation>URZĄD SKARBOWY W PRUSZKOWIE</documentation>
+    </enumeration>
+    <enumeration value="1422">
+        <documentation>URZĄD SKARBOWY W PRZASNYSZU</documentation>
+    </enumeration>
+    <enumeration value="1423">
+        <documentation>URZĄD SKARBOWY W PUŁTUSKU</documentation>
+    </enumeration>
+    <enumeration value="1424">
+        <documentation>PIERWSZY URZĄD SKARBOWY W RADOMIU</documentation>
+    </enumeration>
+    <enumeration value="1425">
+        <documentation>DRUGI URZĄD SKARBOWY W RADOMIU</documentation>
+    </enumeration>
+    <enumeration value="1426">
+        <documentation>URZĄD SKARBOWY W SIEDLCACH</documentation>
+    </enumeration>
+    <enumeration value="1427">
+        <documentation>URZĄD SKARBOWY W SIERPCU</documentation>
+    </enumeration>
+    <enumeration value="1428">
+        <documentation>URZĄD SKARBOWY W SOCHACZEWIE</documentation>
+    </enumeration>
+    <enumeration value="1429">
+        <documentation>URZĄD SKARBOWY W SOKOŁOWIE PODLASKIM</documentation>
+    </enumeration>
+    <enumeration value="1430">
+        <documentation>URZĄD SKARBOWY W SZYDŁOWCU</documentation>
+    </enumeration>
+    <enumeration value="1431">
+        <documentation>URZĄD SKARBOWY WARSZAWA-BEMOWO</documentation>
+    </enumeration>
+    <enumeration value="1432">
+        <documentation>URZĄD SKARBOWY WARSZAWA-BIELANY</documentation>
+    </enumeration>
+    <enumeration value="1433">
+        <documentation>URZĄD SKARBOWY WARSZAWA-MOKOTÓW</documentation>
+    </enumeration>
+    <enumeration value="1434">
+        <documentation>URZĄD SKARBOWY WARSZAWA-PRAGA</documentation>
+    </enumeration>
+    <enumeration value="1435">
+        <documentation>PIERWSZY URZĄD SKARBOWY WARSZAWA-ŚRÓDMIEŚCIE</documentation>
+    </enumeration>
+    <enumeration value="1437">
+        <documentation>URZĄD SKARBOWY WARSZAWA-TARGÓWEK</documentation>
+    </enumeration>
+    <enumeration value="1438">
+        <documentation>URZĄD SKARBOWY WARSZAWA-URSYNÓW</documentation>
+    </enumeration>
+    <enumeration value="1439">
+        <documentation>URZĄD SKARBOWY WARSZAWA-WAWER</documentation>
+    </enumeration>
+    <enumeration value="1440">
+        <documentation>URZĄD SKARBOWY WARSZAWA-WOLA</documentation>
+    </enumeration>
+    <enumeration value="1441">
+        <documentation>URZĄD SKARBOWY W WĘGROWIE</documentation>
+    </enumeration>
+    <enumeration value="1442">
+        <documentation>URZĄD SKARBOWY W WOŁOMINIE</documentation>
+    </enumeration>
+    <enumeration value="1443">
+        <documentation>URZĄD SKARBOWY W WYSZKOWIE</documentation>
+    </enumeration>
+    <enumeration value="1444">
+        <documentation>URZĄD SKARBOWY W ZWOLENIU</documentation>
+    </enumeration>
+    <enumeration value="1445">
+        <documentation>URZĄD SKARBOWY W ŻUROMINIE</documentation>
+    </enumeration>
+    <enumeration value="1446">
+        <documentation>URZĄD SKARBOWY W ŻYRARDOWIE</documentation>
+    </enumeration>
+    <enumeration value="1447">
+        <documentation>URZĄD SKARBOWY W LIPSKU</documentation>
+    </enumeration>
+    <enumeration value="1448">
+        <documentation>URZĄD SKARBOWY W PRZYSUSZE</documentation>
+    </enumeration>
+    <enumeration value="1449">
+        <documentation>TRZECI URZĄD SKARBOWY WARSZAWA-ŚRÓDMIEŚCIE</documentation>
+    </enumeration>
+    <enumeration value="1602">
+        <documentation>URZĄD SKARBOWY W BRZEGU</documentation>
+    </enumeration>
+    <enumeration value="1603">
+        <documentation>URZĄD SKARBOWY W GŁUBCZYCACH</documentation>
+    </enumeration>
+    <enumeration value="1604">
+        <documentation>URZĄD SKARBOWY W KĘDZIERZYNIE-KOŹLU</documentation>
+    </enumeration>
+    <enumeration value="1605">
+        <documentation>URZĄD SKARBOWY W KLUCZBORKU</documentation>
+    </enumeration>
+    <enumeration value="1606">
+        <documentation>URZĄD SKARBOWY W NAMYSŁOWIE</documentation>
+    </enumeration>
+    <enumeration value="1607">
+        <documentation>URZĄD SKARBOWY W NYSIE</documentation>
+    </enumeration>
+    <enumeration value="1608">
+        <documentation>URZĄD SKARBOWY W OLEŚNIE</documentation>
+    </enumeration>
+    <enumeration value="1609">
+        <documentation>PIERWSZY URZĄD SKARBOWY W OPOLU</documentation>
+    </enumeration>
+    <enumeration value="1610">
+        <documentation>DRUGI URZĄD SKARBOWY W OPOLU</documentation>
+    </enumeration>
+    <enumeration value="1611">
+        <documentation>URZĄD SKARBOWY W PRUDNIKU</documentation>
+    </enumeration>
+    <enumeration value="1612">
+        <documentation>URZĄD SKARBOWY W STRZELCACH OPOLSKICH</documentation>
+    </enumeration>
+    <enumeration value="1613">
+        <documentation>URZĄD SKARBOWY W KRAPKOWICACH</documentation>
+    </enumeration>
+    <enumeration value="1802">
+        <documentation>URZĄD SKARBOWY W BRZOZOWIE</documentation>
+    </enumeration>
+    <enumeration value="1803">
+        <documentation>URZĄD SKARBOWY W DĘBICY</documentation>
+    </enumeration>
+    <enumeration value="1804">
+        <documentation>URZĄD SKARBOWY W JAROSŁAWIU</documentation>
+    </enumeration>
+    <enumeration value="1805">
+        <documentation>URZĄD SKARBOWY W JAŚLE</documentation>
+    </enumeration>
+    <enumeration value="1806">
+        <documentation>URZĄD SKARBOWY W KOLBUSZOWEJ</documentation>
+    </enumeration>
+    <enumeration value="1807">
+        <documentation>URZĄD SKARBOWY W KROŚNIE</documentation>
+    </enumeration>
+    <enumeration value="1808">
+        <documentation>URZĄD SKARBOWY W LESKU</documentation>
+    </enumeration>
+    <enumeration value="1809">
+        <documentation>URZĄD SKARBOWY W LEŻAJSKU</documentation>
+    </enumeration>
+    <enumeration value="1810">
+        <documentation>URZĄD SKARBOWY W LUBACZOWIE</documentation>
+    </enumeration>
+    <enumeration value="1811">
+        <documentation>URZĄD SKARBOWY W ŁAŃCUCIE</documentation>
+    </enumeration>
+    <enumeration value="1812">
+        <documentation>URZĄD SKARBOWY W MIELCU</documentation>
+    </enumeration>
+    <enumeration value="1813">
+        <documentation>URZĄD SKARBOWY W PRZEMYŚLU</documentation>
+    </enumeration>
+    <enumeration value="1814">
+        <documentation>URZĄD SKARBOWY W PRZEWORSKU</documentation>
+    </enumeration>
+    <enumeration value="1815">
+        <documentation>URZĄD SKARBOWY W ROPCZYCACH</documentation>
+    </enumeration>
+    <enumeration value="1816">
+        <documentation>PIERWSZY URZĄD SKARBOWY W RZESZOWIE</documentation>
+    </enumeration>
+    <enumeration value="1817">
+        <documentation>URZĄD SKARBOWY W SANOKU</documentation>
+    </enumeration>
+    <enumeration value="1818">
+        <documentation>URZĄD SKARBOWY W STALOWEJ WOLI</documentation>
+    </enumeration>
+    <enumeration value="1819">
+        <documentation>URZĄD SKARBOWY W STRZYŻOWIE</documentation>
+    </enumeration>
+    <enumeration value="1820">
+        <documentation>URZĄD SKARBOWY W TARNOBRZEGU</documentation>
+    </enumeration>
+    <enumeration value="1821">
+        <documentation>URZĄD SKARBOWY W USTRZYKACH DOLNYCH</documentation>
+    </enumeration>
+    <enumeration value="1822">
+        <documentation>DRUGI URZĄD SKARBOWY W RZESZOWIE</documentation>
+    </enumeration>
+    <enumeration value="1823">
+        <documentation>URZĄD SKARBOWY W NISKU</documentation>
+    </enumeration>
+    <enumeration value="2002">
+        <documentation>URZĄD SKARBOWY W AUGUSTOWIE</documentation>
+    </enumeration>
+    <enumeration value="2003">
+        <documentation>PIERWSZY URZĄD SKARBOWY W BIAŁYMSTOKU</documentation>
+    </enumeration>
+    <enumeration value="2004">
+        <documentation>DRUGI URZĄD SKARBOWY W BIAŁYMSTOKU</documentation>
+    </enumeration>
+    <enumeration value="2005">
+        <documentation>URZĄD SKARBOWY W BIELSKU PODLASKIM</documentation>
+    </enumeration>
+    <enumeration value="2006">
+        <documentation>URZĄD SKARBOWY W GRAJEWIE</documentation>
+    </enumeration>
+    <enumeration value="2007">
+        <documentation>URZĄD SKARBOWY W KOLNIE</documentation>
+    </enumeration>
+    <enumeration value="2008">
+        <documentation>URZĄD SKARBOWY W ŁOMŻY</documentation>
+    </enumeration>
+    <enumeration value="2009">
+        <documentation>URZĄD SKARBOWY W MOŃKACH</documentation>
+    </enumeration>
+    <enumeration value="2010">
+        <documentation>URZĄD SKARBOWY W SIEMIATYCZACH</documentation>
+    </enumeration>
+    <enumeration value="2011">
+        <documentation>URZĄD SKARBOWY W SOKÓŁCE</documentation>
+    </enumeration>
+    <enumeration value="2012">
+        <documentation>URZĄD SKARBOWY W SUWAŁKACH</documentation>
+    </enumeration>
+    <enumeration value="2013">
+        <documentation>URZĄD SKARBOWY W WYSOKIEM MAZOWIECKIEM</documentation>
+    </enumeration>
+    <enumeration value="2014">
+        <documentation>URZĄD SKARBOWY W ZAMBROWIE</documentation>
+    </enumeration>
+    <enumeration value="2015">
+        <documentation>URZĄD SKARBOWY W HAJNÓWCE</documentation>
+    </enumeration>
+    <enumeration value="2202">
+        <documentation>URZĄD SKARBOWY W BYTOWIE</documentation>
+    </enumeration>
+    <enumeration value="2203">
+        <documentation>URZĄD SKARBOWY W CHOJNICACH</documentation>
+    </enumeration>
+    <enumeration value="2204">
+        <documentation>URZĄD SKARBOWY W CZŁUCHOWIE</documentation>
+    </enumeration>
+    <enumeration value="2205">
+        <documentation>PIERWSZY URZĄD SKARBOWY W GDAŃSKU</documentation>
+    </enumeration>
+    <enumeration value="2206">
+        <documentation>DRUGI URZĄD SKARBOWY W GDAŃSKU</documentation>
+    </enumeration>
+    <enumeration value="2207">
+        <documentation>TRZECI URZĄD SKARBOWY W GDAŃSKU</documentation>
+    </enumeration>
+    <enumeration value="2208">
+        <documentation>PIERWSZY URZĄD SKARBOWY W GDYNI</documentation>
+    </enumeration>
+    <enumeration value="2209">
+        <documentation>DRUGI URZĄD SKARBOWY W GDYNI</documentation>
+    </enumeration>
+    <enumeration value="2210">
+        <documentation>URZĄD SKARBOWY W KARTUZACH</documentation>
+    </enumeration>
+    <enumeration value="2211">
+        <documentation>URZĄD SKARBOWY W KOŚCIERZYNIE</documentation>
+    </enumeration>
+    <enumeration value="2212">
+        <documentation>URZĄD SKARBOWY W KWIDZYNIE</documentation>
+    </enumeration>
+    <enumeration value="2213">
+        <documentation>URZĄD SKARBOWY W LĘBORKU</documentation>
+    </enumeration>
+    <enumeration value="2214">
+        <documentation>URZĄD SKARBOWY W MALBORKU</documentation>
+    </enumeration>
+    <enumeration value="2215">
+        <documentation>URZĄD SKARBOWY W PUCKU</documentation>
+    </enumeration>
+    <enumeration value="2216">
+        <documentation>URZĄD SKARBOWY W SŁUPSKU</documentation>
+    </enumeration>
+    <enumeration value="2217">
+        <documentation>URZĄD SKARBOWY W SOPOCIE</documentation>
+    </enumeration>
+    <enumeration value="2218">
+        <documentation>URZĄD SKARBOWY W STAROGARDZIE GDAŃSKIM</documentation>
+    </enumeration>
+    <enumeration value="2219">
+        <documentation>URZĄD SKARBOWY W TCZEWIE</documentation>
+    </enumeration>
+    <enumeration value="2220">
+        <documentation>URZĄD SKARBOWY W WEJHEROWIE</documentation>
+    </enumeration>
+    <enumeration value="2221">
+        <documentation>URZĄD SKARBOWY W PRUSZCZU GDAŃSKIM</documentation>
+    </enumeration>
+    <enumeration value="2402">
+        <documentation>URZĄD SKARBOWY W BĘDZINIE</documentation>
+    </enumeration>
+    <enumeration value="2403">
+        <documentation>PIERWSZY URZĄD SKARBOWY W BIELSKU-BIAŁEJ</documentation>
+    </enumeration>
+    <enumeration value="2404">
+        <documentation>DRUGI URZĄD SKARBOWY W BIELSKU-BIAŁEJ</documentation>
+    </enumeration>
+    <enumeration value="2405">
+        <documentation>URZĄD SKARBOWY W BYTOMIU</documentation>
+    </enumeration>
+    <enumeration value="2406">
+        <documentation>URZĄD SKARBOWY W CHORZOWIE</documentation>
+    </enumeration>
+    <enumeration value="2407">
+        <documentation>URZĄD SKARBOWY W CIESZYNIE</documentation>
+    </enumeration>
+    <enumeration value="2408">
+        <documentation>URZĄD SKARBOWY W CZECHOWICACH-DZIEDZICACH</documentation>
+    </enumeration>
+    <enumeration value="2409">
+        <documentation>PIERWSZY URZĄD SKARBOWY W CZĘSTOCHOWIE</documentation>
+    </enumeration>
+    <enumeration value="2410">
+        <documentation>DRUGI URZĄD SKARBOWY W CZĘSTOCHOWIE</documentation>
+    </enumeration>
+    <enumeration value="2411">
+        <documentation>URZĄD SKARBOWY W DĄBROWIE GÓRNICZEJ</documentation>
+    </enumeration>
+    <enumeration value="2412">
+        <documentation>PIERWSZY URZĄD SKARBOWY W GLIWICACH</documentation>
+    </enumeration>
+    <enumeration value="2413">
+        <documentation>DRUGI URZĄD SKARBOWY W GLIWICACH</documentation>
+    </enumeration>
+    <enumeration value="2414">
+        <documentation>URZĄD SKARBOWY W JASTRZĘBIU-ZDROJU</documentation>
+    </enumeration>
+    <enumeration value="2415">
+        <documentation>URZĄD SKARBOWY W JAWORZNIE</documentation>
+    </enumeration>
+    <enumeration value="2416">
+        <documentation>PIERWSZY URZĄD SKARBOWY W KATOWICACH</documentation>
+    </enumeration>
+    <enumeration value="2417">
+        <documentation>DRUGI URZĄD SKARBOWY W KATOWICACH</documentation>
+    </enumeration>
+    <enumeration value="2418">
+        <documentation>URZĄD SKARBOWY W KŁOBUCKU</documentation>
+    </enumeration>
+    <enumeration value="2419">
+        <documentation>URZĄD SKARBOWY W LUBLIŃCU</documentation>
+    </enumeration>
+    <enumeration value="2420">
+        <documentation>URZĄD SKARBOWY W MIKOŁOWIE</documentation>
+    </enumeration>
+    <enumeration value="2421">
+        <documentation>URZĄD SKARBOWY W MYSŁOWICACH</documentation>
+    </enumeration>
+    <enumeration value="2422">
+        <documentation>URZĄD SKARBOWY W MYSZKOWIE</documentation>
+    </enumeration>
+    <enumeration value="2423">
+        <documentation>URZĄD SKARBOWY W PIEKARACH ŚLĄSKICH</documentation>
+    </enumeration>
+    <enumeration value="2424">
+        <documentation>URZĄD SKARBOWY W PSZCZYNIE</documentation>
+    </enumeration>
+    <enumeration value="2425">
+        <documentation>URZĄD SKARBOWY W RACIBORZU</documentation>
+    </enumeration>
+    <enumeration value="2426">
+        <documentation>URZĄD SKARBOWY W RUDZIE ŚLĄSKIEJ</documentation>
+    </enumeration>
+    <enumeration value="2427">
+        <documentation>URZĄD SKARBOWY W RYBNIKU</documentation>
+    </enumeration>
+    <enumeration value="2428">
+        <documentation>URZĄD SKARBOWY W SIEMIANOWICACH ŚLĄSKICH</documentation>
+    </enumeration>
+    <enumeration value="2429">
+        <documentation>URZĄD SKARBOWY W SOSNOWCU</documentation>
+    </enumeration>
+    <enumeration value="2430">
+        <documentation>URZĄD SKARBOWY W TARNOWSKICH GÓRACH</documentation>
+    </enumeration>
+    <enumeration value="2431">
+        <documentation>URZĄD SKARBOWY W TYCHACH</documentation>
+    </enumeration>
+    <enumeration value="2432">
+        <documentation>URZĄD SKARBOWY W WODZISŁAWIU ŚLĄSKIM</documentation>
+    </enumeration>
+    <enumeration value="2433">
+        <documentation>URZĄD SKARBOWY W ZABRZU</documentation>
+    </enumeration>
+    <enumeration value="2434">
+        <documentation>URZĄD SKARBOWY W ZAWIERCIU</documentation>
+    </enumeration>
+    <enumeration value="2435">
+        <documentation>URZĄD SKARBOWY W ŻORACH</documentation>
+    </enumeration>
+    <enumeration value="2436">
+        <documentation>URZĄD SKARBOWY W ŻYWCU</documentation>
+    </enumeration>
+    <enumeration value="2602">
+        <documentation>URZĄD SKARBOWY W BUSKU-ZDROJU</documentation>
+    </enumeration>
+    <enumeration value="2603">
+        <documentation>URZĄD SKARBOWY W JĘDRZEJOWIE</documentation>
+    </enumeration>
+    <enumeration value="2604">
+        <documentation>PIERWSZY URZĄD SKARBOWY W KIELCACH</documentation>
+    </enumeration>
+    <enumeration value="2605">
+        <documentation>DRUGI URZĄD SKARBOWY W KIELCACH</documentation>
+    </enumeration>
+    <enumeration value="2606">
+        <documentation>URZĄD SKARBOWY W KOŃSKICH</documentation>
+    </enumeration>
+    <enumeration value="2607">
+        <documentation>URZĄD SKARBOWY W OPATOWIE</documentation>
+    </enumeration>
+    <enumeration value="2608">
+        <documentation>URZĄD SKARBOWY W OSTROWCU ŚWIĘTOKRZYSKIM</documentation>
+    </enumeration>
+    <enumeration value="2609">
+        <documentation>URZĄD SKARBOWY W PIŃCZOWIE</documentation>
+    </enumeration>
+    <enumeration value="2610">
+        <documentation>URZĄD SKARBOWY W SANDOMIERZU</documentation>
+    </enumeration>
+    <enumeration value="2611">
+        <documentation>URZĄD SKARBOWY W SKARŻYSKU-KAMIENNEJ</documentation>
+    </enumeration>
+    <enumeration value="2612">
+        <documentation>URZĄD SKARBOWY W STARACHOWICACH</documentation>
+    </enumeration>
+    <enumeration value="2613">
+        <documentation>URZĄD SKARBOWY W STASZOWIE</documentation>
+    </enumeration>
+    <enumeration value="2614">
+        <documentation>URZĄD SKARBOWY W KAZIMIERZY WIELKIEJ</documentation>
+    </enumeration>
+    <enumeration value="2615">
+        <documentation>URZĄD SKARBOWY WE WŁOSZCZOWIE</documentation>
+    </enumeration>
+    <enumeration value="2802">
+        <documentation>URZĄD SKARBOWY W BARTOSZYCACH</documentation>
+    </enumeration>
+    <enumeration value="2803">
+        <documentation>URZĄD SKARBOWY W BRANIEWIE</documentation>
+    </enumeration>
+    <enumeration value="2804">
+        <documentation>URZĄD SKARBOWY W DZIAŁDOWIE</documentation>
+    </enumeration>
+    <enumeration value="2805">
+        <documentation>URZĄD SKARBOWY W ELBLĄGU</documentation>
+    </enumeration>
+    <enumeration value="2806">
+        <documentation>URZĄD SKARBOWY W EŁKU</documentation>
+    </enumeration>
+    <enumeration value="2807">
+        <documentation>URZĄD SKARBOWY W GIŻYCKU</documentation>
+    </enumeration>
+    <enumeration value="2808">
+        <documentation>URZĄD SKARBOWY W IŁAWIE</documentation>
+    </enumeration>
+    <enumeration value="2809">
+        <documentation>URZĄD SKARBOWY W KĘTRZYNIE</documentation>
+    </enumeration>
+    <enumeration value="2810">
+        <documentation>URZĄD SKARBOWY W NIDZICY</documentation>
+    </enumeration>
+    <enumeration value="2811">
+        <documentation>URZĄD SKARBOWY W NOWYM MIEŚCIE LUBAWSKIM</documentation>
+    </enumeration>
+    <enumeration value="2812">
+        <documentation>URZĄD SKARBOWY W OLECKU</documentation>
+    </enumeration>
+    <enumeration value="2813">
+        <documentation>URZĄD SKARBOWY W OLSZTYNIE</documentation>
+    </enumeration>
+    <enumeration value="2814">
+        <documentation>URZĄD SKARBOWY W OSTRÓDZIE</documentation>
+    </enumeration>
+    <enumeration value="2815">
+        <documentation>URZĄD SKARBOWY W PISZU</documentation>
+    </enumeration>
+    <enumeration value="2816">
+        <documentation>URZĄD SKARBOWY W SZCZYTNIE</documentation>
+    </enumeration>
+    <enumeration value="3002">
+        <documentation>URZĄD SKARBOWY W CZARNKOWIE</documentation>
+    </enumeration>
+    <enumeration value="3003">
+        <documentation>URZĄD SKARBOWY W GNIEŹNIE</documentation>
+    </enumeration>
+    <enumeration value="3004">
+        <documentation>URZĄD SKARBOWY W GOSTYNIU</documentation>
+    </enumeration>
+    <enumeration value="3005">
+        <documentation>URZĄD SKARBOWY W GRODZISKU WIELKOPOLSKIM</documentation>
+    </enumeration>
+    <enumeration value="3006">
+        <documentation>URZĄD SKARBOWY W JAROCINIE</documentation>
+    </enumeration>
+    <enumeration value="3007">
+        <documentation>PIERWSZY URZĄD SKARBOWY W KALISZU</documentation>
+    </enumeration>
+    <enumeration value="3008">
+        <documentation>DRUGI URZĄD SKARBOWY W KALISZU</documentation>
+    </enumeration>
+    <enumeration value="3009">
+        <documentation>URZĄD SKARBOWY W KĘPNIE</documentation>
+    </enumeration>
+    <enumeration value="3010">
+        <documentation>URZĄD SKARBOWY W KOLE</documentation>
+    </enumeration>
+    <enumeration value="3011">
+        <documentation>URZĄD SKARBOWY W KONINIE</documentation>
+    </enumeration>
+    <enumeration value="3012">
+        <documentation>URZĄD SKARBOWY W KOŚCIANIE</documentation>
+    </enumeration>
+    <enumeration value="3013">
+        <documentation>URZĄD SKARBOWY W KROTOSZYNIE</documentation>
+    </enumeration>
+    <enumeration value="3014">
+        <documentation>URZĄD SKARBOWY W LESZNIE</documentation>
+    </enumeration>
+    <enumeration value="3015">
+        <documentation>URZĄD SKARBOWY W MIĘDZYCHODZIE</documentation>
+    </enumeration>
+    <enumeration value="3016">
+        <documentation>URZĄD SKARBOWY W NOWYM TOMYŚLU</documentation>
+    </enumeration>
+    <enumeration value="3017">
+        <documentation>URZĄD SKARBOWY W OSTROWIE WIELKOPOLSKIM</documentation>
+    </enumeration>
+    <enumeration value="3018">
+        <documentation>URZĄD SKARBOWY W OSTRZESZOWIE</documentation>
+    </enumeration>
+    <enumeration value="3019">
+        <documentation>URZĄD SKARBOWY W PILE</documentation>
+    </enumeration>
+    <enumeration value="3020">
+        <documentation>URZĄD SKARBOWY POZNAŃ-GRUNWALD</documentation>
+    </enumeration>
+    <enumeration value="3021">
+        <documentation>URZĄD SKARBOWY POZNAŃ-JEŻYCE</documentation>
+    </enumeration>
+    <enumeration value="3022">
+        <documentation>URZĄD SKARBOWY POZNAŃ-NOWE MIASTO</documentation>
+    </enumeration>
+    <enumeration value="3023">
+        <documentation>PIERWSZY URZĄD SKARBOWY W POZNANIU</documentation>
+    </enumeration>
+    <enumeration value="3025">
+        <documentation>URZĄD SKARBOWY POZNAŃ-WINOGRADY</documentation>
+    </enumeration>
+    <enumeration value="3026">
+        <documentation>URZĄD SKARBOWY POZNAŃ-WILDA</documentation>
+    </enumeration>
+    <enumeration value="3027">
+        <documentation>URZĄD SKARBOWY W RAWICZU</documentation>
+    </enumeration>
+    <enumeration value="3028">
+        <documentation>URZĄD SKARBOWY W SŁUPCY</documentation>
+    </enumeration>
+    <enumeration value="3029">
+        <documentation>URZĄD SKARBOWY W SZAMOTUŁACH</documentation>
+    </enumeration>
+    <enumeration value="3030">
+        <documentation>URZĄD SKARBOWY W ŚREMIE</documentation>
+    </enumeration>
+    <enumeration value="3031">
+        <documentation>URZĄD SKARBOWY W ŚRODZIE WIELKOPOLSKIEJ</documentation>
+    </enumeration>
+    <enumeration value="3032">
+        <documentation>URZĄD SKARBOWY W TURKU</documentation>
+    </enumeration>
+    <enumeration value="3033">
+        <documentation>URZĄD SKARBOWY W WĄGROWCU</documentation>
+    </enumeration>
+    <enumeration value="3034">
+        <documentation>URZĄD SKARBOWY W WOLSZTYNIE</documentation>
+    </enumeration>
+    <enumeration value="3035">
+        <documentation>URZĄD SKARBOWY WE WRZEŚNI</documentation>
+    </enumeration>
+    <enumeration value="3036">
+        <documentation>URZĄD SKARBOWY W ZŁOTOWIE</documentation>
+    </enumeration>
+    <enumeration value="3037">
+        <documentation>URZĄD SKARBOWY W CHODZIEŻY</documentation>
+    </enumeration>
+    <enumeration value="3038">
+        <documentation>URZĄD SKARBOWY W OBORNIKACH</documentation>
+    </enumeration>
+    <enumeration value="3039">
+        <documentation>URZĄD SKARBOWY W PLESZEWIE</documentation>
+    </enumeration>
+    <enumeration value="3202">
+        <documentation>URZĄD SKARBOWY W BIAŁOGARDZIE</documentation>
+    </enumeration>
+    <enumeration value="3203">
+        <documentation>URZĄD SKARBOWY W CHOSZCZNIE</documentation>
+    </enumeration>
+    <enumeration value="3204">
+        <documentation>URZĄD SKARBOWY W DRAWSKU POMORSKIM</documentation>
+    </enumeration>
+    <enumeration value="3205">
+        <documentation>URZĄD SKARBOWY W GOLENIOWIE</documentation>
+    </enumeration>
+    <enumeration value="3206">
+        <documentation>URZĄD SKARBOWY W GRYFICACH</documentation>
+    </enumeration>
+    <enumeration value="3207">
+        <documentation>URZĄD SKARBOWY W GRYFINIE</documentation>
+    </enumeration>
+    <enumeration value="3208">
+        <documentation>URZĄD SKARBOWY W KAMIENIU POMORSKIM</documentation>
+    </enumeration>
+    <enumeration value="3209">
+        <documentation>URZĄD SKARBOWY W KOŁOBRZEGU</documentation>
+    </enumeration>
+    <enumeration value="3210">
+        <documentation>PIERWSZY URZĄD SKARBOWY W KOSZALINIE</documentation>
+    </enumeration>
+    <enumeration value="3211">
+        <documentation>DRUGI URZĄD SKARBOWY W KOSZALINIE</documentation>
+    </enumeration>
+    <enumeration value="3212">
+        <documentation>URZĄD SKARBOWY W MYŚLIBORZU</documentation>
+    </enumeration>
+    <enumeration value="3213">
+        <documentation>URZĄD SKARBOWY W PYRZYCACH</documentation>
+    </enumeration>
+    <enumeration value="3214">
+        <documentation>URZĄD SKARBOWY W STARGARDZIE</documentation>
+    </enumeration>
+    <enumeration value="3215">
+        <documentation>PIERWSZY URZĄD SKARBOWY W SZCZECINIE</documentation>
+    </enumeration>
+    <enumeration value="3216">
+        <documentation>DRUGI URZĄD SKARBOWY W SZCZECINIE</documentation>
+    </enumeration>
+    <enumeration value="3217">
+        <documentation>TRZECI URZĄD SKARBOWY W SZCZECINIE</documentation>
+    </enumeration>
+    <enumeration value="3218">
+        <documentation>URZĄD SKARBOWY W SZCZECINKU</documentation>
+    </enumeration>
+    <enumeration value="3219">
+        <documentation>URZĄD SKARBOWY W ŚWINOUJŚCIU</documentation>
+    </enumeration>
+    <enumeration value="3220">
+        <documentation>URZĄD SKARBOWY W WAŁCZU</documentation>
+    </enumeration>
+</simpleType>
