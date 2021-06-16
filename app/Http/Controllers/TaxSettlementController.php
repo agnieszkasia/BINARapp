@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Box\Spout\Common\Entity\Style\CellAlignment;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Carbon\Carbon;
 use DateTime;
 use DOMDocument;
@@ -13,25 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Support\Facades\Redirect;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Borders;
-use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
-use function PHPUnit\Framework\stringContains;
 
 
-class TaxSettlementController extends Controller
-{
+class TaxSettlementController extends Controller{
 
-    public function show()
-    {
+    public function show(){
+
         $invoices = null;
         $values = null;
         $gtu = null;
-
 
         if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
@@ -64,8 +53,6 @@ class TaxSettlementController extends Controller
             }
             $reader->close();
         }
-
-//        dd($invoices);
 
         foreach ($values as $key => $invoice) {
             $invoices[$key]['issue_date'] = $values[$key][1][6];
@@ -141,16 +128,14 @@ class TaxSettlementController extends Controller
         return view('show_invoices', compact('invoices', 'warnings', 'gtu'));
     }
 
-    public function showAddSalesPage(Request $request)
-    {
+    public function showAddSalesPage(Request $request){
+
         $invoices = json_decode($request['invoices'], true);
 
         return view('add_sales', compact('invoices'));
     }
 
-    public function showAddPurchasesPage(Request $request)
-    {
-
+    public function showAddPurchasesPage(Request $request){
 
         $invoices = json_decode($request['invoices'], true);
 
@@ -172,8 +157,8 @@ class TaxSettlementController extends Controller
         return view('add_purchases', compact('invoices', 'sales'));
     }
 
-    public function showSummaryPage(Request $request)
-    {
+    public function showSummaryPage(Request $request){
+
         $sales = json_decode($request['sales'], true);
         $invoices = json_decode($request['invoices'], true);
 
@@ -237,8 +222,8 @@ class TaxSettlementController extends Controller
             'invoices', 'sales', 'purchases'));
     }
 
-    public function generateFile(Request $request)
-    {
+    public function generateFile(Request $request){
+
         if ($request->has('generateCSV')) {
             $this->generateCSVFile($request);
         }
@@ -255,8 +240,7 @@ class TaxSettlementController extends Controller
         }
     }
 
-    public function generateCSVFile($request)
-    {
+    public function generateCSVFile($request){
 
         header('Content-type: application/csv');
         header('Content-Disposition: attachment; filename=CSV.csv');
@@ -324,10 +308,22 @@ class TaxSettlementController extends Controller
             }
         }
 
-        $fp = fopen('php://output', 'a'); // Configure fopen to write to the output buffer
+        $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
+        $undefinedSalesVat = str_replace(".", ",", $request['undefinedSalesVat']);
+        $salesVat = str_replace(".", ",", $request['salesVat']);
+
+
+        $stringDate = $invoices[count($invoices)-1]['due_date'];
+        $undocumentedSaleDate = $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
+        $firstDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
+
+        setlocale(LC_ALL, 'pl', 'pl_PL', 'pl_PL.ISO8859-2', 'plk', 'polish', 'Polish');
+        $monthName = strftime('%B', strtotime($undocumentedSaleDate));
+
+        $fp = fopen('php://output', 'a');
 
         $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony' . PHP_EOL .
-            'JPK_VAT;JPK_VAT (3);1-1;3;0;2020-09-31T09:30:47;2021-04-01;2021-04-30;OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            'JPK_VAT;JPK_VAT (3);1-1;3;0;'.$lastDayOfMonth.'T09:30:47;'.$firstDayOfMonth.';'.$lastDayOfMonth.';OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
             ';;;;;;;;;7121553440;BINAR Jarosław Glinka;jarb23@wp.pl;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
             ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL;
 
@@ -335,11 +331,7 @@ class TaxSettlementController extends Controller
             $data .= $line . PHP_EOL;
         }
 
-        $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
-        $undefinedSalesVat = str_replace(".", ",", $request['undefinedSalesVat']);
-        $salesVat = str_replace(".", ",", $request['salesVat']);
-
-        $data .= ";;;;;;;;;;;;" . (count($invoices) + 1) . ";brak;sprzedaz bezrachunkowa miesiąc;brak;brak;;2021-04-30;;;;;;;;;;" . $undefinedSalesNetto . ";" . $undefinedSalesVat . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . PHP_EOL;
+        $data .= ";;;;;;;;;;;;" . (count($invoices) + 1) . ";brak;sprzedaz bezrachunkowa miesiąc ".$monthName.";brak;brak;;".$undocumentedSaleDate.";;;;;;;;;;" . $undefinedSalesNetto . ";" . $undefinedSalesVat . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . PHP_EOL;
 
         $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . (count($invoices) + 1) . ';' . $salesVat . ';;;;;;;;;;;;;;;;;' . PHP_EOL;
 
@@ -355,8 +347,7 @@ class TaxSettlementController extends Controller
         fclose($fp);
     }
 
-    public function generateXMLFile($request)
-    {
+    public function generateXMLFile($request){
 
         $invoices = json_decode($request['invoices'], true);
 
@@ -532,9 +523,7 @@ class TaxSettlementController extends Controller
         unlink($filename);
     }
 
-    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file)
-    {
-
+    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
 
         foreach ($invoices as $key => $invoice) {
 
@@ -590,13 +579,10 @@ class TaxSettlementController extends Controller
         $totalVAT = $file->createElement("PodatekNalezny", $salesVat);
         $salesCtrl->appendChild($totalVAT);
 
-
     }
 
-    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file)
-    {
+    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file){
         foreach ($purchases as $key => $purchase) {
-
 
             /* tag - ZakupWiersz */
             $purchaseRow = $file->createElement("ZakupWiersz");
@@ -633,7 +619,6 @@ class TaxSettlementController extends Controller
             /* tag - K_43 */
             $vat = $file->createElement("K_43", $purchase['vat']);
             $purchaseRow->appendChild($vat);
-
         }
 
         /* tag - ZakupCtrl */
@@ -650,8 +635,7 @@ class TaxSettlementController extends Controller
 
     }
 
-    public function generateDZSVFile($request)
-    {
+    public function generateDZSVFile($request){
         $invoices = json_decode($request['invoices'], true);
         $sales = json_decode($request['sales'], true);
 
@@ -668,49 +652,30 @@ class TaxSettlementController extends Controller
 
         $spreadsheet = new Spreadsheet();
 
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('A12', 'Dzienne zestawienia sprzedaży VAT ')
-            ->setCellValue('E1', 'MISIĄC ROK');
-
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('B2', 'FIRMA');
-
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('B3', 'ADRES');
-
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('B4', 'NIP');
-
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('B5', 'Data');
-
-        $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('A6', 'LP');
-
         $i = 0;
 
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['products']) && !isset($sale['service'])) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['brutto']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
             } elseif (isset($sale['products']) && $sale['products'] !== 0) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['products']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['products']);
             } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
 
             if (isset($sale['service']) && $sale['service'] !== "0") {
                 $i++;
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 12 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 12 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 12 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 12 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 12 + $i), $sale['service']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);
             }
         }
 
@@ -724,7 +689,6 @@ class TaxSettlementController extends Controller
         readfile(public_path("DZSV.ods"));
 
         unlink(public_path('DZSV.ods'));
-
     }
 
     public function sortUndocumentedSales($sales)
@@ -784,6 +748,5 @@ class TaxSettlementController extends Controller
         readfile(public_path("RZV.ods"));
 
         unlink(public_path('RZV.ods'));
-
     }
 }
