@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 class TaxSettlementController extends Controller{
 
     public function showWelcomePage(){
+
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
         $data = array();
@@ -30,10 +31,13 @@ class TaxSettlementController extends Controller{
             echo 'Błąd ładowania pliku';
         }
 
-        return view('welcome', compact('data', 'lineCount'));
+        Session::put('data', $data);
+        Session::put('lineCount', $lineCount);
+
+        return view('welcome');
     }
 
-    function convertDataFromXmlToArray($xml, $lineCount){
+    function convertDataFromXmlToArray($xml, $lineCount): array{
         $data = array();
         for ($i = 0; $i < $lineCount; $i++) {
             $data[$i] = (string)$xml->enumeration[$i]['value']." ".(string)$xml->enumeration[$i]->documentation;
@@ -43,15 +47,25 @@ class TaxSettlementController extends Controller{
 
     public function show(Request $request){
 
+        $request->validate([
+            'companyName' => ['required', 'string', 'max:255', 'min:2'],
+            'firstname' => ['required','string', 'max:255', 'min:2'],
+            'lastname' => ['required', 'string', 'max:255', 'min:2'],
+            'birthDate' => ['required', 'string','regex:/19[0-9]{2}|200[0,1,2,3]-[0-9]{2}-[0-9]{2}/u', 'max:255'],
+            'mail' => ['required', 'string', 'email', 'max:255'],
+            'NIP' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
+            'taxOfficeCode' => ['required', 'string'],
+            'file' => ['required'],
+        ]);
+
+
         $company['companyName'] = $request['companyName'];
         $company['firstname'] = $request['firstname'];
         $company['lastname'] = $request['lastname'];
         $company['birthDate'] = $request['birthDate'];
-        $company['email'] = $request['mail'];
+        $company['mail'] = $request['mail'];
         $company['NIP'] = $request['NIP'];
         $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
-
-        $_SESSION['company'] = $company;
 
         Session::put('company', $company);
 
@@ -162,7 +176,11 @@ class TaxSettlementController extends Controller{
             }
         }
 
-        return view('show_invoices', compact('invoices', 'warnings', 'gtu'));
+        Session::put('invoices', $invoices);
+        Session::put('warnings', $warnings);
+        Session::put('gtu', $gtu);
+
+        return view('show_invoices');
     }
 
     public function showAddSalesPage(Request $request){

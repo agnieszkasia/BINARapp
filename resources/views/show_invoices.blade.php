@@ -29,11 +29,11 @@
                 <a class="btn btn-next" href="">WSTECZ</a>
 
                 <div class="fs-6 mt-2 ">
-                    @if($warnings!== 0) <div class="mx-2 text-warning">Faktury do sprawdzenia: {{$warnings}} </div>@endif
-                    @if($gtu!== 0) <div class="mx-2 text-danger">Faktury z kodem GTU: {{$gtu}}  </div>@endif
+                    @if(session('warnings')!== 0) <div class="mx-2 text-warning">Faktury do sprawdzenia: {{session('warnings')}} </div>@endif
+                    @if(session('gtu')!== 0) <div class="mx-2 text-danger">Faktury z kodem GTU: {{session('gtu')}}  </div>@endif
                 </div>
 
-                <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
+                <input type="hidden" name="invoices" value="{{json_encode(session('invoices'))}}">
                 <button type="submit" class="btn btn-next">DALEJ</button>
             </div>
 
@@ -62,7 +62,7 @@
                 </tr>
             </thead>
             <tbody class="table-light">
-            @foreach($invoices as $invoice)
+            @foreach(session('invoices') as $invoice)
                 <tr class="
                     @if(isset($invoice['warning']) && !isset($invoice['gtu']))table-warning fw-bold
                     @elseif(isset($invoice['gtu'])) table-danger fw-bold

@@ -27,7 +27,7 @@
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
                 <div>
 
-                    <a class="btn btn-next" href="">WSTECZ</a>
+                    <a class="btn btn-next" href="{{ url()->previous() }}">WSTECZ</a>
                 </div>
 
                 <div>
