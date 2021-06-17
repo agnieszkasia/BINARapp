@@ -19,6 +19,7 @@ Route::get('/', [TaxSettlementController::class, 'showWelcomePage'])->name('welc
 Route::post('/show', [TaxSettlementController::class, 'show'])->name('send');
 Route::post('/generate', [TaxSettlementController::class, 'generateFile'])->name('generateFile');
 Route::post('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
+Route::get('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
 Route::post('/add_purchases', [TaxSettlementController::class, 'showAddPurchasesPage'])->name('add_purchases');
 Route::post('/summary', [TaxSettlementController::class, 'showSummaryPage'])->name('summary');
 

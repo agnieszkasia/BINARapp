@@ -50,7 +50,6 @@
 
             </div>
 
-
             <div class="">
                 <table class="table ">
                     <thead class="table-borderless text-white">
@@ -63,38 +62,40 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
+
+                    @foreach(session('productsCount') as $key=>$products)
                         <tr>
                             <td>
-                                <input type="text" name="due_date[ ]" class="form-control @error('due_date[ ]') is-invalid @enderror" >
+                                <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror" value="{{old('due_date.'.$key)}}">
 
-                                @error('due_date[ ]')
+                                @error('due_date.'.$key)
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
                             </td>
                             <td>
-                                <input type="text" name="products_names[ ]" class="form-control @error('products_names[ ]') is-invalid @enderror">
+                                <input type="text" name="products_names[ ]" class="form-control @error('products_names.'.$key) is-invalid @enderror" value="{{old('products_names.'.$key)}}">
 
-                                @error('products_names[ ]')
+                                @error('products_names.'.$key)
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
                             </td>
                             <td>
-                                <input type="text" name="quantity[ ]" class="form-control @error('quantity[ ]') is-invalid @enderror">
+                                <input type="number" min="0" step="1" name="quantity[ ]" class="form-control @error('quantity.'.$key) is-invalid @enderror" value="{{old('quantity.'.$key)}}">
 
-                                @error('quantity[ ]')
+                                @error('quantity.'.$key)
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
                             </td>
                             <td>
-                                <input type="text" name="products[ ]" class="form-control @error('products[ ]') is-invalid @enderror">
+                                <input type="text" name="products[ ]" class="form-control @error('products.'.$key) is-invalid @enderror" value="{{old('products.'.$key)}}">
 
-                                @error('products[ ]')
+                                @error('products.'.$key)
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -102,6 +103,7 @@
                             </td>
                             <th><a href="javascript:void(0)" class="btn btn-next deleteRow">Usuń</a> </th>
                         </tr>
+                    @endforeach
 
                     </tbody>
                 </table>

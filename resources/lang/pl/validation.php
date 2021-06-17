@@ -188,6 +188,11 @@ return [
         'birthDate' => 'Data urodzenia',
         'mail' => 'Email',
         'file' => 'Pliki Faktur VAT',
+        'due_date.*' => 'Data Sprzedaży',
+        'products_names.*' => 'Nazwa Produktu',
+        'quantity.*' => 'Ilość',
+        'products.*' => 'Wartość jednego przedmiotu',
+
     ],
 
 ];

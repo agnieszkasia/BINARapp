@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 class TaxSettlementController extends Controller{
 
     public function showWelcomePage(){
+        Session::put('productsCount', [0]);
 
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
@@ -71,7 +72,7 @@ class TaxSettlementController extends Controller{
 
         $invoices = null;
         $values = null;
-        $gtu = null;
+        $gtu = 0;
 
         if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
@@ -180,6 +181,7 @@ class TaxSettlementController extends Controller{
         Session::put('warnings', $warnings);
         Session::put('gtu', $gtu);
 
+
         return view('show_invoices');
     }
 
@@ -191,6 +193,16 @@ class TaxSettlementController extends Controller{
     }
 
     public function showAddPurchasesPage(Request $request){
+
+        Session::put('productsCount', $request['products_names']);
+
+        $request->validate([
+            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{4}/u'],
+            'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
+            'quantity.*' => ['required', 'integer'],
+            'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+        ]);
+
 
         $invoices = json_decode($request['invoices'], true);
 
@@ -214,7 +226,14 @@ class TaxSettlementController extends Controller{
 
     public function showSummaryPage(Request $request){
 
+        Session::put('productsCount', $request['products_names']);
 
+        $request->validate([
+            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{4}/u'],
+            'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
+            'quantity.*' => ['required', 'integer'],
+            'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+        ]);
 
         $sales = json_decode($request['sales'], true);
         $invoices = json_decode($request['invoices'], true);
