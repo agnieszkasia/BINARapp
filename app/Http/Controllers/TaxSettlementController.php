@@ -19,6 +19,7 @@ class TaxSettlementController extends Controller{
 
     public function showWelcomePage(){
         Session::put('productsCount', [0]);
+        Session::put('purchasesCount', [0]);
 
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
@@ -197,7 +198,7 @@ class TaxSettlementController extends Controller{
         Session::put('productsCount', $request['products_names']);
 
         $request->validate([
-            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{4}/u'],
+            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
             'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
             'quantity.*' => ['required', 'integer'],
             'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
@@ -221,22 +222,29 @@ class TaxSettlementController extends Controller{
             }
         } else $sales = null;
 
+
         return view('add_purchases', compact('invoices', 'sales'));
     }
 
     public function showSummaryPage(Request $request){
+        dd($request);
 
-        Session::put('productsCount', $request['products_names']);
+        Session::put('purchasesCount', $request['issue_date']);
 
         $request->validate([
-            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{4}/u'],
-            'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
-            'quantity.*' => ['required', 'integer'],
-            'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+            'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+            'invoice_number.*' => ['required', 'string', 'max:255', 'min:1'],
+            'company.*' => ['required', 'string', 'max:255', 'min:2'],
+            'address.*' => ['required', 'string', 'min:3', 'max:255'],
+            'NIP.*' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
+            'netto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+            'vat.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+            'brutto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
 
         $sales = json_decode($request['sales'], true);
-        $invoices = json_decode($request['invoices'], true);
+        $invoices = session('invoices');
 
         foreach ($request['issue_date'] as $key => $item) {
             $purchases[$key]['issue_date'] = $request['issue_date'][$key];

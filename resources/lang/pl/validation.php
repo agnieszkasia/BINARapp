@@ -192,6 +192,14 @@ return [
         'products_names.*' => 'Nazwa Produktu',
         'quantity.*' => 'Ilość',
         'products.*' => 'Wartość jednego przedmiotu',
+        'issue_date.*' => 'Data Wystawienia',
+        'invoice_number.*' => 'Numer Faktury',
+        'company.*' => 'Nabywca',
+        'address.*' => 'Adres',
+        'netto.*' => 'Netto',
+        'vat.*' => 'VAT',
+        'brutto.*' => 'Brutto',
+        'NIP.*' => 'NIP',
 
     ],
 

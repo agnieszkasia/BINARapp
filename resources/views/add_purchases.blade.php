@@ -57,11 +57,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                @foreach(session('purchasesCount') as $key=>$purchases)
+
                     <tr>
                         <td>
-                            <input type="text" name="issue_date[ ]" class="form-control @error('issue_date[ ]') is-invalid @enderror" >
+                            <input type="text" name="issue_date[ ]" class="form-control @error('issue_date.'.$key) is-invalid @enderror" value="{{old('issue_date.'.$key)}}">
 
-                            @error('issue_date[ ]')
+                            @error('issue_date.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -69,9 +71,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="due_date[ ]" class="form-control @error('due_date[ ]') is-invalid @enderror" >
+                            <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror" value="{{old('due_date.'.$key)}}">
 
-                            @error('due_date[ ]')
+                            @error('due_date.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -79,9 +81,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="invoice_number[ ]" class="form-control @error('invoice_number[ ]') is-invalid @enderror" >
+                            <input type="text" name="invoice_number[ ]" class="form-control @error('invoice_number.'.$key) is-invalid @enderror" value="{{old('invoice_number.'.$key)}}">
 
-                            @error('invoice_number[ ]')
+                            @error('invoice_number.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -89,9 +91,9 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company[ ]') is-invalid @enderror" ></textarea>
+                            <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company.'.$key) is-invalid @enderror">{{old('company.'.$key)}}</textarea>
 
-                            @error('company[ ]')
+                            @error('company.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -99,9 +101,9 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address[ ]') is-invalid @enderror" ></textarea>
+                            <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">{{old('address.'.$key)}}</textarea>
 
-                            @error('address[ ]')
+                            @error('address.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -109,9 +111,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="NIP[ ]" class="form-control @error('NIP[ ]') is-invalid @enderror" >
+                            <input type="text" name="NIP[ ]" class="form-control @error('NIP.'.$key) is-invalid @enderror" value="{{old('NIP.'.$key)}}">
 
-                            @error('NIP[ ]')
+                            @error('NIP.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -119,9 +121,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="netto[ ]" class="form-control @error('netto[ ]') is-invalid @enderror">
+                            <input type="text" name="netto[ ]" class="form-control @error('netto.'.$key) is-invalid @enderror" value="{{old('netto.'.$key)}}">
 
-                            @error('netto[ ]')
+                            @error('netto.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -129,9 +131,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="vat[ ]" class="form-control @error('vat[ ]') is-invalid @enderror">
+                            <input type="text" name="vat[ ]" class="form-control @error('vat.'.$key) is-invalid @enderror" value="{{old('vat.'.$key)}}">
 
-                            @error('vat[ ]')
+                            @error('vat.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -139,9 +141,9 @@
                         </td>
 
                         <td>
-                            <input type="text" name="brutto[ ]" class="form-control @error('brutto[ ]') is-invalid @enderror">
+                            <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror" value="{{old('brutto.'.$key)}}">
 
-                            @error('brutto[ ]')
+                            @error('brutto.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -149,6 +151,7 @@
                         </td>
                         <th><a href="javascript:void(0)" class="btn btn-next deletePurchaseRow">Usuń</a> </th>
                     </tr>
+                @endforeach
 
                 </tbody>
             </table>
