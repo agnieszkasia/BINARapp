@@ -9,6 +9,11 @@ Project is created with:
 * PHP 8.0.2
 * Laravel 8.44
 * Bootstrap 5
-* Spout Library
+* Spout Library, PhpSpreadsheet Library
 
+## Functionality
+* Reading sales invocices data from ods file
+* Adding undocumented sales via the form
+* Adding purchase invoices via the form
+* Generating tax settlements files (.csv, .xml, .ods)
 
