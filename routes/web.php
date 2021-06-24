@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [TaxSettlementController::class, 'showWelcomePage'])->name('welcome');
 
-Route::post('/show', [TaxSettlementController::class, 'show'])->name('send');
+Route::post('/show', [TaxSettlementController::class, 'addInvoices'])->name('send');
+Route::get('/show', [TaxSettlementController::class, 'show'])->name('send');
 Route::post('/generate', [TaxSettlementController::class, 'generateFile'])->name('generateFile');
 Route::post('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
 Route::get('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');

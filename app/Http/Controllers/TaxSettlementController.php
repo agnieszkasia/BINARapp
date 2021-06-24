@@ -18,8 +18,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 class TaxSettlementController extends Controller{
 
     public function showWelcomePage(){
-        Session::put('productsCount', [0]);
-        Session::put('purchasesCount', [0]);
+        Session::forget(['data', 'lineCount', 'company', 'invoices',
+            'warnings', 'gtu', 'productsCount', 'sales', 'purchases', 'purchasesCount']);
+
 
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
@@ -47,8 +48,7 @@ class TaxSettlementController extends Controller{
         return $data;
     }
 
-    public function show(Request $request){
-
+    public function addInvoices(Request $request){
         $request->validate([
             'companyName' => ['required', 'string', 'max:255', 'min:2'],
             'firstname' => ['required','string', 'max:255', 'min:2'],
@@ -184,17 +184,26 @@ class TaxSettlementController extends Controller{
 
 
         return view('show_invoices');
+     }
+
+    public function show(Request $request){
+
+        return view('show_invoices');
     }
 
     public function showAddSalesPage(Request $request){
+//        dd(\session('sales'));
         if (session('productsCount') == null) Session::put('productsCount', ['']);
 
         return view('add_sales');
     }
 
     public function showAddPurchasesPage(Request $request){
+        if (session('purchasesCount') == null) Session::put('purchasesCount', ['']);
 
-        Session::put('productsCount', $request['products_names']);
+        if (session('productsCount') == null) Session::put('productsCount', count($request['products_names']));
+
+
 
         $request->validate([
             'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -215,6 +224,8 @@ class TaxSettlementController extends Controller{
                 $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
                 $sales[$key]['vat'] = round($products * 0.23, 2);
                 $sales[$key]['brutto'] = $products;
+                $sales[$key]['quantity'] = $request['quantity'][$key];
+                $sales[$key]['products'] = $request['products'][$key];
             }
         } else $sales = null;
 
@@ -225,6 +236,7 @@ class TaxSettlementController extends Controller{
 
     public function showSummaryPage(Request $request){
 //        dd($request);
+//        dd(session('invoices'));
 
 
         $request->validate([
@@ -242,16 +254,20 @@ class TaxSettlementController extends Controller{
         $sales = session('sales');
         $invoices = session('invoices');
 
-        foreach ($request['issue_date'] as $key => $item) {
-            $purchases[$key]['issue_date'] = $request['issue_date'][$key];
-            $purchases[$key]['due_date'] = $request['due_date'][$key];
-            $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
-            $purchases[$key]['company'] = $request['company'][$key];
-            $purchases[$key]['address'] = $request['address'][$key];
-            $purchases[$key]['NIP'] = $request['NIP'][$key];
-            $purchases[$key]['netto'] = str_replace(",", ".", $request['netto'][$key]);
-            $purchases[$key]['vat'] = str_replace(",", ".", $request['vat'][$key]);
-            $purchases[$key]['brutto'] = str_replace(",", ".", $request['brutto'][$key]);
+        $purchases = array();
+
+        if (isset($request['issue_date'])) {
+            foreach ($request['issue_date'] as $key => $item) {
+                $purchases[$key]['issue_date'] = $request['issue_date'][$key];
+                $purchases[$key]['due_date'] = $request['due_date'][$key];
+                $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
+                $purchases[$key]['company'] = $request['company'][$key];
+                $purchases[$key]['address'] = $request['address'][$key];
+                $purchases[$key]['NIP'] = $request['NIP'][$key];
+                $purchases[$key]['netto'] = str_replace(",", ".", $request['netto'][$key]);
+                $purchases[$key]['vat'] = str_replace(",", ".", $request['vat'][$key]);
+                $purchases[$key]['brutto'] = str_replace(",", ".", $request['brutto'][$key]);
+            }
         }
 
         $purchasesNetto = 0;
@@ -812,12 +828,13 @@ class TaxSettlementController extends Controller{
     public function generateRZVFile($request){
         $purchases = session('purchases');
 
-        foreach ($purchases as $key => $purchase) {
-            $sort[$key] = strtotime($purchase['due_date']);
+        if (isset($purchases['due_date'])) {
+            foreach ($purchases as $key => $purchase) {
+                $sort[$key] = strtotime($purchase['due_date']);
+            }
+
+            array_multisort($sort, SORT_ASC, $purchases);
         }
-
-        array_multisort($sort, SORT_ASC, $purchases);
-
         $spreadsheet = new Spreadsheet();
 
         foreach ($purchases as $key => $purchase) {
