@@ -30,7 +30,7 @@
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
                     <a class="btn btn-next" href="{{ url()->previous() }}">WSTECZ</a>
 
-                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
+{{--                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">--}}
                     <button type="submit" class="btn btn-next">DALEJ</button>
                 </div>
 

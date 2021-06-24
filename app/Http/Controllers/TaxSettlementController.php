@@ -187,10 +187,9 @@ class TaxSettlementController extends Controller{
     }
 
     public function showAddSalesPage(Request $request){
+        if (session('productsCount') == null) Session::put('productsCount', ['']);
 
-        $invoices = json_decode($request['invoices'], true);
-
-        return view('add_sales', compact('invoices'));
+        return view('add_sales');
     }
 
     public function showAddPurchasesPage(Request $request){
@@ -203,9 +202,6 @@ class TaxSettlementController extends Controller{
             'quantity.*' => ['required', 'integer'],
             'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
-
-
-        $invoices = json_decode($request['invoices'], true);
 
         if (isset($request['quantity'][0])) {
             foreach ($request['due_date'] as $key => $sale) {
@@ -222,14 +218,14 @@ class TaxSettlementController extends Controller{
             }
         } else $sales = null;
 
+        Session::put('sales', $sales);
 
-        return view('add_purchases', compact('invoices', 'sales'));
+        return view('add_purchases');
     }
 
     public function showSummaryPage(Request $request){
-        dd($request);
+//        dd($request);
 
-        Session::put('purchasesCount', $request['issue_date']);
 
         $request->validate([
             'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -243,7 +239,7 @@ class TaxSettlementController extends Controller{
             'brutto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
 
-        $sales = json_decode($request['sales'], true);
+        $sales = session('sales');
         $invoices = session('invoices');
 
         foreach ($request['issue_date'] as $key => $item) {
@@ -262,13 +258,17 @@ class TaxSettlementController extends Controller{
         $purchasesVat = 0;
         $purchasesBrutto = 0;
 
-        if (isset($sales[0]['issue_date'])) {
+        if (isset($purchases[0]['issue_date'])) {
             foreach ($purchases as $purchase) {
                 $purchasesNetto += $purchase['netto'];
                 $purchasesVat += $purchase['vat'];
                 $purchasesBrutto += $purchase['brutto'];
             }
         }
+
+        Session::put('purchases', $purchases);
+        Session::put('purchasesCount', count($purchases));
+
 
         $invoicesNetto = 0;
         $invoicesVat = 0;
@@ -304,8 +304,7 @@ class TaxSettlementController extends Controller{
             'purchasesNetto', 'purchasesVat', 'purchasesBrutto',
             'invoicesNetto', 'invoicesVat', 'invoicesBrutto',
             'undefinedSalesNetto', 'undefinedSalesVat', 'undefinedSalesBrutto',
-            'salesNetto', 'salesVat', 'salesBrutto',
-            'invoices', 'sales', 'purchases'));
+            'salesNetto', 'salesVat', 'salesBrutto'));
     }
 
     public function generateFile(Request $request){
@@ -338,7 +337,7 @@ class TaxSettlementController extends Controller{
         $lines = array();
         $purchaseLines = array();
 
-        $invoices = json_decode($request['invoices'], true);
+        $invoices = session('invoices');
 
         $vat = 0;
 
@@ -370,11 +369,11 @@ class TaxSettlementController extends Controller{
                 $invoice['vat'] . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
         }
 
-        $purchases = json_decode($request['purchases'], true);
+        $purchases = session('purchases');
 
         foreach ($purchases as $key => $purchase) {
 
-            if (isset($purchases['issue_date'])) {
+//            if (isset($purchases['issue_date'])) {
 
                 $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
                 $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
@@ -394,7 +393,7 @@ class TaxSettlementController extends Controller{
                     $purchase['due_date'] . ";;;" .
                     $purchase['netto'] . ";" .
                     $purchase['vat'] . ";;;;;;";
-            }
+//            }
         }
 
         $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
@@ -413,7 +412,7 @@ class TaxSettlementController extends Controller{
 
         $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony' . PHP_EOL .
             'JPK_VAT;JPK_VAT (3);1-1;3;0;'.$lastDayOfMonth.'T23:59:59;'.$firstDayOfMonth.';'.$lastDayOfMonth.';OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
-            ';;;;;;;;;'.$company["NIP"].';'.$company["companyName"].';'.$company["email"].';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
+            ';;;;;;;;;'.$company["NIP"].';'.$company["companyName"].';'.$company["mail"].';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
             ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL;
 
         foreach ($lines as $line) {
@@ -427,7 +426,7 @@ class TaxSettlementController extends Controller{
         foreach ($purchaseLines as $line) {
             $data .= $line . PHP_EOL;
         }
-        $purchaseVat = str_replace(".", ",", $request['purchaseVat']);
+        $purchaseVat = str_replace(".", ",", $request['purchasesVat']);
         $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . count($purchases) . ';' . $purchaseVat;
 
 
@@ -438,9 +437,9 @@ class TaxSettlementController extends Controller{
 
     public function generateXMLFile($request, $company){
 
-        $invoices = json_decode($request['invoices'], true);
+        $invoices = session('invoices');
 
-        $purchases = json_decode($request['purchases'], true);
+        $purchases = session('purchases');
 
         $file = new DOMDocument('1.0', 'UTF-8');
 
@@ -548,7 +547,7 @@ class TaxSettlementController extends Controller{
         $entityType->appendChild($birthDate);
 
         /* tag - Email */
-        $email = $file->createElement("Email", $company['email']);
+        $email = $file->createElement("Email", $company['mail']);
         $entityType->appendChild($email);
 
         /* tag - Deklaracja */
@@ -729,8 +728,8 @@ class TaxSettlementController extends Controller{
     }
 
     public function generateDZSVFile($request){
-        $invoices = json_decode($request['invoices'], true);
-        $sales = json_decode($request['sales'], true);
+        $invoices = session('invoices');
+        $sales = session('sales');
 
         if (isset($sales)) {
             $sales = $this->sortUndocumentedSales($sales);
@@ -811,7 +810,7 @@ class TaxSettlementController extends Controller{
     }
 
     public function generateRZVFile($request){
-        $purchases = json_decode($request['purchases'], true);
+        $purchases = session('purchases');
 
         foreach ($purchases as $key => $purchase) {
             $sort[$key] = strtotime($purchase['due_date']);

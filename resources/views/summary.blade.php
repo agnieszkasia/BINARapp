@@ -34,9 +34,6 @@
                     <div class="d-flex float-right justify-content-end">
                         <form action="{{route('generateFile')}}" method="POST">
                             @csrf
-                            <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">
-                            <input type="hidden" name="sales" value="{{json_encode($sales)}}">
-                            <input type="hidden" name="purchases" value="{{json_encode($purchases)}}">
                             <input type="hidden" name="salesVat" value="{{$salesVat}}">
                             <input type="hidden" name="undefinedSalesNetto" value="{{$undefinedSalesNetto}}">
                             <input type="hidden" name="undefinedSalesVat" value="{{$undefinedSalesVat}}">
