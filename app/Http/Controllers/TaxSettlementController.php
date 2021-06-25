@@ -21,7 +21,11 @@ class TaxSettlementController extends Controller{
         Session::forget(['data', 'lineCount', 'company', 'invoices',
             'warnings', 'gtu', 'productsCount', 'sales', 'purchases', 'purchasesCount']);
 
+        return view('welcome');
+    }
 
+    public function showAddFilesPage(){
+//dd(\session('company'));
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
         $data = array();
@@ -37,7 +41,9 @@ class TaxSettlementController extends Controller{
         Session::put('data', $data);
         Session::put('lineCount', $lineCount);
 
-        return view('welcome');
+        $company = session('company');
+
+        return view('add_files', compact('company'));
     }
 
     function convertDataFromXmlToArray($xml, $lineCount): array{
@@ -64,7 +70,7 @@ class TaxSettlementController extends Controller{
         $company['companyName'] = $request['companyName'];
         $company['firstname'] = $request['firstname'];
         $company['lastname'] = $request['lastname'];
-        $company['birthDate'] = $request['birthDate'];
+        $company['birthDate'] = strtotime($request['birthDate']);
         $company['mail'] = $request['mail'];
         $company['NIP'] = $request['NIP'];
         $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
@@ -235,9 +241,6 @@ class TaxSettlementController extends Controller{
     }
 
     public function showSummaryPage(Request $request){
-//        dd($request);
-//        dd(session('invoices'));
-
 
         $request->validate([
             'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],

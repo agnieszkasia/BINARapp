@@ -26,7 +26,7 @@
             FAKTURY SPRZEDAŻY
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                <a class="btn btn-next" href="">WSTECZ</a>
+                <a class="btn btn-next" href="{{ url('/add_files') }}">WSTECZ</a>
 
                 <div class="fs-6 mt-2 ">
                     @if(session('warnings')!== 0) <div class="mx-2 text-warning">Faktury do sprawdzenia: {{session('warnings')}} </div>@endif
