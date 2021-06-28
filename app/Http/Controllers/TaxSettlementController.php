@@ -25,6 +25,7 @@ class TaxSettlementController extends Controller{
     }
 
     public function showAddFilesPage(){
+
 //dd(\session('company'));
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
@@ -67,10 +68,11 @@ class TaxSettlementController extends Controller{
         ]);
 
 
+
         $company['companyName'] = $request['companyName'];
         $company['firstname'] = $request['firstname'];
         $company['lastname'] = $request['lastname'];
-        $company['birthDate'] = strtotime($request['birthDate']);
+        $company['birthDate'] = $request['birthDate'];
         $company['mail'] = $request['mail'];
         $company['NIP'] = $request['NIP'];
         $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
