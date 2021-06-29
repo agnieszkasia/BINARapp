@@ -66,7 +66,11 @@
                     @foreach(session('sales') as $key=>$products)
                         <tr>
                             <td>
-                                <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror" value="@if(isset($products['due_date'])) {{$products['due_date']}}@endif">
+                                <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
+                                        @if(old('due_date.'.$key)) value="{{old('due_date.'.$key)}}"
+                                        @elseif(isset($products['due_date']))
+                                        value="{{$products['due_date']}}"
+                                        @endif>
 
                                 @error('due_date.'.$key)
                                 <span class="invalid-feedback" role="alert">
@@ -75,7 +79,11 @@
                                 @enderror
                             </td>
                             <td>
-                                <input type="text" name="products_names[ ]" class="form-control @error('products_names.'.$key) is-invalid @enderror" value="@if(isset($products['products_names'])) {{$products['products_names']}}@endif">
+                                <input type="text" name="products_names[ ]" class="form-control @error('products_names.'.$key) is-invalid @enderror"
+                                        @if(old('products_names.'.$key)) value="{{old('products_names.'.$key)}}"
+                                        @elseif(isset($products['products_names']))
+                                        value="{{$products['products_names']}}"
+                                        @endif>
 
                                 @error('products_names.'.$key)
                                 <span class="invalid-feedback" role="alert">
@@ -84,7 +92,11 @@
                                 @enderror
                             </td>
                             <td>
-                                <input type="number" min="0" step="1" name="quantity[ ]" class="form-control @error('quantity.'.$key) is-invalid @enderror" value="@if(isset($products['quantity'])) {{$products['quantity']}} @endif">
+                                <input type="number" min="0" step="1" name="quantity[ ]" class="form-control @error('quantity.'.$key) is-invalid @enderror"
+                                        @if(old('quantity.'.$key)) value="{{old('quantity.'.$key)}}"
+                                        @elseif(isset($products['quantity']))
+                                        value="{{$products['quantity']}}"
+                                        @endif>
 
                                 @error('quantity.'.$key)
                                 <span class="invalid-feedback" role="alert">
@@ -93,7 +105,11 @@
                                 @enderror
                             </td>
                             <td>
-                                <input type="text" name="products[ ]" class="form-control @error('products.'.$key) is-invalid @enderror" value="@if(isset($products['products'])) {{$products['products']}}@endif">
+                                <input type="text" name="products[ ]" class="form-control @error('products.'.$key) is-invalid @enderror"
+                                        @if(old('products.'.$key)) value="{{old('products.'.$key)}}"
+                                        @elseif(isset($products['products']))
+                                        value="{{$products['products']}}"
+                                        @endif>
 
                                 @error('products.'.$key)
                                 <span class="invalid-feedback" role="alert">

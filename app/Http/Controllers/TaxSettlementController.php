@@ -19,14 +19,13 @@ class TaxSettlementController extends Controller{
 
     public function showWelcomePage(){
         Session::forget(['data', 'lineCount', 'company', 'invoices',
-            'warnings', 'gtu', 'productsCount', 'sales', 'purchases', 'purchasesCount']);
+            'warnings', 'gtu', 'salesCount', 'sales', 'purchases', 'purchasesCount']);
 
         return view('welcome');
     }
 
     public function showAddFilesPage(){
 
-//dd(\session('company'));
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
         $data = array();
@@ -194,24 +193,19 @@ class TaxSettlementController extends Controller{
         return view('show_invoices');
      }
 
-    public function show(Request $request){
+    public function show(){
 
         return view('show_invoices');
     }
 
-    public function showAddSalesPage(Request $request){
-//        dd(\session('sales'));
-        if (session('productsCount') == null) Session::put('productsCount', ['']);
+    public function showAddSalesPage(){
+        if (session('salesCount') == null) Session::put('salesCount', ['']);
+        if (session('sales') == null) Session::put('sales', ['']);
 
         return view('add_sales');
     }
 
-    public function showAddPurchasesPage(Request $request){
-        if (session('purchasesCount') == null) Session::put('purchasesCount', ['']);
-
-        if (session('productsCount') == null) Session::put('productsCount', count($request['products_names']));
-
-
+    public function addSales(Request $request){
 
         $request->validate([
             'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -237,13 +231,23 @@ class TaxSettlementController extends Controller{
             }
         } else $sales = null;
 
+        dd($sales);
+
         Session::put('sales', $sales);
+        Session::put('salesCount', count($sales));
+
+        $this->showAddPurchasesPage();
+    }
+
+    public function showAddPurchasesPage(){
+
+        if (session('purchasesCount') == null) Session::put('purchasesCount', ['']);
+        if (session('purchases') == null) Session::put('purchases', ['']);
 
         return view('add_purchases');
     }
 
-    public function showSummaryPage(Request $request){
-
+    public function addPurchases(Request $request){
         $request->validate([
             'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
             'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -255,9 +259,6 @@ class TaxSettlementController extends Controller{
             'vat.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
             'brutto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
-
-        $sales = session('sales');
-        $invoices = session('invoices');
 
         $purchases = array();
 
@@ -275,6 +276,16 @@ class TaxSettlementController extends Controller{
             }
         }
 
+        Session::put('purchases', $purchases);
+        Session::put('purchasesCount', count($purchases));
+
+    }
+
+    public function showSummaryPage(){
+        $sales = session('sales');
+        $invoices = session('invoices');
+        $purchases = session('purchases');
+
         $purchasesNetto = 0;
         $purchasesVat = 0;
         $purchasesBrutto = 0;
@@ -286,10 +297,6 @@ class TaxSettlementController extends Controller{
                 $purchasesBrutto += $purchase['brutto'];
             }
         }
-
-        Session::put('purchases', $purchases);
-        Session::put('purchasesCount', count($purchases));
-
 
         $invoicesNetto = 0;
         $invoicesVat = 0;
@@ -307,9 +314,9 @@ class TaxSettlementController extends Controller{
 
         if (isset($sales)) {
             foreach ($sales as $sale) {
-                $undefinedSalesNetto += $sale['netto'];
-                $undefinedSalesVat += $sale['vat'];
-                $undefinedSalesBrutto += $sale['brutto'];
+                $undefinedSalesNetto += (int)$sale['netto'];
+                $undefinedSalesVat += (int)$sale['vat'];
+                $undefinedSalesBrutto += (int)$sale['brutto'];
             }
         }
 
@@ -333,535 +340,25 @@ class TaxSettlementController extends Controller{
         $company = Session::get('company');
 
         if ($request->has('generateCSV')) {
-            $this->generateCSVFile($request, $company);
+            $controller = new CSVFileController();
+            $controller->generateCSVFile($request, $company);
         }
 
         if ($request->has('generateXML')) {
-            $this->generateXMLFile($request, $company);
+            $controller = new XMLFileController();
+            $controller->generateXMLFile($request, $company);
         }
 
         if ($request->has('generateDZSV')) {
-            $this->generateDZSVFile($request);
+            $controller = new ODSFileController();
+            $controller->generateDZSVFile($request);
         }
 
         if ($request->has('generateRZV')) {
-            $this->generateRZVFile($request);
+            $controller = new ODSFileController();
+            $controller->generateRZVFile($request);
         }
     }
 
-    public function generateCSVFile($request, $company){
 
-        header('Content-type: application/csv');
-        header('Content-Disposition: attachment; filename=CSV.csv');
-        header("Content-Transfer-Encoding: UTF-8");
-
-        $lines = array();
-        $purchaseLines = array();
-
-        $invoices = session('invoices');
-
-        $vat = 0;
-
-        foreach ($invoices as $key => $invoice) {
-            $invoice['issue_date'];
-
-            $issueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['issue_date']);
-            $invoice['issue_date'] = $issueDateTime->format('Y-m-d');
-
-            $dueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['due_date']);
-            $invoice['due_date'] = $dueDateTime->format('Y-m-d');
-
-            $vat += $invoice['vat'];
-
-            $invoice['netto'] = str_replace(".", ",", $invoice['netto']);
-            $invoice['vat'] = str_replace(".", ",", $invoice['vat']);
-
-            $invoice['company'] = str_replace("\"", "", $invoice['company']);
-
-
-            $lines[] = ";;;;;;;;;;;;" . ($key + 1) . ";" .
-                $invoice['NIP'] . ";" .
-                $invoice['company'] . ";" .
-                $invoice['address'] . ";" .
-                $invoice['invoice_number'] . ";" .
-                $invoice['issue_date'] . ";" .
-                $invoice['due_date'] . ";;;;;;;;;;" .
-                $invoice['netto'] . ";" .
-                $invoice['vat'] . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
-        }
-
-        $purchases = session('purchases');
-
-        foreach ($purchases as $key => $purchase) {
-
-//            if (isset($purchases['issue_date'])) {
-
-                $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
-                $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
-
-                $dueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['due_date']);
-                $purchase['due_date'] = $dueDateTime->format('Y-m-d');
-
-                $purchase['netto'] = str_replace(".", ",", $purchase['netto']);
-                $purchase['vat'] = str_replace(".", ",", $purchase['vat']);
-
-                $purchaseLines[] = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . ($key + 1) . ";" .
-                    $purchase['NIP'] . ";" .
-                    $purchase['company'] . ";" .
-                    $purchase['address'] . ";" .
-                    $purchase['invoice_number'] . ";" .
-                    $purchase['issue_date'] . ";" .
-                    $purchase['due_date'] . ";;;" .
-                    $purchase['netto'] . ";" .
-                    $purchase['vat'] . ";;;;;;";
-//            }
-        }
-
-        $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
-        $undefinedSalesVat = str_replace(".", ",", $request['undefinedSalesVat']);
-        $salesVat = str_replace(".", ",", $request['salesVat']);
-
-
-        $stringDate = $invoices[count($invoices)-1]['due_date'];
-        $undocumentedSaleDate = $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
-        $firstDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
-
-        setlocale(LC_ALL, 'pl', 'pl_PL', 'pl_PL.ISO8859-2', 'plk', 'polish', 'Polish');
-        $monthName = strftime('%B', strtotime($undocumentedSaleDate));
-
-        $fp = fopen('php://output', 'a');
-
-        $data = 'KodFormularza;kodSystemowy;wersjaSchemy;WariantFormularza;CelZlozenia;DataWytworzeniaJPK;DataOd;DataDo;NazwaSystemu;NIP;PelnaNazwa;Email;LpSprzedazy;NrKontrahenta;NazwaKontrahenta;AdresKontrahenta;DowodSprzedazy;DataWystawienia;DataSprzedazy;K_10;K_11;K_12;K_13;K_14;K_15;K_16;K_17;K_18;K_19;K_20;K_21;K_22;K_23;K_24;K_25;K_26;K_27;K_28;K_29;K_30;K_31;K_32;K_33;K_34;K_35;K_36;K_37;K_38;K_39;LiczbaWierszySprzedazy;PodatekNalezny;LpZakupu;NrDostawcy;NazwaDostawcy;AdresDostawcy;DowodZakupu;DataZakupu;DataWplywu;K_43;K_44;K_45;K_46;K_47;K_48;K_49;K_50;LiczbaWierszyZakupow;PodatekNaliczony' . PHP_EOL .
-            'JPK_VAT;JPK_VAT (3);1-1;3;0;'.$lastDayOfMonth.'T23:59:59;'.$firstDayOfMonth.';'.$lastDayOfMonth.';OpenOffice Calc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
-            ';;;;;;;;;'.$company["NIP"].';'.$company["companyName"].';'.$company["mail"].';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL .
-            ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . PHP_EOL;
-
-        foreach ($lines as $line) {
-            $data .= $line . PHP_EOL;
-        }
-
-        $data .= ";;;;;;;;;;;;" . (count($invoices) + 1) . ";brak;sprzedaz bezrachunkowa miesiąc ".$monthName.";brak;brak;;".$undocumentedSaleDate.";;;;;;;;;;" . $undefinedSalesNetto . ";" . $undefinedSalesVat . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . PHP_EOL;
-
-        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . (count($invoices) + 1) . ';' . $salesVat . ';;;;;;;;;;;;;;;;;' . PHP_EOL;
-
-        foreach ($purchaseLines as $line) {
-            $data .= $line . PHP_EOL;
-        }
-        $purchaseVat = str_replace(".", ",", $request['purchasesVat']);
-        $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . count($purchases) . ';' . $purchaseVat;
-
-
-        fwrite($fp, print_r($data, TRUE));
-
-        fclose($fp);
-    }
-
-    public function generateXMLFile($request, $company){
-
-        $invoices = session('invoices');
-
-        $purchases = session('purchases');
-
-        $file = new DOMDocument('1.0', 'UTF-8');
-
-        $stringDate = $invoices[count($invoices)-1]['due_date'];
-        $year = substr($invoices[count($invoices)-1]['due_date'],6,4);
-        $month = (int)substr($invoices[count($invoices)-1]['due_date'],3,2);
-
-        /* Format XML to save indented tree rather than one line */
-        $file->preserveWhiteSpace = true;
-        $file->formatOutput = true;
-
-        /* tag - JPK */
-        $JPK = $file->createElement("JPK");
-
-        $JPKAttribute = $file->createAttribute('xmlns:etd');
-        $JPKAttribute->value = "http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/";
-        $JPK->appendChild($JPKAttribute);
-
-        $JPKAttribute = $file->createAttribute('xmlns:xsi');
-        $JPKAttribute->value = "http://www.w3.org/2001/XMLSchema-instance";
-        $JPK->appendChild($JPKAttribute);
-
-        $JPKAttribute = $file->createAttribute('xmlns');
-        $JPKAttribute->value = "http://crd.gov.pl/wzor/2020/05/08/9393/";
-        $JPK->appendChild($JPKAttribute);
-
-        $JPKAttribute = $file->createAttribute('xsi:schemaLocation');
-        $JPKAttribute->value = "http://crd.gov.pl/wzor/2020/05/08/9393/ http://crd.gov.pl/wzor/2020/05/08/9393/schemat.xsd";
-        $JPK->appendChild($JPKAttribute);
-
-        $file->appendChild($JPK);
-
-        /* tag - Naglowek*/
-        $head = $file->createElement("Naglowek");
-        $JPK->appendChild($head);
-
-        /* tag - KodFormularza */
-        $formCode = $file->createElement("KodFormularza", 'JPK_VAT');
-
-        $formCodeAttribute = $file->createAttribute('kodSystemowy');
-        $formCodeAttribute->value = "JPK_V7M (1)";
-        $formCode->appendChild($formCodeAttribute);
-
-        $formCodeAttribute = $file->createAttribute('wersjaSchemy');
-        $formCodeAttribute->value = '1-2E';
-        $formCode->appendChild($formCodeAttribute);
-
-        $head->appendChild($formCode);
-
-        /* tag - WariantFormularza */
-        $formVariant = $file->createElement("WariantFormularza", "1");
-        $head->appendChild($formVariant);
-
-        /* tag - DataWytworzeniaJPK */
-        $date = $file->createElement("DataWytworzeniaJPK", str_replace(' ', 'T',Carbon::now()));
-        $head->appendChild($date);
-
-        /* tag - NazwaSystemu */
-        $systemName = $file->createElement("NazwaSystemu", "Formularz uproszczony");
-        $head->appendChild($systemName);
-
-        /* tag - CelZlozenia */
-        $purposeOfSubmission = $file->createElement("CelZlozenia", "1");
-        $purposeOfSubmissionAttribute = $file->createAttribute('poz');
-        $purposeOfSubmissionAttribute->value = 'P_7';
-        $purposeOfSubmission->appendChild($purposeOfSubmissionAttribute);
-        $head->appendChild($purposeOfSubmission);
-
-        /* tag - KodUrzedu */
-        $officeCode = $file->createElement("KodUrzedu", $company['taxOfficeCode']);
-        $head->appendChild($officeCode);
-
-        /* tag - Rok */
-        $year = $file->createElement("Rok", $year);
-        $head->appendChild($year);
-
-        /* tag - Miesiac */
-        $month = $file->createElement("Miesiac", $month);
-        $head->appendChild($month);
-
-        /* tag - Podmiot1 */
-        $entity = $file->createElement("Podmiot1");
-        $entityAttribute = $file->createAttribute('rola');
-        $entityAttribute->value = "Podatnik";
-        $entity->appendChild($entityAttribute);
-        $JPK->appendChild($entity);
-
-        $entityType = $file->createElement("OsobaFizyczna");
-        $entity->appendChild($entityType);
-
-        /* tag - etd:NIP */
-        $nip = $file->createElement("etd:NIP", $company['NIP']);
-        $entityType->appendChild($nip);
-
-        /* tag - etd:ImiePierwsze */
-        $firstName = $file->createElement("etd:ImiePierwsze", $company['firstname']);
-        $entityType->appendChild($firstName);
-
-        /* tag - etd:Nazwisko */
-        $familyName = $file->createElement("etd:Nazwisko", $company['lastname']);
-        $entityType->appendChild($familyName);
-
-        /* tag - etd:DataUrodzenia */
-        $birthDate = $file->createElement("etd:DataUrodzenia", $company['birthDate']);
-        $entityType->appendChild($birthDate);
-
-        /* tag - Email */
-        $email = $file->createElement("Email", $company['mail']);
-        $entityType->appendChild($email);
-
-        /* tag - Deklaracja */
-        $declaration = $file->createElement("Deklaracja");
-        $JPK->appendChild($declaration);
-
-        /* tag - Naglowek */
-        $declarationHead = $file->createElement("Naglowek");
-        $declaration->appendChild($declarationHead);
-
-        /* tag - KodFormularzaDekl */
-        $declarationFormCode = $file->createElement("KodFormularzaDekl", 'VAT-7');
-
-        /* kodSystemowy */
-        $declarationFormCodeAttribute = $file->createAttribute('kodSystemowy');
-        $declarationFormCodeAttribute->value = "VAT-7 (21)";
-        $declarationFormCode->appendChild($declarationFormCodeAttribute);
-
-        /* kodPodatku */
-        $declarationFormCodeAttribute = $file->createAttribute('kodPodatku');
-        $declarationFormCodeAttribute->value = "VAT";
-        $declarationFormCode->appendChild($declarationFormCodeAttribute);
-
-        /* rodzajZobowiazania */
-        $declarationFormCodeAttribute = $file->createAttribute('rodzajZobowiazania');
-        $declarationFormCodeAttribute->value = "Z";
-        $declarationFormCode->appendChild($declarationFormCodeAttribute);
-
-        /* wersjaSchemy */
-        $declarationFormCodeAttribute = $file->createAttribute('wersjaSchemy');
-        $declarationFormCodeAttribute->value = "1-2E";
-        $declarationFormCode->appendChild($declarationFormCodeAttribute);
-
-        $declarationHead->appendChild($declarationFormCode);
-
-
-        /* tag - WariantFormularzaDekl */
-        $declarationFormVariant = $file->createElement("WariantFormularzaDekl", '21');
-        $declarationHead->appendChild($declarationFormVariant);
-
-        /* tag - PozycjeSzczegolowe */
-        $detailedItems = $file->createElement("PozycjeSzczegolowe");
-        $declaration->appendChild($detailedItems);
-
-        /* tag - P_ORDZU XXXXXX */
-        $P_ORDZU = $file->createElement("P_ORDZU", 'null');
-        $detailedItems->appendChild($P_ORDZU);
-
-
-        /* tag - Ewidencja */
-        $register = $file->createElement("Ewidencja");
-        $JPK->appendChild($register);
-
-        $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'], $register, $file);
-        $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'], $register, $file);
-
-
-        /*download file */
-        $filename = 'XML - zlozenie po raz pierwszy - ' . '.xml';
-        $file->save($filename);
-
-        header("Content-Type: application/xml; charset=utf-8");
-        header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
-        readfile($filename);
-        unlink($filename);
-    }
-
-    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
-
-        foreach ($invoices as $key => $invoice) {
-
-            /* tag - SprzedazWiersz */
-            $salesRow = $file->createElement("SprzedazWiersz");
-            $register->appendChild($salesRow);
-
-            /* tag - LpSprzedazy */
-            $sales = $file->createElement("LpSprzedazy", ($key + 1));
-            $salesRow->appendChild($sales);
-
-            /* tag - NrKontrahenta */
-            $nip = $file->createElement("NrKontrahenta", $invoice['NIP']);
-            $salesRow->appendChild($nip);
-
-            /* tag - NazwaKontrahenta */
-            $invoice['company'] = str_replace('&', '&amp;', $invoice['company']);
-//            if(str_contains($invoice['company'], "&")) dd($invoice['company']);
-            $company = $file->createElement("NazwaKontrahenta", $invoice['company']);
-            $salesRow->appendChild($company);
-
-            /* tag - DowodSprzedazy */
-            $invoiceNumber = $file->createElement("DowodSprzedazy", $invoice['invoice_number']);
-            $salesRow->appendChild($invoiceNumber);
-
-            /* tag - DataWystawienia */
-            $issueDate = $file->createElement("DataWystawienia", $invoice['issue_date']);
-            $salesRow->appendChild($issueDate);
-
-            /* tag - DataSprzedazy */
-            $dueDate = $file->createElement("DataSprzedazy", $invoice['due_date']);
-            $salesRow->appendChild($dueDate);
-
-            /* tag - K_19 */
-            $netto = $file->createElement("K_19", $invoice['netto']);
-            $salesRow->appendChild($netto);
-
-            /* tag - K_20 */
-            $vat = $file->createElement("K_20", $invoice['vat']);
-            $salesRow->appendChild($vat);
-
-        }
-
-        /* tag - SprzedazCtrl */
-        $salesCtrl = $file->createElement("SprzedazCtrl");
-        $register->appendChild($salesCtrl);
-
-        /* tag - LiczbaWierszySprzedazy */
-        $rowNumber = $file->createElement("LiczbaWierszySprzedazy", count($invoices));
-        $salesCtrl->appendChild($rowNumber);
-
-        /* tag - PodatekNalezny */
-        $totalVAT = $file->createElement("PodatekNalezny", $salesVat);
-        $salesCtrl->appendChild($totalVAT);
-
-    }
-
-    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file){
-        foreach ($purchases as $key => $purchase) {
-
-            /* tag - ZakupWiersz */
-            $purchaseRow = $file->createElement("ZakupWiersz");
-            $register->appendChild($purchaseRow);
-
-            /* tag - LpZakupu */
-            $sales = $file->createElement("LpZakupu", ($key + 1));
-            $purchaseRow->appendChild($sales);
-
-            /* tag - NrDostawcy */
-            $nip = $file->createElement("NrDostawcy", $purchase['NIP']);
-            $purchaseRow->appendChild($nip);
-
-            /* tag - NazwaDostawcy */
-            $company = $file->createElement("NazwaDostawcy", $purchase['company']);
-            $purchaseRow->appendChild($company);
-
-            /* tag - DowodZakupu */
-            $invoiceNumber = $file->createElement("DowodZakupu", $purchase['invoice_number']);
-            $purchaseRow->appendChild($invoiceNumber);
-
-            /* tag - DataZakupu */
-            $issueDate = $file->createElement("DataZakupu", $purchase['issue_date']);
-            $purchaseRow->appendChild($issueDate);
-
-            /* tag - DataWplywu */
-            $dueDate = $file->createElement("DataWplywu", $purchase['due_date']);
-            $purchaseRow->appendChild($dueDate);
-
-            /* tag - K_42 */
-            $netto = $file->createElement("K_42", $purchase['netto']);
-            $purchaseRow->appendChild($netto);
-
-            /* tag - K_43 */
-            $vat = $file->createElement("K_43", $purchase['vat']);
-            $purchaseRow->appendChild($vat);
-        }
-
-        /* tag - ZakupCtrl */
-        $purchaseCtrl = $file->createElement("ZakupCtrl");
-        $register->appendChild($purchaseCtrl);
-
-        /* tag - LiczbaWierszyZakupow */
-        $rowNumber = $file->createElement("LiczbaWierszyZakupow", count($purchases));
-        $purchaseCtrl->appendChild($rowNumber);
-
-        /* tag - PodatekNaliczony */
-        $totalVAT = $file->createElement("PodatekNaliczony", $purchasesVat);
-        $purchaseCtrl->appendChild($totalVAT);
-
-    }
-
-    public function generateDZSVFile($request){
-        $invoices = session('invoices');
-        $sales = session('sales');
-
-        if (isset($sales)) {
-            $sales = $this->sortUndocumentedSales($sales);
-
-            $allSales = array_merge($invoices, $sales);
-        } else $allSales = $invoices;
-
-
-        foreach ($allSales as $key => $sale) {
-            $sort[$key] = strtotime($sale['due_date']);
-        }
-
-        array_multisort($sort, SORT_ASC, $allSales);
-
-        $spreadsheet = new Spreadsheet();
-
-        $i = 0;
-
-        foreach ($allSales as $key => $sale) {
-
-            if ($sale['brutto'] !== null && !isset($sale['products']) && !isset($sale['service'])) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
-            } elseif (isset($sale['products']) && $sale['products'] !== 0) {
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['products']);
-            } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
-
-            if (isset($sale['service']) && $sale['service'] !== "0") {
-                $i++;
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);
-            }
-        }
-
-        $writer = new Ods($spreadsheet);
-        $writer->save('DZSV.ods');
-
-        $finfo = new finfo(FILEINFO_MIME);
-        header('Content-Type: ' . $finfo->file(public_path('DZSV.ods')));
-        header('Content-Disposition: attachment; filename="DZSV.ods"');
-
-        readfile(public_path("DZSV.ods"));
-
-        unlink(public_path('DZSV.ods'));
-    }
-
-    public function sortUndocumentedSales($sales){
-        foreach ($sales as $key => $sale) {
-            $sort[$key] = strtotime($sale['due_date']);
-        }
-
-        array_multisort($sort, SORT_ASC, $sales);
-
-        foreach ($sales as $key => $sale) {
-            if (isset($sales[$key - 1])) $previousSale = $sales[$key - 1];
-
-            if (isset($previousSale) && $previousSale['due_date'] == $sale['due_date']) {
-                unset($sales[$key - 1]);
-
-                $sales[$key]['products_names'] = $sale['products_names'] . ", " . $previousSale['products_names'];
-                $sales[$key]['netto'] = $sale['netto'] + $previousSale['netto'];
-                $sales[$key]['vat'] = $sale['vat'] + $previousSale['vat'];
-                $sales[$key]['brutto'] = $sale['brutto'] + $previousSale['brutto'];
-            }
-
-        }
-
-        return $sales;
-    }
-
-    public function generateRZVFile($request){
-        $purchases = session('purchases');
-
-        if (isset($purchases['due_date'])) {
-            foreach ($purchases as $key => $purchase) {
-                $sort[$key] = strtotime($purchase['due_date']);
-            }
-
-            array_multisort($sort, SORT_ASC, $purchases);
-        }
-        $spreadsheet = new Spreadsheet();
-
-        foreach ($purchases as $key => $purchase) {
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1), $key + 1);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1), $purchase['invoice_number']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1), $purchase['due_date']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1), $purchase['issue_date']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1), $purchase['company']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('F' . ($key + 1), $purchase['address']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['NIP']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('H' . ($key + 1), $purchase['brutto']);
-        }
-
-        $writer = new Ods($spreadsheet);
-        $writer->save('RZV.ods');
-
-        $finfo = new finfo(FILEINFO_MIME);
-        header('Content-Type: ' . $finfo->file(public_path('RZV.ods')));
-        header('Content-Disposition: attachment; filename="RZV.ods"');
-
-        readfile(public_path("RZV.ods"));
-
-        unlink(public_path('RZV.ods'));
-    }
 }

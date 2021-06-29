@@ -200,6 +200,7 @@ return [
         'vat.*' => 'VAT',
         'brutto.*' => 'Brutto',
         'NIP.*' => 'NIP',
+        'taxOfficeCode' => 'Kod Urzędu',
 
     ],
 

@@ -59,7 +59,12 @@
 
                     <tr>
                         <td>
-                            <input type="text" name="issue_date[ ]" class="form-control @error('issue_date.'.$key) is-invalid @enderror" value="{{old('issue_date.'.$key)}}">
+                            <input type="text" name="issue_date[ ]" class="form-control @error('issue_date.'.$key) is-invalid @enderror"
+                                    @if(old('issue_date.'.$key))
+                                        value="{{old('issue_date.'.$key)}}"
+                                    @elseif(isset($purchases['products']))
+                                        value="{{$purchases['products']}}"
+                                    @endif>
 
                             @error('issue_date.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -69,7 +74,12 @@
                         </td>
 
                         <td>
-                            <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror" value="{{old('due_date.'.$key)}}">
+                            <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
+                                    @if(old('due_date.'.$key))
+                                        value="{{old('due_date.'.$key)}}"
+                                    @elseif(isset($purchases['products']))
+                                        value="{{$purchases['products']}}"
+                                    @endif>
 
                             @error('due_date.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -79,7 +89,12 @@
                         </td>
 
                         <td>
-                            <input type="text" name="invoice_number[ ]" class="form-control @error('invoice_number.'.$key) is-invalid @enderror" value="{{old('invoice_number.'.$key)}}">
+                            <input type="text" name="invoice_number[ ]" class="form-control @error('invoice_number.'.$key) is-invalid @enderror"
+                                    @if(old('invoice_number.'.$key))
+                                        value="{{old('invoice_number.'.$key)}}"
+                                    @elseif(isset($purchases['products']))
+                                        value="{{$purchases['products']}}"
+                                    @endif>
 
                             @error('invoice_number.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -89,7 +104,13 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company.'.$key) is-invalid @enderror">{{old('company.'.$key)}}</textarea>
+                            <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company.'.$key) is-invalid @enderror">
+                                    @if(old('company.'.$key))
+                                        {{old('company.'.$key)}}
+                                    @elseif(isset($purchases['products']))
+                                        {{$purchases['products']}}
+                                    @endif
+                            </textarea>
 
                             @error('company.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -99,7 +120,13 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">{{old('address.'.$key)}}</textarea>
+                            <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">
+                                    @if(old('address.'.$key))
+                                        {{old('address.'.$key)}}
+                                    @elseif(isset($purchases['address']))
+                                        {{$purchases['address']}}
+                                    @endif
+                            </textarea>
 
                             @error('address.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -109,7 +136,12 @@
                         </td>
 
                         <td>
-                            <input type="text" name="NIP[ ]" class="form-control @error('NIP.'.$key) is-invalid @enderror" value="{{old('NIP.'.$key)}}">
+                            <input type="text" name="NIP[ ]" class="form-control @error('NIP.'.$key) is-invalid @enderror"
+                                    @if(old('NIP.'.$key))
+                                        value="{{old('NIP.'.$key)}}"
+                                    @elseif(isset($purchases['NIP']))
+                                        value="{{$purchases['NIP']}}"
+                                    @endif>
 
                             @error('NIP.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -119,7 +151,12 @@
                         </td>
 
                         <td>
-                            <input type="text" name="netto[ ]" class="form-control @error('netto.'.$key) is-invalid @enderror" value="{{old('netto.'.$key)}}">
+                            <input type="text" name="netto[ ]" class="form-control @error('netto.'.$key) is-invalid @enderror"
+                                    @if(old('netto.'.$key))
+                                        value="{{old('netto.'.$key)}}"
+                                    @elseif(isset($purchases['netto']))
+                                        value="{{$purchases['netto']}}"
+                                    @endif>
 
                             @error('netto.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -129,7 +166,12 @@
                         </td>
 
                         <td>
-                            <input type="text" name="vat[ ]" class="form-control @error('vat.'.$key) is-invalid @enderror" value="{{old('vat.'.$key)}}">
+                            <input type="text" name="vat[ ]" class="form-control @error('vat.'.$key) is-invalid @enderror"
+                                    @if(old('vat.'.$key))
+                                        value="{{old('vat.'.$key)}}"
+                                    @elseif(isset($purchases['vat']))
+                                        value="{{$purchases['vat']}}"
+                                    @endif>
 
                             @error('vat.'.$key)
                             <span class="invalid-feedback" role="alert">
@@ -139,7 +181,11 @@
                         </td>
 
                         <td>
-                            <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror" value="{{old('brutto.'.$key)}}">
+                            <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror"
+                                   @if(old('brutto.'.$key)) value="{{old('brutto.'.$key)}}"
+                                   @elseif(isset($purchases['brutto']))
+                                   value="{{$purchases['brutto']}}"
+                                @endif>
 
                             @error('brutto.'.$key)
                             <span class="invalid-feedback" role="alert">
