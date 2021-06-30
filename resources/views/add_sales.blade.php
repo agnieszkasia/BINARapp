@@ -1,26 +1,6 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layout')
 
-        <title>Laravel</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-
-        <!-- Styles -->
-        <link rel="stylesheet" href="{{asset('css/app.css')}}">
-        <link rel="stylesheet" href="{{asset('css/style.css')}}">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-        <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
-
-    </head>
-    <body class="bg-gray">
-    <div class="justify-content-center">
+@section('content')
         <form action="{{route('add_purchases')}}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -35,7 +15,7 @@
                 </div>
 
                 <div class="bg-white col-12 ">
-                    <div class="bg-secondary col-6 p-1"></div>
+                    <div class="bg-warning col-6 p-1"></div>
                 </div>
             </div>
 
@@ -126,9 +106,8 @@
             </div>
         </form>
 
-    </div>
+@endsection
 
-    </body>
+@section('script')
     <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
-
-</html>
+@endsection
