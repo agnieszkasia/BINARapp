@@ -14,6 +14,7 @@ Project is created with:
 ## Functionality
 * Reading sales invocices data from ods file
 * Adding undocumented sales via the form
+* Adding undocumented sales from the sales statement files (.csv) from Allegro
 * Adding purchase invoices via the form
 * Generating tax settlements files (.csv, .xml, .ods)
 
