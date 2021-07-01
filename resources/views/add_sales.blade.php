@@ -20,17 +20,17 @@
             </div>
 
             <div class="col-12 d-flex bg-black text-white text-center mt-0">
-                <div class="col-6 h5 py-3 my-0 rounded-top mt-3">Link</div>
-                <div class="col-6 h5 py-3 my-0 bg-gray rounded-top mt-3">Formularz</div>
+                <div class="col-6 h5 py-3 my-0 bg-gray rounded-top mt-3">Plik</div>
+                <div class="col-6 h5 py-3 my-0 rounded-top mt-3">Formularz</div>
             </div>
 
-            <div class="col-6 m-auto mt-5 visually-hidden">
-                Wybierz pliki html
+            <div class="col-6 m-auto mt-5">
+                Wybierz pliki CSV
                 <input type="file" id="link" name="link[]" multiple class="form-control">
 
             </div>
 
-            <div class="">
+            <div class="visually-hidden">
                 <table class="table ">
                     <thead class="table-borderless text-white">
                         <tr>
