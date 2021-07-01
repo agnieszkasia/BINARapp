@@ -231,12 +231,12 @@ class TaxSettlementController extends Controller{
             }
         } else $sales = null;
 
-        dd($sales);
 
         Session::put('sales', $sales);
-        Session::put('salesCount', count($sales));
+        if ($sales !== null) Session::put('salesCount', count($sales));
+        else Session::put('salesCount', 1);
 
-        $this->showAddPurchasesPage();
+        return $this->showAddPurchasesPage();
     }
 
     public function showAddPurchasesPage(){
@@ -279,6 +279,8 @@ class TaxSettlementController extends Controller{
         Session::put('purchases', $purchases);
         Session::put('purchasesCount', count($purchases));
 
+        return $this->showSummaryPage();
+
     }
 
     public function showSummaryPage(){
@@ -312,7 +314,8 @@ class TaxSettlementController extends Controller{
         $undefinedSalesVat = 0;
         $undefinedSalesBrutto = 0;
 
-        if (isset($sales)) {
+
+        if (isset($sales[0]['issue_date'])) {
             foreach ($sales as $sale) {
                 $undefinedSalesNetto += (int)$sale['netto'];
                 $undefinedSalesVat += (int)$sale['vat'];
