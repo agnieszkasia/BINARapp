@@ -8,7 +8,9 @@
                 DODAJ SPRZEDAŻ NIEUDOKUMENTOWANĄ
 
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                    <a class="btn btn-next" href="{{ url('/add_sales') }}">WSTECZ</a>
+                    <a class="btn btn-next" onclick="return confirm('Czy na pewno chcesz przejść do poprzedniej strony? ' +
+                     'Wprowadzone zmiany zostaną utracone')" href="{{ url('/add_sales') }}">WSTECZ</a>
+
                     <button type="submit" class="btn btn-next" name="fileSales" id="dataOrigin">DALEJ</button>
                 </div>
 

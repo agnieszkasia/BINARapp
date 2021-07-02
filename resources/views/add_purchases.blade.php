@@ -8,13 +8,13 @@
                 DODAJ FAKTURY ZAKUPU
 
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                    <a class="btn btn-next" href="{{ url('/add_sales') }}">WSTECZ</a>
+                    <a class="btn btn-next" href="{{ url('/add_sales_form') }}">WSTECZ</a>
 
                     <button type="submit" class="btn btn-next">PODSUMOWANIE</button>
                 </div>
 
                 <div class="bg-white col-12  ">
-                    <div class="bg-warning col-9 p-1"></div>
+                    <div class="bg-warning col-4-5 p-1"></div>
                 </div>
 
             </div>
