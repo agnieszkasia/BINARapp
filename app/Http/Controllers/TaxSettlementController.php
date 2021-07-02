@@ -207,30 +207,38 @@ class TaxSettlementController extends Controller{
 
     public function addSales(Request $request){
 
-        $request->validate([
-            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
-            'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
-            'quantity.*' => ['required', 'integer'],
-            'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
-        ]);
+        if ($request->has('fileSales')) {
+            $sales = $this->readSalesStatementFile();
 
-        if (isset($request['quantity'][0])) {
-            foreach ($request['due_date'] as $key => $sale) {
-                $sales[$key]['due_date'] = $request['due_date'][$key];
-                if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
-                else $sales[$key]['products_names'] = $request['products_names'][$key];
 
-                $price = str_replace(",", ".", $request['products'][$key]);
+        }elseif ($request->has('formSales')) {
+            $request->validate([
+                'due_date.*' => ['required', 'string', 'regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+                'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
+                'quantity.*' => ['required', 'integer'],
+                'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+            ]);
 
-                $products = $price * $request['quantity'][$key];
-                $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
-                $sales[$key]['vat'] = round($products * 0.23, 2);
-                $sales[$key]['brutto'] = $products;
-                $sales[$key]['quantity'] = $request['quantity'][$key];
-                $sales[$key]['products'] = $request['products'][$key];
-            }
-        } else $sales = null;
+            if (isset($request['quantity'][0])) {
+                foreach ($request['due_date'] as $key => $sale) {
+                    $sales[$key]['due_date'] = $request['due_date'][$key];
+                    if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
+                    else $sales[$key]['products_names'] = $request['products_names'][$key];
 
+                    $price = str_replace(",", ".", $request['products'][$key]);
+
+                    $products = $price * $request['quantity'][$key];
+                    $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
+                    $sales[$key]['vat'] = round($products * 0.23, 2);
+                    $sales[$key]['brutto'] = $products;
+                    $sales[$key]['quantity'] = $request['quantity'][$key];
+                    $sales[$key]['products'] = $request['products'][$key];
+                }
+            } else $sales = null;
+
+
+
+        }
 
         Session::put('sales', $sales);
         if ($sales !== null) Session::put('salesCount', count($sales));
@@ -239,7 +247,77 @@ class TaxSettlementController extends Controller{
         return $this->showAddPurchasesPage();
     }
 
+    public function readSalesStatementFile(): array{
+
+        $filesPaths = $_FILES['link']['tmp_name'];
+        foreach ($filesPaths as $filePath) {
+            $file[] = $this->readCSV($filePath, array('delimiter' => ','));
+            $undocumentedOrders =$this->getUndocumentedOrdersData($file);
+            $items = $this->getItems($file);
+
+            $i=0;
+            foreach($items as $itemKey=>$item){
+                foreach ($undocumentedOrders as $orderKey=>$order){
+                    if(array_search($item[1],$order) !== false) {
+                        $value[$i] = $itemKey . "  -  " . $orderKey;
+
+                        $sales[$i]['due_date'] = date("d.m.Y",strtotime($order[4]));
+                        $sales[$i]['products_names'] = $item[5];
+
+
+                        $products = $item[6] * $item[7];
+                        $sales[$i]['netto'] = (int)round($products - ($products * 0.23), 2);
+                        $sales[$i]['vat'] = (int)round($products * 0.23, 2);
+                        $sales[$i]['brutto'] = (int)$products;
+                        $sales[$i]['quantity'] = $item[6];
+                        $sales[$i]['products'] = $item[7];
+
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        return $sales;
+    }
+
+    public function getUndocumentedOrdersData($file): array{
+
+        foreach ($file as $orders) {
+            foreach ($orders as $key=>$sale) {
+                    if (!is_bool($sale) && $sale[0] == 'order' && $sale[5] == 'SENT' && $sale[37] == '') {
+                    $order[] = $sale;
+                }
+            }
+        }
+
+        return $order;
+    }
+
+    public function getItems($file){
+        $items = array();
+        foreach ($file as $sales) {
+            foreach ($sales as $key=>$sale) {
+                if (!is_bool($sale) &&  $sale[0] == 'lineItem') {
+                    $items[] = $sale;
+                }
+            }
+        }
+        return $items;
+    }
+
+
+    public function readCSV($csvFile, $array){
+        $file_handle = fopen($csvFile, 'r');
+        while (!feof($file_handle)) {
+            $line_of_text[] = fgetcsv($file_handle, 0, $array['delimiter']);
+        }
+        fclose($file_handle);
+        return $line_of_text;
+    }
+
     public function showAddPurchasesPage(){
+//        dd(\session('sales'));
 
         if (session('purchasesCount') == null) Session::put('purchasesCount', ['']);
         if (session('purchases') == null) Session::put('purchases', ['']);
@@ -284,6 +362,8 @@ class TaxSettlementController extends Controller{
     }
 
     public function showSummaryPage(){
+
+//        dd(\session('sales'));
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');
@@ -315,7 +395,7 @@ class TaxSettlementController extends Controller{
         $undefinedSalesBrutto = 0;
 
 
-        if (isset($sales[0]['issue_date'])) {
+        if (isset($sales[0]['due_date'])) {
             foreach ($sales as $sale) {
                 $undefinedSalesNetto += (int)$sale['netto'];
                 $undefinedSalesVat += (int)$sale['vat'];

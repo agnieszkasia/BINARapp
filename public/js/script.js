@@ -53,3 +53,34 @@ $('tbody').on('click', '.deleteLink', function (){
     console.log('ok');
     $(this).parent().parent().remove();
 })
+
+$('#form').click(function (){
+    $('#form').addClass("bg-gray");
+    $('#file').removeClass("bg-gray");
+    $('#fileContainer').addClass("visually-hidden");
+    $('#formContainer').removeClass("visually-hidden");
+    $('#dataOrigin').attr('name', 'formSales');
+
+})
+
+$('#file').click(function (){
+    $('#file').addClass("bg-gray");
+    $('#form').removeClass("bg-gray");
+    $('#fileContainer').removeClass("visually-hidden");
+    $('#formContainer').addClass("visually-hidden");
+    $('#dataOrigin').attr('name', 'fileSales');
+
+})
+
+function checkfile(sender) {
+    var validExts = new Array(".csv");
+    var fileExt = sender.value;
+    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+    if (validExts.indexOf(fileExt) < 0) {
+        alert("Niepoprawny format plików. Obługiwane rozszerzenie to  " +
+            validExts.toString());
+        $("#link").val(null);
+        return false;
+    }
+    else return true;
+}

@@ -9,9 +9,7 @@
 
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
                     <a class="btn btn-next" href="{{ url('/show') }}">WSTECZ</a>
-
-{{--                    <input type="hidden" name="invoices" value="{{json_encode($invoices)}}">--}}
-                    <button type="submit" class="btn btn-next">DALEJ</button>
+                    <button type="submit" class="btn btn-next" name="fileSales" id="dataOrigin">DALEJ</button>
                 </div>
 
                 <div class="bg-white col-12 ">
@@ -20,17 +18,28 @@
             </div>
 
             <div class="col-12 d-flex bg-black text-white text-center mt-0">
-                <div class="col-6 h5 py-3 my-0 bg-gray rounded-top mt-3">Plik</div>
-                <div class="col-6 h5 py-3 my-0 rounded-top mt-3">Formularz</div>
+                <div id="file" class="col-6 h5 py-3 my-0 bg-gray rounded-top mt-3">Plik</div>
+                <div id="form" class="col-6 h5 py-3 my-0 rounded-top mt-3">Formularz</div>
             </div>
 
-            <div class="col-6 m-auto mt-5">
-                Wybierz pliki CSV
-                <input type="file" id="link" name="link[]" multiple class="form-control">
+            <div id="fileContainer" class="col-6 m-auto mt-5">
+                <div class="text-white h3">
+                    Wybierz pliki CSV
+
+                </div>
+                <input type="file" id="link" name="link[]" multiple class="form-control" accept=".csv" onchange="checkfile(this);">
+
+                <div class="h5 text-white mt-5 text-center">
+                    Pliki CSV, które są obsługiwane to zestawienia sprzedaży z Allegro. <br>
+                    Aby dowiedzieć się jak wygenerować plik, kliknij
+                    <a class="link-warning text-decoration-none" href="https://allegro.pl/pomoc/dla-sprzedajacych/wystawianie-i-edycja-oferty/co-to-jest-zestawienie-sprzedazy-i-jak-je-wygenerowac-nl5Lgqb4wFj" target="_blank">
+                        TUTAJ
+                    </a>
+                </div>
 
             </div>
 
-            <div class="visually-hidden">
+            <div id="formContainer" class="visually-hidden">
                 <table class="table ">
                     <thead class="table-borderless text-white">
                         <tr>
