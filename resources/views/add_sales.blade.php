@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-        <form action="{{route('add_purchases')}}" method="POST" enctype="multipart/form-data">
+        <form action="{{route('add_sales_form')}}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
@@ -13,107 +13,31 @@
                 </div>
 
                 <div class="bg-white col-12 ">
-                    <div class="bg-warning col-6 p-1"></div>
+                    <div class="bg-warning col-2-5 p-1"></div>
                 </div>
             </div>
 
-            <div class="col-12 d-flex bg-black text-white text-center mt-0">
-                <div id="file" class="col-6 h5 py-3 my-0 bg-gray rounded-top mt-3">Plik</div>
-                <div id="form" class="col-6 h5 py-3 my-0 rounded-top mt-3">Formularz</div>
-            </div>
 
             <div id="fileContainer" class="col-6 m-auto mt-5">
                 <div class="text-white h3">
-                    Wybierz pliki CSV
+                    Wybierz pliki CSV.
+                </div>
 
+                <div class="text-white h5">
+                    Jeśli chcesz dodać sprzedaż nieudokumentowaną przez formularz - przejdź dalej.
                 </div>
                 <input type="file" id="link" name="link[]" multiple class="form-control" accept=".csv" onchange="checkfile(this);">
 
                 <div class="h5 text-white mt-5 text-center">
                     Pliki CSV, które są obsługiwane to zestawienia sprzedaży z Allegro. <br>
-                    Aby dowiedzieć się jak wygenerować plik, kliknij
-                    <a class="link-warning text-decoration-none" href="https://allegro.pl/pomoc/dla-sprzedajacych/wystawianie-i-edycja-oferty/co-to-jest-zestawienie-sprzedazy-i-jak-je-wygenerowac-nl5Lgqb4wFj" target="_blank">
+                    Aby wygenerować plik, kliknij
+{{--                    <a class="link-warning text-decoration-none" href="https://allegro.pl/pomoc/dla-sprzedajacych/wystawianie-i-edycja-oferty/co-to-jest-zestawienie-sprzedazy-i-jak-je-wygenerowac-nl5Lgqb4wFj" target="_blank">--}}
+                    <a class="link-warning text-decoration-none" href="https://allegro.pl/moje-allegro/sprzedaz/raporty-zamowien" target="_blank">
                         TUTAJ
                     </a>
                 </div>
 
             </div>
-
-            <div id="formContainer" class="visually-hidden">
-                <table class="table ">
-                    <thead class="table-borderless text-white">
-                        <tr>
-                            <th class="col-2">Data sprzedaży</th>
-                            <th class="col-5">Nazwa produktu</th>
-                            <th class="col-2">Ilość</th>
-                            <th class="col-2">Wartość jednego przedmiotu</th>
-                            <th class="col-1"><a href="javascript:void(0)" class="btn btn-add addRow">+</a> </th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-light">
-
-                    @foreach(session('sales') as $key=>$products)
-                        <tr>
-                            <td>
-                                <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
-                                        @if(old('due_date.'.$key)) value="{{old('due_date.'.$key)}}"
-                                        @elseif(isset($products['due_date']))
-                                        value="{{$products['due_date']}}"
-                                        @endif>
-
-                                @error('due_date.'.$key)
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </td>
-                            <td>
-                                <input type="text" name="products_names[ ]" class="form-control @error('products_names.'.$key) is-invalid @enderror"
-                                        @if(old('products_names.'.$key)) value="{{old('products_names.'.$key)}}"
-                                        @elseif(isset($products['products_names']))
-                                        value="{{$products['products_names']}}"
-                                        @endif>
-
-                                @error('products_names.'.$key)
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </td>
-                            <td>
-                                <input type="number" min="0" step="1" name="quantity[ ]" class="form-control @error('quantity.'.$key) is-invalid @enderror"
-                                        @if(old('quantity.'.$key)) value="{{old('quantity.'.$key)}}"
-                                        @elseif(isset($products['quantity']))
-                                        value="{{$products['quantity']}}"
-                                        @endif>
-
-                                @error('quantity.'.$key)
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </td>
-                            <td>
-                                <input type="text" name="products[ ]" class="form-control @error('products.'.$key) is-invalid @enderror"
-                                        @if(old('products.'.$key)) value="{{old('products.'.$key)}}"
-                                        @elseif(isset($products['products']))
-                                        value="{{$products['products']}}"
-                                        @endif>
-
-                                @error('products.'.$key)
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </td>
-                            <th><a href="javascript:void(0)" class="btn btn-next deleteRow">Usuń</a> </th>
-                        </tr>
-                    @endforeach
-
-                    </tbody>
-                </table>
-            </div>
-        </form>
 
 @endsection
 

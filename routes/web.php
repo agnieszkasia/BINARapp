@@ -23,7 +23,9 @@ Route::post('/show', [TaxSettlementController::class, 'addInvoices'])->name('sen
 Route::get('/show', [TaxSettlementController::class, 'show'])->name('send');
 Route::post('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
 Route::get('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales_page');
-Route::post('/add_purchases', [TaxSettlementController::class, 'addSales'])->name('add_purchases');
+Route::post('/add_sales_form', [TaxSettlementController::class, 'addSales'])->name('add_sales_form');
+Route::get('/add_sales_form', [TaxSettlementController::class, 'showAddSalesFormPage'])->name('add_sales_form_page');
+Route::post('/add_purchases', [TaxSettlementController::class, 'addSalesForm'])->name('add_purchases');
 Route::get('/add_purchases', [TaxSettlementController::class, 'showAddPurchasesPage'])->name('add_purchases');
 Route::post('/summary', [TaxSettlementController::class, 'addPurchases'])->name('summary');
 Route::get('/summary', [TaxSettlementController::class, 'showSummaryPage'])->name('summary');

@@ -20,7 +20,7 @@
             </div>
 
             <div class="bg-white col-12 my-1 ">
-                <div class="bg-warning col-3 p-1"></div>
+                <div class="bg-warning col-1-5 p-1"></div>
             </div>
         </div>
         </form>

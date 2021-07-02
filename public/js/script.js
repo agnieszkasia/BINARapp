@@ -61,6 +61,8 @@ $('#form').click(function (){
     $('#formContainer').removeClass("visually-hidden");
     $('#dataOrigin').attr('name', 'formSales');
 
+    $("input").prop('required',true);
+
 })
 
 $('#file').click(function (){
@@ -69,6 +71,8 @@ $('#file').click(function (){
     $('#fileContainer').removeClass("visually-hidden");
     $('#formContainer').addClass("visually-hidden");
     $('#dataOrigin').attr('name', 'fileSales');
+
+    $("input").prop('required',true);
 
 })
 

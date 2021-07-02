@@ -207,44 +207,26 @@ class TaxSettlementController extends Controller{
 
     public function addSales(Request $request){
 
-        if ($request->has('fileSales')) {
+
+        $sales = [''];
+//        dd($_FILES);
+        if ($_FILES['link']['tmp_name'][0] !== '') {
             $sales = $this->readSalesStatementFile();
 
 
-        }elseif ($request->has('formSales')) {
-            $request->validate([
-                'due_date.*' => ['required', 'string', 'regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
-                'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
-                'quantity.*' => ['required', 'integer'],
-                'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
-            ]);
-
-            if (isset($request['quantity'][0])) {
-                foreach ($request['due_date'] as $key => $sale) {
-                    $sales[$key]['due_date'] = $request['due_date'][$key];
-                    if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
-                    else $sales[$key]['products_names'] = $request['products_names'][$key];
-
-                    $price = str_replace(",", ".", $request['products'][$key]);
-
-                    $products = $price * $request['quantity'][$key];
-                    $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
-                    $sales[$key]['vat'] = round($products * 0.23, 2);
-                    $sales[$key]['brutto'] = $products;
-                    $sales[$key]['quantity'] = $request['quantity'][$key];
-                    $sales[$key]['products'] = $request['products'][$key];
-                }
-            } else $sales = null;
-
-
-
         }
+//        elseif ($request->has('formSales')) {
+//
+//
+//
+//
+//        }
 
         Session::put('sales', $sales);
         if ($sales !== null) Session::put('salesCount', count($sales));
         else Session::put('salesCount', 1);
 
-        return $this->showAddPurchasesPage();
+        return $this->showAddSalesFormPage();
     }
 
     public function readSalesStatementFile(): array{
@@ -314,6 +296,46 @@ class TaxSettlementController extends Controller{
         }
         fclose($file_handle);
         return $line_of_text;
+    }
+
+    public function showAddSalesFormPage(){
+        if (session('salesCount') == null) Session::put('salesCount', ['']);
+        if (session('sales') == null) Session::put('sales', ['']);
+
+        return view('add_sales_form');
+    }
+
+    public function addSalesForm(Request $request){
+
+        $request->validate([
+            'due_date.*' => ['required', 'string', 'regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+            'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
+            'quantity.*' => ['required', 'integer'],
+            'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+        ]);
+
+        if (isset($request['quantity'][0])) {
+            foreach ($request['due_date'] as $key => $sale) {
+                $sales[$key]['due_date'] = $request['due_date'][$key];
+                if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
+                else $sales[$key]['products_names'] = $request['products_names'][$key];
+
+                $price = str_replace(",", ".", $request['products'][$key]);
+
+                $products = $price * $request['quantity'][$key];
+                $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
+                $sales[$key]['vat'] = round($products * 0.23, 2);
+                $sales[$key]['brutto'] = $products;
+                $sales[$key]['quantity'] = $request['quantity'][$key];
+                $sales[$key]['products'] = $request['products'][$key];
+            }
+        } else $sales = null;
+
+        Session::put('sales', $sales);
+        if ($sales !== null) Session::put('salesCount', count($sales));
+        else Session::put('salesCount', 1);
+
+        return $this->showAddPurchasesPage();
     }
 
     public function showAddPurchasesPage(){

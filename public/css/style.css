@@ -41,3 +41,23 @@
 .bg-gray{
     background-color: #343434;
 }
+
+.col-1-5 {
+    flex: 0 0 auto;
+    width: 20%;
+}
+
+.col-2-5 {
+    flex: 0 0 auto;
+    width: 40%;
+}
+
+.col-3-5 {
+    flex: 0 0 auto;
+    width: 60%;
+}
+
+.col-4-5 {
+    flex: 0 0 auto;
+    width: 80%;
+}
