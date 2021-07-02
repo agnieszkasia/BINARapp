@@ -10,11 +10,14 @@ Project is created with:
 * Laravel 8.44
 * Bootstrap 5
 * Spout Library, PhpSpreadsheet Library
+* jQuery
 
 ## Functionality
 * Reading sales invocices data from ods file
-* Adding undocumented sales via the form
+* Highlighting similar invoices and invoices with the GTU code
 * Adding undocumented sales from the sales statement files (.csv) from Allegro
+* Editing and deleting data from sales statement files
+* Adding undocumented sales via the form
 * Adding purchase invoices via the form
 * Generating tax settlements files (.csv, .xml, .ods)
 
