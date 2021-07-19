@@ -26,9 +26,9 @@
                         <th class="col-1">Data wystawienia</th>
                         <th class="col-1">Data sprzedaży</th>
                         <th scope="col">Numer faktury</th>
+                        <th class="col-1">NIP</th>
                         <th scope="col">Nabywca</th>
                         <th scope="col">Adres</th>
-                        <th class="col-1">NIP</th>
                         <th class="col-1">Netto</th>
                         <th class="col-1">VAT</th>
                         <th class="col-1">Brutto</th>
@@ -84,6 +84,30 @@
                             @enderror
                         </td>
 
+                        <input type="hidden" id="hdnSession" data-value="{{json_encode(session('companiesData'))}}" />
+
+
+                        <td>
+                            <input type="text" name="NIP[ ]" id="companyId" list="companiesData" class="form-control @error('NIP.'.$key) is-invalid @enderror"
+                                   @if(old('NIP.'.$key))
+                                   value="{{old('NIP.'.$key)}}"
+                                   @elseif(isset($purchases['NIP']))
+                                   value="{{$purchases['NIP']}}"
+                                @endif>
+
+                            @error('NIP.'.$key)
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+
+                            <datalist id="companiesData">
+                                @for($i=0; $i<count(session('companiesData')); $i++)
+                                    <option value="{{ session('companiesData')[$i][2] }}" class="form-control"></option>
+                                @endfor
+                            </datalist>
+                        </td>
+
                         <td>
                             <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company.'.$key) is-invalid @enderror" >@if(old('company.'.$key)){{old('company.'.$key)}}@elseif(isset($purchases['company'])){{$purchases['company']}}@endif</textarea>
 
@@ -98,21 +122,6 @@
                             <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">@if(old('address.'.$key)){{old('address.'.$key)}}@elseif(isset($purchases['address'])){{$purchases['address']}}@endif</textarea>
 
                             @error('address.'.$key)
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </td>
-
-                        <td>
-                            <input type="text" name="NIP[ ]" class="form-control @error('NIP.'.$key) is-invalid @enderror"
-                                    @if(old('NIP.'.$key))
-                                        value="{{old('NIP.'.$key)}}"
-                                    @elseif(isset($purchases['NIP']))
-                                        value="{{$purchases['NIP']}}"
-                                    @endif>
-
-                            @error('NIP.'.$key)
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

@@ -76,6 +76,20 @@ $('#file').click(function (){
 
 })
 
+$('#companyId').change(function (){
+    let nip = $('#companyId').val();
+    let companies= $("#hdnSession").data('value');
+    // let key = $.inArray(nip, companies);
+    if(nip in companies){
+        alert(companies[nip])
+    } else {
+        alert("This number does not exists")
+    }
+    // console.log(nip, companies);
+})
+
+
+
 function checkfile(sender) {
     var validExts = new Array(".csv");
     var fileExt = sender.value;
@@ -88,3 +102,5 @@ function checkfile(sender) {
     }
     else return true;
 }
+
+

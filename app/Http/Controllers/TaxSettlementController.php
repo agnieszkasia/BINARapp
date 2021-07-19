@@ -294,6 +294,7 @@ class TaxSettlementController extends Controller{
         while (!feof($file_handle)) {
             $line_of_text[] = fgetcsv($file_handle, 0, $array['delimiter']);
         }
+        if (end($line_of_text)==false) array_pop($line_of_text);
         fclose($file_handle);
         return $line_of_text;
     }
@@ -339,7 +340,9 @@ class TaxSettlementController extends Controller{
     }
 
     public function showAddPurchasesPage(){
-//        dd(\session('sales'));
+
+        $companiesData = $this->readCSV(public_path('files/DaneFirm.csv'), array('delimiter' => ';'));
+        Session::put('companiesData', $companiesData);
 
         if (session('purchasesCount') == null) Session::put('purchasesCount', ['']);
         if (session('purchases') == null) Session::put('purchases', ['']);
