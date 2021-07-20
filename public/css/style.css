@@ -61,3 +61,28 @@
     flex: 0 0 auto;
     width: 80%;
 }
+
+.col-005 {
+    flex: 0 0 auto;
+    width: 5%;
+}
+
+.col-006 {
+    flex: 0 0 auto;
+    width: 6%;
+}
+
+.col-007 {
+    flex: 0 0 auto;
+    width: 7%;
+}
+
+.col-012 {
+    flex: 0 0 auto;
+    width: 12%;
+}
+
+.px-01 {
+    padding-right: 0.2rem;
+    padding-left: 0.2rem;
+}

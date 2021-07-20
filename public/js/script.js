@@ -1,5 +1,4 @@
 $('thead').on('click', '.addRow', function (){
-    console.log('ok');
     var tr = "<tr id='group[ ]'>" +
         "<td><input type='text' name='due_date[ ]' class='form-control'></td>" +
         "<td><input type='text' name='products_names[ ]' class='form-control'></td>" +
@@ -12,19 +11,22 @@ $('thead').on('click', '.addRow', function (){
 });
 
 $('tbody').on('click', '.deleteRow', function (){
-    console.log('ok');
     $(this).parent().parent().remove();
 })
 
 $('thead').on('click', '.addPurchaseRow', function (){
-    console.log('ok');
-    var tr = "<tr id='group[ ]'>" +
+    var tr = "<tr>" +
         "<td><input type='text' name='issue_date[ ]' class='form-control'></td>" +
         "<td><input type='text' name='due_date[ ]' class='form-control'></td>" +
         "<td><input type='text' name='invoice_number[ ]' class='form-control'></td>" +
+        "<td><input type='text' name='NIP[ ]' id='nipId' list='companiesData' class='form-control'></td>" +
+        "<datalist id='companiesData'>" +
+        "                                @for($i=0; $i<count(session('companiesData')); $i++)\n" +
+        "                                    <option value='{{ session(\"companiesData\")[$i][2] }}' class='form-control'></option>" +
+        "                                @endfor" +
+        "                            </datalist>" +
         "<td><textarea type='text' rows='1' name='company[ ]' class='form-control'></textarea></td>" +
         "<td><textarea type='text' rows='1' name='address[ ]' class='form-control'></textarea></td>" +
-        "<td><input type='text' name='NIP[ ]' class='form-control'></td>" +
         "<td><input type='text' name='netto[ ]' class='form-control'></td>" +
         "<td><input type='text' name='vat[ ]' class='form-control'></td>" +
         "<td><input type='text' name='brutto[ ]' class='form-control'></td>" +
@@ -32,15 +34,17 @@ $('thead').on('click', '.addPurchaseRow', function (){
         "</tr>"
 
     $('tbody').append(tr);
+
+
+
+
 });
 
 $('tbody').on('click', '.deletePurchaseRow', function (){
-    console.log('ok');
     $(this).parent().parent().remove();
 })
 
 $('thead').on('click', '.addLink', function (){
-    console.log('ok');
     var tr = "<tr id='group[ ]'>" +
         "<td><input type='text' name='link[ ]' class='form-control'></td>" +
         "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
@@ -50,7 +54,6 @@ $('thead').on('click', '.addLink', function (){
 });
 
 $('tbody').on('click', '.deleteLink', function (){
-    console.log('ok');
     $(this).parent().parent().remove();
 })
 
@@ -76,19 +79,29 @@ $('#file').click(function (){
 
 })
 
-$('#companyId').change(function (){
-    let nip = $('#companyId').val();
-    let companies= $("#hdnSession").data('value');
-    // let key = $.inArray(nip, companies);
-    if(nip in companies){
-        alert(companies[nip])
-    } else {
-        alert("This number does not exists")
-    }
-    // console.log(nip, companies);
-})
 
+$('tbody').on('change', 'input', function (){
+    var company = $(this).parent().next("td").children();
+    var address = $(this).parent().next("td").next('td').children();
 
+    let nip = $(this).val();
+    console.log(nip);
+    const companies= $("#hdnSession").data('value');
+    $(companies).each(function (index, value){
+        if(nip === value[2]){
+            company.val(value[0]);
+            address.val(value[1]);
+
+            if(value[0].length >30){
+                company.attr('rows', '2');
+            }
+            if(value[1].length >30){
+                address.attr('rows', '2');
+            }
+
+        }
+    })
+});
 
 function checkfile(sender) {
     var validExts = new Array(".csv");

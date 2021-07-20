@@ -23,16 +23,16 @@
             <table class="table table-light mt-0">
                 <thead class="table-dark">
                     <tr>
-                        <th class="col-1">Data wystawienia</th>
-                        <th class="col-1">Data sprzedaży</th>
-                        <th scope="col">Numer faktury</th>
+                        <th class="col-007">Data wystawienia</th>
+                        <th class="col-007">Data sprzedaży</th>
+                        <th class="col-012">Numer faktury</th>
                         <th class="col-1">NIP</th>
                         <th scope="col">Nabywca</th>
                         <th scope="col">Adres</th>
-                        <th class="col-1">Netto</th>
-                        <th class="col-1">VAT</th>
-                        <th class="col-1">Brutto</th>
-                        <th class="col-1"><a href="javascript:void(0)" class="btn btn-add addPurchaseRow">+</a> </th>
+                        <th class="col-006">Netto</th>
+                        <th class="col-006">VAT</th>
+                        <th class="col-006">Brutto</th>
+                        <th class="col-005"><a href="javascript:void(0)" class="btn btn-add addPurchaseRow">+</a> </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@
 
 
                         <td>
-                            <input type="text" name="NIP[ ]" id="companyId" list="companiesData" class="form-control @error('NIP.'.$key) is-invalid @enderror"
+                            <input type="text" name="NIP[ ]" id="nipId" list="companiesData" class="form-control @error('NIP.'.$key) is-invalid @enderror"
                                    @if(old('NIP.'.$key))
                                    value="{{old('NIP.'.$key)}}"
                                    @elseif(isset($purchases['NIP']))
@@ -109,7 +109,7 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="company[ ]" class="form-control @error('company.'.$key) is-invalid @enderror" >@if(old('company.'.$key)){{old('company.'.$key)}}@elseif(isset($purchases['company'])){{$purchases['company']}}@endif</textarea>
+                            <textarea type="text" rows="1" name="company[ ]" id="companyId" class="form-control @error('company.'.$key) is-invalid @enderror" >@if(old('company.'.$key)){{old('company.'.$key)}}@elseif(isset($purchases['company'])){{$purchases['company']}}@endif</textarea>
 
                             @error('company.'.$key)
                             <span class="invalid-feedback" role="alert">

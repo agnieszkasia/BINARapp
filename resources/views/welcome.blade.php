@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>BINARapp</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -19,16 +19,15 @@
     </head>
     <body class="bg-black m-auto">
     <div class="justify-content-center vh-100 d-flex justify-content-center">
-            <div class="pt-3 m-auto">
-                <div class="m-auto display-1 text-warning mb-3">
-                    BINAR<span class="text-white-50">app</span>
-                </div>
-
-                <div class="text-center">
-                    <a type="submit" class="btn btn-next fw-bold " href="{{ url('/add_files') }}">DODAJ FAKTURY</a>
-                </div>
-
+        <div class="pt-3 m-auto">
+            <div class="m-auto display-1 text-warning mb-3">
+                BINAR<span class="text-white-50">app</span>
             </div>
+
+            <div class="text-center">
+                <a type="submit" class="btn btn-next fw-bold " href="{{ url('/add_files') }}">DODAJ FAKTURY</a>
+            </div>
+        </div>
     </div>
 
     </body>
