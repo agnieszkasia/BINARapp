@@ -198,6 +198,39 @@ class TaxSettlementController extends Controller{
         return view('show_invoices');
     }
 
+    public function showAddCorrectionInvoicePage(){
+        return view('add_correction_invoice');
+
+    }
+
+    public function addCorrectionInvoice(Request $request){
+
+//        dd($request);
+//        dd(\session('invoices'));
+
+        $invoices = session('invoices');
+
+        $invoice['issue_date'] = $request['issue_date'];
+        $invoice['due_date'] = $request['due_date'];
+        $invoice['invoice_number'] = $request['invoice_number'];
+        $invoice['company'] = $request['company'];
+        $invoice['address'] = $request['address'];
+        $invoice['NIP'] = $request['NIP'];
+        $invoice['products_names'] = '';
+        $invoice['products_number'] = 1;
+        $invoice['products'] = (float)$request['brutto'];
+        $invoice['service'] = 0;
+        $invoice['netto'] = (float)$request['netto'];
+        $invoice['vat'] = (float)$request['vat'];
+        $invoice['brutto'] = (float)$request['brutto'];
+
+        array_push($invoices, $invoice);
+
+        Session::put('invoices', $invoices);
+
+        return $this->show();
+    }
+
     public function showAddSalesPage(){
         if (session('salesCount') == null) Session::put('salesCount', ['']);
         if (session('sales') == null) Session::put('sales', ['']);
@@ -209,18 +242,9 @@ class TaxSettlementController extends Controller{
 
 
         $sales = [''];
-//        dd($_FILES);
         if ($_FILES['link']['tmp_name'][0] !== '') {
             $sales = $this->readSalesStatementFile();
-
-
         }
-//        elseif ($request->has('formSales')) {
-//
-//
-//
-//
-//        }
 
         Session::put('sales', $sales);
         if ($sales !== null) Session::put('salesCount', count($sales));
@@ -388,7 +412,6 @@ class TaxSettlementController extends Controller{
 
     public function showSummaryPage(){
 
-//        dd(\session('sales'));
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');

@@ -21,6 +21,9 @@ Route::get('/add_files', [TaxSettlementController::class, 'showAddFilesPage'])->
 
 Route::post('/show', [TaxSettlementController::class, 'addInvoices'])->name('send');
 Route::get('/show', [TaxSettlementController::class, 'show'])->name('send');
+//Route::post('/add_correction_invoice', [TaxSettlementController::class, 'showAddCorrectionInvoicePage'])->name('add_correction_invoice');
+Route::get('/add_correction_invoice', [TaxSettlementController::class, 'showAddCorrectionInvoicePage'])->name('add_correction_invoice');
+Route::post('/add_correction_invoice', [TaxSettlementController::class, 'addCorrectionInvoice'])->name('add_sales_invoice');
 Route::post('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales');
 Route::get('/add_sales', [TaxSettlementController::class, 'showAddSalesPage'])->name('add_sales_page');
 Route::post('/add_sales_form', [TaxSettlementController::class, 'addSales'])->name('add_sales_form');

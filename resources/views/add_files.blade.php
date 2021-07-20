@@ -10,11 +10,8 @@
                 <div class="d-flex float-right justify-content-end mx-5">
                     <button type="submit" class="btn btn-next ">Dalej</button>
                 </div>
-
             </div>
-            <div class="bg-white col-12 p-1 ">
-
-            </div>
+            <div class="bg-white col-12 p-1 "></div>
 
             <div class="col-5 mx-auto mt-4 text-white">
 
@@ -113,13 +110,9 @@
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
-            </div>
 
-
-            <div class="col-5 mx-auto mt-4">
 
             </div>
-
 
         </form>
 

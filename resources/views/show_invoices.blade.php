@@ -16,6 +16,7 @@
                 </div>
 
                 <input type="hidden" name="invoices" value="{{json_encode(session('invoices'))}}">
+                <a class="btn btn-next" href="{{ url('/add_correction_invoice') }}">DODAJ FAKTURĘ KORYGUJĄCĄ</a>
                 <button type="submit" class="btn btn-next">DALEJ</button>
             </div>
 
