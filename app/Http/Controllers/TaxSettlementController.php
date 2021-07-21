@@ -217,9 +217,14 @@ class TaxSettlementController extends Controller{
         $invoice['products_number'] = 1;
         $invoice['products'] = (float)$request['brutto'];
         $invoice['service'] = 0;
-        $invoice['netto'] = (float)$request['netto'];
-        $invoice['vat'] = (float)$request['vat'];
-        $invoice['brutto'] = (float)$request['brutto'];
+
+        $netto = str_replace(",", ".", $request['netto']);
+        $vat = str_replace(",", ".", $request['vat']);
+        $brutto = str_replace(",", ".", $request['brutto']);
+
+        $invoice['netto'] = (float)$netto;
+        $invoice['vat'] = (float)$vat;
+        $invoice['brutto'] = (float)$brutto;
 
         array_push($invoices, $invoice);
 
@@ -330,6 +335,9 @@ class TaxSettlementController extends Controller{
 
     public function addSalesForm(Request $request){
 
+        Session::put('sales', $request['due_date']);
+
+
         $request->validate([
             'due_date.*' => ['required', 'string', 'regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
             'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
@@ -347,8 +355,8 @@ class TaxSettlementController extends Controller{
                 $price = str_replace(",", ".", $request['products'][$key]);
 
                 $products = $price * $request['quantity'][$key];
-                $sales[$key]['netto'] = round($products - ($products * 0.23), 2);
-                $sales[$key]['vat'] = round($products * 0.23, 2);
+                $sales[$key]['netto'] = round(($products/ 1.23), 2);
+                $sales[$key]['vat'] = round(($products - ($products/ 1.23)), 2);
                 $sales[$key]['brutto'] = $products;
                 $sales[$key]['quantity'] = $request['quantity'][$key];
                 $sales[$key]['products'] = $request['products'][$key];
@@ -374,6 +382,14 @@ class TaxSettlementController extends Controller{
     }
 
     public function addPurchases(Request $request){
+
+//        dd($request);
+
+        Session::put('purchases', $request['issue_date']);
+
+//        dd(\session('purchases'));
+
+
         $request->validate([
             'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
             'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -381,9 +397,9 @@ class TaxSettlementController extends Controller{
             'company.*' => ['required', 'string', 'max:255', 'min:2'],
             'address.*' => ['required', 'string', 'min:3', 'max:255'],
             'NIP.*' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
-            'netto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
-            'vat.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
-            'brutto.*' => ['required', 'numeric', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
+            'netto.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,2})?$/u', 'max:255'],
+            'vat.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,2})?$/u', 'max:255'],
+            'brutto.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,2})?$/u', 'max:255'],
         ]);
 
         $purchases = array();
@@ -444,9 +460,9 @@ class TaxSettlementController extends Controller{
 
         if (isset($sales[0]['due_date'])) {
             foreach ($sales as $sale) {
-                $undefinedSalesNetto += (int)$sale['netto'];
-                $undefinedSalesVat += (int)$sale['vat'];
-                $undefinedSalesBrutto += (int)$sale['brutto'];
+                $undefinedSalesNetto += (float)$sale['netto'];
+                $undefinedSalesVat += (float)$sale['vat'];
+                $undefinedSalesBrutto += (float)$sale['brutto'];
             }
         }
 

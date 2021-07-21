@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 class XMLFileController extends Controller
 {
     public function generateXMLFile($request, $company){
-
         $invoices = session('invoices');
-
         $purchases = session('purchases');
 
         $file = new DOMDocument('1.0', 'UTF-8');
@@ -174,6 +172,8 @@ class XMLFileController extends Controller
         $register = $file->createElement("Ewidencja");
         $JPK->appendChild($register);
 
+        $invoices = $this->addUndocumentedSalesToInvoices($request, $invoices);
+
         $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'], $register, $file);
         $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'], $register, $file);
 
@@ -188,8 +188,32 @@ class XMLFileController extends Controller
         unlink($filename);
     }
 
+    public function addUndocumentedSalesToInvoices($request, $invoices){
+
+        $stringDate = $invoices[count($invoices)-1]['due_date'];
+        $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
+
+        setlocale(LC_ALL, 'pl', 'pl_PL', 'pl_PL.ISO8859-2', 'plk', 'polish', 'Polish');
+        $monthName = strftime('%B', strtotime($lastDayOfMonth));
+
+
+        $sales['issue_date'] = $lastDayOfMonth;
+        $sales['due_date'] = $lastDayOfMonth;
+        $sales['invoice_number'] = 'brak';
+        $sales['company'] = 'sprzedaz bezrachunkowa miesiąc '.$monthName;
+        $sales['address'] = 'brak';
+        $sales['NIP'] = 'brak';
+        $sales['netto'] = $request['undefinedSalesNetto'];
+        $sales['vat'] = $request['undefinedSalesVat'];
+
+        array_push($invoices, $sales);
+
+        return $invoices;
+    }
+
     public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
 
+//dd($invoices);
         foreach ($invoices as $key => $invoice) {
 
             /* tag - SprzedazWiersz */

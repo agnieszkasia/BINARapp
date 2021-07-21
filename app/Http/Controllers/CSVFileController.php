@@ -53,8 +53,6 @@ class CSVFileController extends Controller{
 
         foreach ($purchases as $key => $purchase) {
 
-//            if (isset($purchases['issue_date'])) {
-
             $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
             $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
 
@@ -73,7 +71,6 @@ class CSVFileController extends Controller{
                 $purchase['due_date'] . ";;;" .
                 $purchase['netto'] . ";" .
                 $purchase['vat'] . ";;;;;;";
-//            }
         }
 
         $undefinedSalesNetto = str_replace(".", ",", $request['undefinedSalesNetto']);
