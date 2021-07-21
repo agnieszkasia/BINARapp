@@ -35,7 +35,7 @@ class CSVFileController extends Controller{
             $invoice['netto'] = str_replace(".", ",", $invoice['netto']);
             $invoice['vat'] = str_replace(".", ",", $invoice['vat']);
 
-            $invoice['company'] = str_replace("\"", "", $invoice['company']);
+            $invoice['company'] = str_replace("\n", " ", str_replace("\"", "", $invoice['company']));
 
 
             $lines[] = ";;;;;;;;;;;;" . ($key + 1) . ";" .
@@ -50,6 +50,13 @@ class CSVFileController extends Controller{
         }
 
         $purchases = session('purchases');
+
+        $sort = null;
+        foreach ($purchases as $key => $purchase) {
+            $sort[$key] = strtotime($purchase['issue_date']);
+        }
+
+        array_multisort($sort, SORT_ASC, $purchases);
 
         foreach ($purchases as $key => $purchase) {
 

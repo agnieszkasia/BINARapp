@@ -383,12 +383,7 @@ class TaxSettlementController extends Controller{
 
     public function addPurchases(Request $request){
 
-//        dd($request);
-
         Session::put('purchases', $request['issue_date']);
-
-//        dd(\session('purchases'));
-
 
         $request->validate([
             'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
@@ -430,6 +425,8 @@ class TaxSettlementController extends Controller{
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');
+
+//        dd($invoices);
 
         $purchasesNetto = 0;
         $purchasesVat = 0;

@@ -12,6 +12,13 @@ class XMLFileController extends Controller
         $invoices = session('invoices');
         $purchases = session('purchases');
 
+        $sort = null;
+        foreach ($purchases as $key => $purchase) {
+            $sort[$key] = strtotime($purchase['issue_date']);
+        }
+
+        array_multisort($sort, SORT_ASC, $purchases);
+
         $file = new DOMDocument('1.0', 'UTF-8');
 
         $stringDate = $invoices[count($invoices)-1]['due_date'];
@@ -294,11 +301,11 @@ class XMLFileController extends Controller
             $purchaseRow->appendChild($invoiceNumber);
 
             /* tag - DataZakupu */
-            $issueDate = $file->createElement("DataZakupu", $purchase['issue_date']);
+            $issueDate = $file->createElement("DataZakupu", date('Y-m-d' ,strtotime($purchase['issue_date'])));
             $purchaseRow->appendChild($issueDate);
 
             /* tag - DataWplywu */
-            $dueDate = $file->createElement("DataWplywu", $purchase['due_date']);
+            $dueDate = $file->createElement("DataWplywu", date('Y-m-d' ,strtotime($purchase['due_date'])));
             $purchaseRow->appendChild($dueDate);
 
             /* tag - K_42 */
