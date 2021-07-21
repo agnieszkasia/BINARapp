@@ -93,13 +93,12 @@ class ODSFileController extends Controller
     public function generateRZVFile($request){ //RZV - Rejestr Zakupów Vat
         $purchases = session('purchases');
 
-        if (isset($purchases['due_date'])) {
-            foreach ($purchases as $key => $purchase) {
-                $sort[$key] = strtotime($purchase['due_date']);
-            }
-
-            array_multisort($sort, SORT_ASC, $purchases);
+        foreach ($purchases as $key => $purchase) {
+            $sort[$key] = strtotime($purchase['issue_date']);
         }
+
+        array_multisort($sort, SORT_ASC, $purchases);
+
         $spreadsheet = new Spreadsheet();
 
         foreach ($purchases as $key => $purchase) {

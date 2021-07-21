@@ -170,10 +170,6 @@ class XMLFileController extends Controller
         $detailedItems = $file->createElement("PozycjeSzczegolowe");
         $declaration->appendChild($detailedItems);
 
-        /* tag - P_ORDZU XXXXXX */
-        $P_ORDZU = $file->createElement("P_10", '0');
-        $detailedItems->appendChild($P_ORDZU);
-
 
         /* tag - Ewidencja */
         $register = $file->createElement("Ewidencja");
