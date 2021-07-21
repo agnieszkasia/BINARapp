@@ -20,7 +20,7 @@ class ODSFileController extends Controller
 
 
         foreach ($allSales as $key => $sale) {
-            $sort[$key] = strtotime($sale['due_date']);
+            $sort[$key] = strtotime($sale['issue_date']);
         }
 
         array_multisort($sort, SORT_ASC, $allSales);
@@ -31,14 +31,14 @@ class ODSFileController extends Controller
 
         foreach ($allSales as $key => $sale) {
 
-            if ($sale['brutto'] !== null && !isset($sale['products']) && !isset($sale['service'])) {
+            if ($sale['brutto'] !== null && !isset($sale['service'])) {
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
             } elseif (isset($sale['products']) && $sale['products'] !== 0) {
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['products']);
@@ -47,7 +47,7 @@ class ODSFileController extends Controller
             if (isset($sale['service']) && $sale['service'] !== "0") {
                 $i++;
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['due_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);

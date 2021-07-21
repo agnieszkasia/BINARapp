@@ -35,12 +35,12 @@ class XMLFileController extends Controller
         $JPKAttribute->value = "http://www.w3.org/2001/XMLSchema-instance";
         $JPK->appendChild($JPKAttribute);
 
-        $JPKAttribute = $file->createAttribute('xmlns');
-        $JPKAttribute->value = "http://crd.gov.pl/wzor/2020/05/08/9393/";
-        $JPK->appendChild($JPKAttribute);
-
         $JPKAttribute = $file->createAttribute('xsi:schemaLocation');
         $JPKAttribute->value = "http://crd.gov.pl/wzor/2020/05/08/9393/ http://crd.gov.pl/wzor/2020/05/08/9393/schemat.xsd";
+        $JPK->appendChild($JPKAttribute);
+
+        $JPKAttribute = $file->createAttribute('xmlns');
+        $JPKAttribute->value = "http://crd.gov.pl/wzor/2020/05/08/9393/";
         $JPK->appendChild($JPKAttribute);
 
         $file->appendChild($JPK);
@@ -67,7 +67,7 @@ class XMLFileController extends Controller
         $head->appendChild($formVariant);
 
         /* tag - DataWytworzeniaJPK */
-        $date = $file->createElement("DataWytworzeniaJPK", str_replace(' ', 'T',Carbon::now()));
+        $date = $file->createElement("DataWytworzeniaJPK", str_replace(' ', 'T',Carbon::now()).'.000000');
         $head->appendChild($date);
 
         /* tag - NazwaSystemu */
@@ -166,7 +166,7 @@ class XMLFileController extends Controller
         $declaration->appendChild($detailedItems);
 
         /* tag - P_ORDZU XXXXXX */
-        $P_ORDZU = $file->createElement("P_ORDZU", 'null');
+        $P_ORDZU = $file->createElement("P_10", '0');
         $detailedItems->appendChild($P_ORDZU);
 
 
@@ -215,11 +215,11 @@ class XMLFileController extends Controller
             $salesRow->appendChild($invoiceNumber);
 
             /* tag - DataWystawienia */
-            $issueDate = $file->createElement("DataWystawienia", $invoice['issue_date']);
+            $issueDate = $file->createElement("DataWystawienia", date('Y-m-d' ,strtotime($invoice['issue_date'])));
             $salesRow->appendChild($issueDate);
 
             /* tag - DataSprzedazy */
-            $dueDate = $file->createElement("DataSprzedazy", $invoice['due_date']);
+            $dueDate = $file->createElement("DataSprzedazy", date('Y-m-d' ,strtotime($invoice['due_date'])));
             $salesRow->appendChild($dueDate);
 
             /* tag - K_19 */

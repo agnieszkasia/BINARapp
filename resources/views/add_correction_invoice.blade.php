@@ -100,11 +100,6 @@
                             </span>
                             @enderror
 
-                            <datalist id="companiesData">
-                                @for($i=0; $i<count(session('companiesData')); $i++)
-                                    <option value="{{ session('companiesData')[$i][2] }}" class="form-control"></option>
-                                @endfor
-                            </datalist>
                         </td>
 
                         <td>

@@ -205,9 +205,6 @@ class TaxSettlementController extends Controller{
 
     public function addCorrectionInvoice(Request $request){
 
-//        dd($request);
-//        dd(\session('invoices'));
-
         $invoices = session('invoices');
 
         $invoice['issue_date'] = $request['issue_date'];
@@ -267,6 +264,7 @@ class TaxSettlementController extends Controller{
                     if(array_search($item[1],$order) !== false) {
                         $value[$i] = $itemKey . "  -  " . $orderKey;
 
+                        $sales[$i]['issue_date'] = date("d.m.Y",strtotime($order[4]));
                         $sales[$i]['due_date'] = date("d.m.Y",strtotime($order[4]));
                         $sales[$i]['products_names'] = $item[5];
 
@@ -342,6 +340,7 @@ class TaxSettlementController extends Controller{
         if (isset($request['quantity'][0])) {
             foreach ($request['due_date'] as $key => $sale) {
                 $sales[$key]['due_date'] = $request['due_date'][$key];
+                $sales[$key]['issue_date'] = $request['due_date'][$key];
                 if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
                 else $sales[$key]['products_names'] = $request['products_names'][$key];
 
