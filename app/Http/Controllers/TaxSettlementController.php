@@ -422,6 +422,7 @@ class TaxSettlementController extends Controller{
 
     public function showSummaryPage(){
 
+
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');

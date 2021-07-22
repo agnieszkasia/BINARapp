@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 class XMLFileController extends Controller
 {
     public function generateXMLFile($request, $company){
+
+
         $invoices = session('invoices');
         $purchases = session('purchases');
 
@@ -17,7 +19,9 @@ class XMLFileController extends Controller
             $sort[$key] = strtotime($purchase['issue_date']);
         }
 
-        array_multisort($sort, SORT_ASC, $purchases);
+        if (is_array($sort)){
+            array_multisort($sort, SORT_ASC, $purchases);
+        }
 
         $file = new DOMDocument('1.0', 'UTF-8');
 
@@ -217,6 +221,9 @@ class XMLFileController extends Controller
     public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
 
 //dd($invoices);
+
+//        dd(session('invoices'));
+
         foreach ($invoices as $key => $invoice) {
 
             /* tag - SprzedazWiersz */
@@ -248,6 +255,13 @@ class XMLFileController extends Controller
             /* tag - DataSprzedazy */
             $dueDate = $file->createElement("DataSprzedazy", date('Y-m-d' ,strtotime($invoice['due_date'])));
             $salesRow->appendChild($dueDate);
+
+            /* tag - GTU_06 */
+            if (isset($invoice['gtu'])){
+                $gtu = $file->createElement("GTU_06", 1);
+                $salesRow->appendChild($gtu);
+            }
+
 
             /* tag - K_19 */
             $netto = $file->createElement("K_19", $invoice['netto']);
