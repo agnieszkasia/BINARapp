@@ -21,3 +21,18 @@ Project is created with:
 * Adding purchase invoices via the form
 * Generating tax settlements files (.csv, .xml, .ods)
 
+![Welcome Page](./images/1.jpg)
+
+![Comapny Infomation Page](./images/2.jpg)
+
+![Sales Invoices Page](./images/3.jpg)
+
+![Add Correction Invoice Page](./images/4.jpg)
+
+![Add Undocumented Sales Page](./images/5.jpg)
+
+![Undocumented Sales Form Page](./images/6.jpg)
+
+![Purchase Invoices Page](./images/7.jpg)
+
+![Summary Page](./images/8.jpg)
