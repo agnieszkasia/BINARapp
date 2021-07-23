@@ -35,9 +35,6 @@ $('thead').on('click', '.addPurchaseRow', function (){
 
     $('tbody').append(tr);
 
-
-
-
 });
 
 $('tbody').on('click', '.deletePurchaseRow', function (){
@@ -80,12 +77,12 @@ $('#file').click(function (){
 })
 
 
+
 $('tbody').on('change', 'input', function (){
     var company = $(this).parent().next("td").children();
     var address = $(this).parent().next("td").next('td').children();
 
     let nip = $(this).val();
-    console.log(nip);
     const companies= $("#hdnSession").data('value');
     $(companies).each(function (index, value){
         if(nip === value[2]){
@@ -101,6 +98,20 @@ $('tbody').on('change', 'input', function (){
 
         }
     })
+});
+
+
+$('#brutto').on('change', 'input', function (){
+    var netto = $(this).parent().next("td").children();
+    var vat = $(this).parent().next("td").next('td').children();
+
+    let brutto = $(this).val();
+    console.log(brutto);
+
+    let nettoValue = (brutto/1.23).toFixed(2)
+    netto.val(nettoValue);
+    vat.val((brutto-nettoValue).toFixed(2));
+
 });
 
 function checkfile(sender) {

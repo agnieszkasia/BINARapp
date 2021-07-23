@@ -29,9 +29,9 @@
                         <th class="col-1">NIP</th>
                         <th scope="col">Nabywca</th>
                         <th scope="col">Adres</th>
+                        <th class="col-006">Brutto</th>
                         <th class="col-006">Netto</th>
                         <th class="col-006">VAT</th>
-                        <th class="col-006">Brutto</th>
                         <th class="col-005"><a href="javascript:void(0)" class="btn btn-add addPurchaseRow">+</a> </th>
                     </tr>
                 </thead>
@@ -128,6 +128,20 @@
                             @enderror
                         </td>
 
+                        <td id="brutto">
+                            <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror"
+                                   @if(old('brutto.'.$key)) value="{{old('brutto.'.$key)}}"
+                                   @elseif(isset($purchases['brutto']))
+                                   value="{{$purchases['brutto']}}"
+                                @endif>
+
+                            @error('brutto.'.$key)
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </td>
+
                         <td>
                             <input type="text" name="netto[ ]" class="form-control @error('netto.'.$key) is-invalid @enderror"
                                     @if(old('netto.'.$key))
@@ -158,19 +172,7 @@
                             @enderror
                         </td>
 
-                        <td>
-                            <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror"
-                                   @if(old('brutto.'.$key)) value="{{old('brutto.'.$key)}}"
-                                   @elseif(isset($purchases['brutto']))
-                                   value="{{$purchases['brutto']}}"
-                                @endif>
 
-                            @error('brutto.'.$key)
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </td>
                         <th><a href="javascript:void(0)" class="btn btn-next deletePurchaseRow">Usuń</a> </th>
                     </tr>
                 @endforeach
