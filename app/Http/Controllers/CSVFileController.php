@@ -1,11 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Carbon\Carbon;
 use DateTime;
-use DOMDocument;
-use finfo;
-use Illuminate\Http\Request;
 
 class CSVFileController extends Controller{
     public function generateCSVFile($request, $company){
@@ -56,7 +52,7 @@ class CSVFileController extends Controller{
             $sort[$key] = strtotime($purchase['issue_date']);
         }
 
-        array_multisort($sort, SORT_ASC, $purchases);
+        if (isset($sort)) array_multisort($sort, SORT_ASC, $purchases);
 
         foreach ($purchases as $key => $purchase) {
 

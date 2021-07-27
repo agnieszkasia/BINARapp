@@ -84,10 +84,9 @@
                             @enderror
                         </td>
 
-                        <input type="hidden" id="hdnSession" data-value="{{json_encode(session('companiesData'))}}" />
-
-
                         <td>
+                            <input type="hidden" id="hdnSession" data-value="{{json_encode(session('companiesData'))}}" />
+
                             <input type="text" name="NIP[ ]" id="nipId" list="companiesData" class="form-control @error('NIP.'.$key) is-invalid @enderror"
                                    @if(old('NIP.'.$key))
                                    value="{{old('NIP.'.$key)}}"

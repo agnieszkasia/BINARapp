@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use DateTime;
-use DOMDocument;
-use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 
 class TaxSettlementController extends Controller{
@@ -71,11 +65,11 @@ class TaxSettlementController extends Controller{
         if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
         }
+        return null;
     }
 
     public function readInvoicesFiles(){
         $values = null;
-        $gtu = 0;
         $gtuCode = array();
 
         $filesPaths = $_FILES['file']['tmp_name'];
@@ -257,8 +251,7 @@ class TaxSettlementController extends Controller{
         return view('add_sales');
     }
 
-    public function addSales(Request $request){
-
+    public function addSales(){
 
         $sales = [''];
         if ($_FILES['link']['tmp_name'][0] !== '') {
@@ -512,12 +505,12 @@ class TaxSettlementController extends Controller{
 
         if ($request->has('generateDZSV')) {
             $controller = new ODSFileController();
-            $controller->generateDZSVFile($request);
+            $controller->generateDZSVFile();
         }
 
         if ($request->has('generateRZV')) {
             $controller = new ODSFileController();
-            $controller->generateRZVFile($request);
+            $controller->generateRZVFile();
         }
     }
 

@@ -6,9 +6,9 @@ use finfo;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
-class ODSFileController extends Controller
-{
-    public function generateDZSVFile($request){ //DZSV - Dzienne Zestawienie Sprzedaży Vat
+class ODSFileController extends Controller{
+
+    public function generateDZSVFile(){ //DZSV - Dzienne Zestawienie Sprzedaży Vat
         $invoices = session('invoices');
         $sales = session('sales');
 
@@ -90,14 +90,13 @@ class ODSFileController extends Controller
         return $sales;
     }
 
-    public function generateRZVFile($request){ //RZV - Rejestr Zakupów Vat
+    public function generateRZVFile(){ //RZV - Rejestr Zakupów Vat
         $purchases = session('purchases');
 
         foreach ($purchases as $key => $purchase) {
             $sort[$key] = strtotime($purchase['issue_date']);
         }
-
-        array_multisort($sort, SORT_ASC, $purchases);
+        if (isset($sort)) array_multisort($sort, SORT_ASC, $purchases);
 
         $spreadsheet = new Spreadsheet();
 

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use DOMDocument;
-use Illuminate\Http\Request;
 
-class XMLFileController extends Controller
-{
+class XMLFileController extends Controller{
     public function generateXMLFile($request, $company){
 
 
@@ -25,7 +23,6 @@ class XMLFileController extends Controller
 
         $file = new DOMDocument('1.0', 'UTF-8');
 
-        $stringDate = $invoices[count($invoices)-1]['due_date'];
         $year = substr($invoices[count($invoices)-1]['due_date'],6,4);
         $month = (int)substr($invoices[count($invoices)-1]['due_date'],3,2);
 
