@@ -27,7 +27,7 @@
                         <th class="col-007">Data sprzedaży</th>
                         <th class="col-012">Numer faktury</th>
                         <th class="col-1">NIP</th>
-                        <th scope="col">Nabywca</th>
+                        <th scope="col">Odbiorca</th>
                         <th scope="col">Adres</th>
                         <th class="col-006">Brutto</th>
                         <th class="col-006">Netto</th>

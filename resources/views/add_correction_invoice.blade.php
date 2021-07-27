@@ -14,7 +14,7 @@
                 </div>
 
                 <div class="bg-white col-12  ">
-                    <div class="bg-warning col-4-5 p-1"></div>
+                    <div class="bg-warning col-1-5 p-1"></div>
                 </div>
 
             </div>
@@ -32,7 +32,6 @@
                         <th class="col-006">Netto</th>
                         <th class="col-006">VAT</th>
                         <th class="col-006">Brutto</th>
-{{--                        <th class="col-005"><a href="javascript:void(0)" class="btn btn-add addPurchaseRow">+</a> </th>--}}
                     </tr>
                 </thead>
                 <tbody>
@@ -165,7 +164,6 @@
                             </span>
                             @enderror
                         </td>
-{{--                        <th><a href="javascript:void(0)" class="btn btn-next deletePurchaseRow">Usuń</a> </th>--}}
                     </tr>
 
                 </tbody>
