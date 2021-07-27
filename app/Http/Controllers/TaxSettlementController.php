@@ -54,7 +54,7 @@ class TaxSettlementController extends Controller{
         return $data;
     }
 
-    public function addInvoices(Request $request){
+    public function validateInvoices($request){
         $request->validate([
             'companyName' => ['required', 'string', 'max:255', 'min:2'],
             'firstname' => ['required','string', 'max:255', 'min:2'],
@@ -65,28 +65,21 @@ class TaxSettlementController extends Controller{
             'taxOfficeCode' => ['required', 'string'],
             'file' => ['required'],
         ]);
+    }
 
-
-
-        $company['companyName'] = $request['companyName'];
-        $company['firstname'] = $request['firstname'];
-        $company['lastname'] = $request['lastname'];
-        $company['birthDate'] = $request['birthDate'];
-        $company['mail'] = $request['mail'];
-        $company['NIP'] = $request['NIP'];
-        $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
-
-        Session::put('company', $company);
-
-        $invoices = null;
-        $values = null;
-        $gtu = 0;
-
+    public function checkFilesInput(){
         if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
         }
+    }
+
+    public function readInvoicesFiles(){
+        $values = null;
+        $gtu = 0;
+        $gtuCode = array();
 
         $filesPaths = $_FILES['file']['tmp_name'];
+
         foreach ($filesPaths as $key => $filePath) {
 
             $reader = ReaderEntityFactory::createODSReader();
@@ -105,7 +98,7 @@ class TaxSettlementController extends Controller{
                         if (str_contains($cell->getValue(), 'GTU') or str_contains($cell->getValue(), 'GTO') or
                             str_contains($cell->getValue(), 'gtu') or str_contains($cell->getValue(), 'gto')) {
                             $gtuCode[$key] = 'GTU';
-                            $gtu++;
+//                            $gtu++;
                         }
                     }
                     $j++;
@@ -113,6 +106,28 @@ class TaxSettlementController extends Controller{
             }
             $reader->close();
         }
+        return array($values, $gtuCode);
+    }
+
+    public function addInvoices(Request $request){
+
+        $this->validateInvoices($request);
+
+
+        $company['companyName'] = $request['companyName'];
+        $company['firstname'] = $request['firstname'];
+        $company['lastname'] = $request['lastname'];
+        $company['birthDate'] = $request['birthDate'];
+        $company['mail'] = $request['mail'];
+        $company['NIP'] = $request['NIP'];
+        $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
+
+        Session::put('company', $company);
+
+        $invoices = null;
+
+        $this->checkFilesInput();
+        list($values, $gtuCode) = $this->readInvoicesFiles();
 
         foreach ($values as $key => $invoice) {
             $invoices[$key]['issue_date'] = $values[$key][1][6];
@@ -184,6 +199,8 @@ class TaxSettlementController extends Controller{
                 }
             }
         }
+
+        $gtu = count($gtuCode);
 
         Session::put('invoices', $invoices);
         Session::put('warnings', $warnings);
