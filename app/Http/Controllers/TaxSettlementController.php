@@ -107,7 +107,6 @@ class TaxSettlementController extends Controller{
 
         $this->validateInvoices($request);
 
-
         $company['companyName'] = $request['companyName'];
         $company['firstname'] = $request['firstname'];
         $company['lastname'] = $request['lastname'];
@@ -172,13 +171,11 @@ class TaxSettlementController extends Controller{
                 }
             }
 
-
             $invoices[$key]['netto'] = $values[$key][34][6];
             $invoices[$key]['vat'] = $values[$key][34][8];
             $invoices[$key]['brutto'] = $values[$key][34][9];
 
             if (isset($gtuCode[$key])) $invoices[$key]['gtu'] = $gtuCode[$key];
-
         }
 
         $warnings = 0;
@@ -200,7 +197,6 @@ class TaxSettlementController extends Controller{
         Session::put('warnings', $warnings);
         Session::put('gtu', $gtu);
 
-
         return view('show_invoices');
      }
 
@@ -211,7 +207,6 @@ class TaxSettlementController extends Controller{
 
     public function showAddCorrectionInvoicePage(){
         return view('add_correction_invoice');
-
     }
 
     public function addCorrectionInvoice(Request $request){
@@ -266,6 +261,7 @@ class TaxSettlementController extends Controller{
     }
 
     public function readSalesStatementFile(): array{
+        $sales = array();
 
         $filesPaths = $_FILES['link']['tmp_name'];
         foreach ($filesPaths as $filePath) {
@@ -301,6 +297,7 @@ class TaxSettlementController extends Controller{
     }
 
     public function getUndocumentedOrdersData($file): array{
+        $order = array();
 
         foreach ($file as $orders) {
             foreach ($orders as $key=>$sale) {
@@ -313,7 +310,7 @@ class TaxSettlementController extends Controller{
         return $order;
     }
 
-    public function getItems($file){
+    public function getItems($file): array{
         $items = array();
         foreach ($file as $sales) {
             foreach ($sales as $key=>$sale) {
@@ -328,10 +325,13 @@ class TaxSettlementController extends Controller{
 
     public function readCSV($csvFile, $array){
         $file_handle = fopen($csvFile, 'r');
+
         while (!feof($file_handle)) {
             $line_of_text[] = fgetcsv($file_handle, 0, $array['delimiter']);
         }
+
         if (end($line_of_text)==false) array_pop($line_of_text);
+
         fclose($file_handle);
         return $line_of_text;
     }
@@ -344,21 +344,27 @@ class TaxSettlementController extends Controller{
     }
 
     public function addSalesForm(Request $request){
+        $sales = array();
 
         Session::put('sales', $request['due_date']);
 
-
         $request->validate([
-            'due_date.*' => ['required', 'string', 'regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+            'due_date.*' => ['required', 'string', 'regex:/^(([0-2]{0,1}[0-9]{1})|(3[01]))\.[0-9]{2}\.(20[0-9]{2})$/u'],
             'products_names.*' => ['required', 'string', 'max:255', 'min:1'],
             'quantity.*' => ['required', 'integer'],
             'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
 
+
+
         if (isset($request['quantity'][0])) {
             foreach ($request['due_date'] as $key => $sale) {
-                $sales[$key]['due_date'] = $request['due_date'][$key];
-                $sales[$key]['issue_date'] = $request['due_date'][$key];
+
+                if ($request['due_date'][$key][0] == '0') $dueDate = substr($request['due_date'][$key], 1);
+                else $dueDate = $request['due_date'][$key];
+                $sales[$key]['due_date'] = $dueDate;
+                $sales[$key]['issue_date'] = $dueDate;
+
                 if (isset($sales[$key]['products_names'])) $sales[$key]['products_names'] .= $request['products_names'][$key];
                 else $sales[$key]['products_names'] = $request['products_names'][$key];
 
@@ -396,8 +402,8 @@ class TaxSettlementController extends Controller{
         Session::put('purchases', $request['issue_date']);
 
         $request->validate([
-            'issue_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
-            'due_date.*' => ['required', 'string','regex:/[0-9]{2}\.[0-9]{2}\.[0-9]{4}/u'],
+            'issue_date.*' => ['required', 'string','regex:/^(([0-2]{0,1}[0-9]{1})|(3[01]))\.[0-9]{2}\.(20[0-9]{2})$/u'],
+            'due_date.*' => ['required', 'string','regex:/^(([0-2]{0,1}[0-9]{1})|(3[01]))\.[0-9]{2}\.(20[0-9]{2})$/u'],
             'invoice_number.*' => ['required', 'string', 'max:255', 'min:1'],
             'company.*' => ['required', 'string', 'max:255', 'min:2'],
             'address.*' => ['required', 'string', 'min:3', 'max:255'],
@@ -411,8 +417,15 @@ class TaxSettlementController extends Controller{
 
         if (isset($request['issue_date'])) {
             foreach ($request['issue_date'] as $key => $item) {
-                $purchases[$key]['issue_date'] = $request['issue_date'][$key];
-                $purchases[$key]['due_date'] = $request['due_date'][$key];
+
+                if ($request['issue_date'][$key][0] == '0') $issueDate = substr($request['issue_date'][$key], 1);
+                else $issueDate = $request['issue_date'][$key];
+                $purchases[$key]['issue_date'] = $issueDate;
+
+                if ($request['due_date'][$key][0] == '0') $dueDate = substr($request['due_date'][$key], 1);
+                else $dueDate = $request['due_date'][$key];
+                $purchases[$key]['due_date'] = $dueDate;
+
                 $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
                 $purchases[$key]['company'] = $request['company'][$key];
                 $purchases[$key]['address'] = $request['address'][$key];
@@ -427,7 +440,6 @@ class TaxSettlementController extends Controller{
         Session::put('purchasesCount', count($purchases));
 
         return $this->showSummaryPage();
-
     }
 
     public function showSummaryPage(){
@@ -436,8 +448,6 @@ class TaxSettlementController extends Controller{
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');
-
-//        dd($invoices);
 
         $purchasesNetto = 0;
         $purchasesVat = 0;
@@ -464,7 +474,6 @@ class TaxSettlementController extends Controller{
         $undefinedSalesNetto = 0;
         $undefinedSalesVat = 0;
         $undefinedSalesBrutto = 0;
-
 
         if (isset($sales[0]['due_date'])) {
             foreach ($sales as $sale) {
@@ -503,9 +512,14 @@ class TaxSettlementController extends Controller{
             $controller->generateXMLFile($request, $company);
         }
 
+        if ($request->has('generateDetailedDZSV')) {
+            $controller = new ODSFileController();
+            $controller->generateDZSVFile('true', 'DZSV-szcz.ods');
+        }
+
         if ($request->has('generateDZSV')) {
             $controller = new ODSFileController();
-            $controller->generateDZSVFile();
+            $controller->generateDZSVFile('false', 'DZSV.ods');
         }
 
         if ($request->has('generateRZV')) {
