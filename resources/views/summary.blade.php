@@ -22,6 +22,7 @@
                             <button type="submit" class="btn btn-next mx-2" name="generateCSV">Generuj CSV</button>
                             <button type="submit" class="btn btn-next mx-2" name="generateXML">Generuj XML</button>
                             <button type="submit" class="btn btn-next mx-2" name="generateDZSV">Generuj DZSV</button>
+                            <button type="submit" class="btn btn-next mx-2" name="generateDetailedDZSV">Generuj DZSV-szcz</button>
                             <button type="submit" class="btn btn-next mx-2" name="generateRZV">Generuj RZV</button>
                         </form>
 

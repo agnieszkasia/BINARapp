@@ -8,33 +8,50 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 class ODSFileController extends Controller{
 
-    public function generateDZSVFile(){ //DZSV - Dzienne Zestawienie Sprzedaży Vat
+    public function generateDZSVFile($detailed, $filename){ //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
         $invoices = session('invoices');
         $sales = session('sales');
 
         if (isset($sales)) {
-            $sales = $this->sortUndocumentedSales($sales);
+            $sales = $this->sortItems($sales, 'false');
+            $sales = $this->mergeSales($sales);
 
             $allSales = array_merge($invoices, $sales);
         } else $allSales = $invoices;
 
+        $allSales = $this->sortItems($allSales, 'true');
 
-        foreach ($allSales as $key => $sale) {
-            $sort[$key] = strtotime($sale['issue_date']);
-        }
+        $spreadsheet = $this->createDZSVSpreadsheet($allSales, $detailed);
 
-        array_multisort($sort, SORT_ASC, $allSales);
+        $writer = new Ods($spreadsheet);
+        $writer->save($filename);
+
+        $finfo = new finfo(FILEINFO_MIME);
+        header('Content-Type: ' . $finfo->file(public_path($filename)));
+        header('Content-Disposition: attachment; filename='.$filename);
+
+        readfile(public_path($filename));
+
+        unlink(public_path($filename));
+    }
+
+    public function createDZSVSpreadsheet($allSales, $detailed): Spreadsheet{
+        $i = 0;
 
         $spreadsheet = new Spreadsheet();
-
-        $i = 0;
 
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
+
+                if ($detailed == 'true'){
+                    $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
+                }elseif ($detailed == 'false') {
+                    $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana");
+                }
+
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
             } elseif (isset($sale['products']) && $sale['products'] !== 0) {
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
@@ -53,26 +70,10 @@ class ODSFileController extends Controller{
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);
             }
         }
-
-        $writer = new Ods($spreadsheet);
-        $writer->save('DZSV.ods');
-
-        $finfo = new finfo(FILEINFO_MIME);
-        header('Content-Type: ' . $finfo->file(public_path('DZSV.ods')));
-        header('Content-Disposition: attachment; filename="DZSV.ods"');
-
-        readfile(public_path("DZSV.ods"));
-
-        unlink(public_path('DZSV.ods'));
+        return $spreadsheet;
     }
 
-    public function sortUndocumentedSales($sales){
-        foreach ($sales as $key => $sale) {
-            $sort[$key] = strtotime($sale['due_date']);
-        }
-
-        array_multisort($sort, SORT_ASC, $sales);
-
+    public function mergeSales($sales){
         foreach ($sales as $key => $sale) {
             if (isset($sales[$key - 1])) $previousSale = $sales[$key - 1];
 
@@ -84,8 +85,23 @@ class ODSFileController extends Controller{
                 $sales[$key]['vat'] = $sale['vat'] + $previousSale['vat'];
                 $sales[$key]['brutto'] = $sale['brutto'] + $previousSale['brutto'];
             }
-
         }
+        return $sales;
+    }
+
+    public function sortItems($sales, $multiSort){
+
+        foreach ($sales as $key => $sale) {
+            $sort[$key] = strtotime($sale['issue_date']);
+            if ($multiSort == 'true') {
+                if (isset($sale['invoice_number'])) $sort2[$key] = $sale['invoice_number'];
+                else $sort2[$key] = '0';
+            }
+        }
+        if ($multiSort =='true') {
+            array_multisort($sort, SORT_ASC, $sort2, SORT_ASC, $sales);
+        }
+        else array_multisort($sort, SORT_ASC, $sales);
 
         return $sales;
     }
