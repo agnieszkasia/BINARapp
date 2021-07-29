@@ -20,6 +20,7 @@ Project is created with:
 * Adding undocumented sales via the form
 * Adding purchase invoices via the form
 * Generating tax settlements files (.csv, .xml, .ods)
+* Generating revenue and expense ledger file (.ods)
 
 ![Welcome Page](./images/1.jpg)
 
