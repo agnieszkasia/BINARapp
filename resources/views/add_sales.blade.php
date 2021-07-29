@@ -26,7 +26,7 @@
                 <div class="text-white h5">
                     Jeśli chcesz dodać sprzedaż nieudokumentowaną przez formularz - przejdź dalej.
                 </div>
-                <input type="file" id="link" name="link[]" multiple class="form-control" accept=".csv" onchange="checkfile(this);">
+                <input type="file" id="link" name="link[]" multiple class="form-control" accept=".csv" onchange="checkFile(this);">
 
                 <div class="h5 text-white mt-5 text-center">
                     Pliki CSV, które są obsługiwane to zestawienia sprzedaży z Allegro. <br>

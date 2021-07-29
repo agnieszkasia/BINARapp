@@ -114,7 +114,7 @@ $('#brutto').on('change', 'input', function (){
 
 });
 
-function checkfile(sender) {
+function checkFile(sender) {
     var validExts = new Array(".csv");
     var fileExt = sender.value;
     fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
@@ -122,6 +122,19 @@ function checkfile(sender) {
         alert("Niepoprawny format plików. Obługiwane rozszerzenie to  " +
             validExts.toString());
         $("#link").val(null);
+        return false;
+    }
+    else return true;
+}
+
+function checkInvoiceFiles(sender) {
+    var validExts = new Array(".ods");
+    var fileExt = sender.value;
+    fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+    if (validExts.indexOf(fileExt) < 0) {
+        alert("Niepoprawny format plików. Obługiwane rozszerzenie to  " +
+            validExts.toString());
+        $("#file").val(null);
         return false;
     }
     else return true;

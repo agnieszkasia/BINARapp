@@ -104,7 +104,7 @@
                     @endfor
                 </datalist>
 
-                <label for="file" class="text-white mt-4">Pliki Faktur VAT</label> <input type="file" id="file" name="file[]" multiple class="form-control @error('file') is-invalid @enderror" >
+                <label for="file" class="text-white mt-4">Pliki Faktur VAT</label> <input type="file" id="file" name="file[]" multiple accept=".ods" onchange="checkInvoiceFiles(this);" class="form-control @error('file') is-invalid @enderror" >
                 @error('file')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -116,4 +116,8 @@
 
         </form>
 
+@endsection
+
+@section('script')
+    <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
 @endsection

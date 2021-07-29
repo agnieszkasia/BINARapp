@@ -24,7 +24,7 @@
                             <button type="submit" class="btn btn-next mx-2" name="generateDZSV">Generuj DZSV</button>
                             <button type="submit" class="btn btn-next mx-2" name="generateDetailedDZSV">Generuj DZSV-szcz</button>
                             <button type="submit" class="btn btn-next mx-2" name="generateRZV">Generuj RZV</button>
-                            <button type="submit" class="btn btn-next mx-2" name="generateKSIE">Generuj KSIE</button>
+                            <button type="submit" class="btn btn-next mx-2" name="generateKPiR">Generuj KSIE</button>
                         </form>
 
                     </div>
