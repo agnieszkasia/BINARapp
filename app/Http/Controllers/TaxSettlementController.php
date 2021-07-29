@@ -512,19 +512,24 @@ class TaxSettlementController extends Controller{
             $controller->generateXMLFile($request, $company);
         }
 
-        if ($request->has('generateDetailedDZSV')) {
+        if ($request->has('generateDetailedDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
             $controller = new ODSFileController();
-            $controller->generateDZSVFile('true', 'DZSV-szcz.ods');
+            $controller->generateSalesFile('true', 'DZSV', 'DZSV-szcz.ods');
         }
 
-        if ($request->has('generateDZSV')) {
+        if ($request->has('generateDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat
             $controller = new ODSFileController();
-            $controller->generateDZSVFile('false', 'DZSV.ods');
+            $controller->generateSalesFile('false', 'DZSV', 'DZSV.ods');
         }
 
         if ($request->has('generateRZV')) {
             $controller = new ODSFileController();
             $controller->generateRZVFile();
+        }
+
+        if ($request->has('generateKPiR')) { //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
+            $controller = new ODSFileController();
+            $controller->generateSalesFile('false', 'KPiR', 'KSIE.ods');
         }
     }
 

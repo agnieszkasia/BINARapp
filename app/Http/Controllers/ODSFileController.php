@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 class ODSFileController extends Controller{
 
-    public function generateDZSVFile($detailed, $filename){ //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
+    public function generateSalesFile($detailed, $type, $filename){
         $invoices = session('invoices');
         $sales = session('sales');
 
@@ -21,7 +21,8 @@ class ODSFileController extends Controller{
 
         $allSales = $this->sortItems($allSales, 'true');
 
-        $spreadsheet = $this->createDZSVSpreadsheet($allSales, $detailed);
+        if ($type == 'DZSV') $spreadsheet = $this->createDZSVSpreadsheet($allSales, $detailed); //DZSV - Dzienne Zestawienie Sprzedaży Vat
+        elseif ($type == 'KPiR') $spreadsheet = $this->createKSIESpreadsheet($allSales); //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
 
         $writer = new Ods($spreadsheet);
         $writer->save($filename);
@@ -35,7 +36,7 @@ class ODSFileController extends Controller{
         unlink(public_path($filename));
     }
 
-    public function createDZSVSpreadsheet($allSales, $detailed): Spreadsheet{
+    public function createDZSVSpreadsheet($allSales, $detailed): Spreadsheet{ //DZSV - Dzienne Zestawienie Sprzedaży Vat
         $i = 0;
 
         $spreadsheet = new Spreadsheet();
@@ -68,6 +69,44 @@ class ODSFileController extends Controller{
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
                 $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);
+            }
+        }
+        return $spreadsheet;
+    }
+
+    public function createKSIESpreadsheet($allSales): Spreadsheet{ //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
+        $i = 0;
+
+        $spreadsheet = new Spreadsheet();
+
+        foreach ($allSales as $key => $sale) {
+
+            if ($sale['brutto'] !== null && !isset($sale['service'])) {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('K' . ($key + 1 + $i), $sale['netto']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('L' . ($key + 1 + $i), $sale['netto']);
+            } elseif (isset($sale['products']) && $sale['products'] !== 0) {
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['products']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('K' . ($key + 1 + $i), round($sale['products']/1.23,2));
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('L' . ($key + 1 + $i), round($sale['products']/1.23,2));
+            } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
+
+            if (isset($sale['service']) && $sale['service'] !== "0") {
+                $i++;
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1 + $i), $sale['issue_date']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['service']);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('I' . ($key + 1 + $i), round($sale['service']/1.23, 2));
+                $spreadsheet->setActiveSheetIndex(0)->setCellValue('L' . ($key + 1 + $i), round($sale['service']/1.23, 2));
             }
         }
         return $spreadsheet;
