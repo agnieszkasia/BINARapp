@@ -521,7 +521,7 @@ class TaxSettlementController extends Controller{
 
         if ($request->has('generateDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat
             $controller = new ODSFileController();
-            $controller->generateSalesFile('false', 'DZSV', 'DZSV.ods');
+            $controller->generateSalesFile('false', 'DZSV', 'DZSV.xls');
         }
 
         if ($request->has('generateRZV')) {
