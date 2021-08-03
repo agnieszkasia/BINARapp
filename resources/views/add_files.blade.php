@@ -50,6 +50,18 @@
                 </span>
                 @enderror
 
+                <label for="address" class=" mt-4">Adres (ulica, kod pocztowy miasto)</label><input type="text" id="address" name="address" class="form-control @error('address') is-invalid @enderror"
+                        @if(old('address')) value="{{old('address')}}"
+                        @elseif(isset($company['address']))
+                        value="{{$company['address']}}"
+                        @endif>
+
+                @error('address')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+
                 <label for="birthDate" class=" mt-4">Data Urodzenia</label><input type="date" id="birthDate" name="birthDate" class="form-control @error('birthDate') is-invalid @enderror"
                         @if(old('birthDate')) value="{{old('birthDate')}}"
                         @elseif(isset($company['birthDate']))

@@ -53,6 +53,7 @@ class TaxSettlementController extends Controller{
             'companyName' => ['required', 'string', 'max:255', 'min:2'],
             'firstname' => ['required','string', 'max:255', 'min:2'],
             'lastname' => ['required', 'string', 'max:255', 'min:2'],
+            'address' => ['required', 'string', 'max:255', 'min:2'],
             'birthDate' => ['required', 'string','regex:/19[0-9]{2}|200[0,1,2,3]-[0-9]{2}-[0-9]{2}/u', 'max:255'],
             'mail' => ['required', 'string', 'email', 'max:255'],
             'NIP' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
@@ -110,6 +111,7 @@ class TaxSettlementController extends Controller{
         $company['companyName'] = $request['companyName'];
         $company['firstname'] = $request['firstname'];
         $company['lastname'] = $request['lastname'];
+        $company['address'] = $request['address'];
         $company['birthDate'] = $request['birthDate'];
         $company['mail'] = $request['mail'];
         $company['NIP'] = $request['NIP'];
@@ -529,7 +531,7 @@ class TaxSettlementController extends Controller{
 
         if ($request->has('generateKPiR')) { //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
             $controller = new ODSFileController();
-            $controller->generateSalesFile('false', 'KPiR', 'KSIE.ods');
+            $controller->generateSalesFile('false', 'KPiR', 'KPiR.xls');
         }
     }
 
