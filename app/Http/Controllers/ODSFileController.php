@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use finfo;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -67,7 +66,6 @@ class ODSFileController extends Controller{
 
         foreach ($allSales as $key => $sale) {
 
-
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
                 $sheet->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
                 $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
@@ -96,7 +94,6 @@ class ODSFileController extends Controller{
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['service']);
             }
         }
-
         return $spreadsheet;
     }
 
@@ -106,21 +103,16 @@ class ODSFileController extends Controller{
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
-
         $stringDate = $allSales[count($allSales)-1]['due_date'];
-        $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
 
-        date_default_timezone_set('Europe/Warsaw');
-
-        setlocale(LC_ALL, 'pl', 'pl', 'polish', 'Polish');
-        $monthName = iconv('ISO-8859-2', 'UTF-8',(strftime('%B', strtotime($lastDayOfMonth))));
-        $monthName = ucfirst($monthName);
+        $monthName = $this->getMonthName($stringDate);
 
         $this->createKPiRFileSchema($sheet, $monthName);
 
         $service = 0;
         $products = 0;
         $allNetto = 0;
+        $countLines = 0;
 
         foreach ($allSales as $key => $sale) {
 
@@ -159,14 +151,14 @@ class ODSFileController extends Controller{
             }
             $sheet->getRowDimension($key + 1 + $i)->setRowHeight(7.95);
 
-            $count = $key + 1 + $i;
+            $countLines = $key + 1 + $i;
         }
 
-        $sheet->setCellValue('C' . ($count+1), 'Razem miesiąc');
-        $sheet->setCellValue('I' . ($count+1), $service);
-        $sheet->setCellValue('J' . ($count+1), '0');
-        $sheet->setCellValue('K' . ($count+1), $products);
-        $sheet->setCellValue('L' . ($count+1), $allNetto);
+        $sheet->setCellValue('C' . ($countLines+1), 'Razem miesiąc');
+        $sheet->setCellValue('I' . ($countLines+1), $service);
+        $sheet->setCellValue('J' . ($countLines+1), '0');
+        $sheet->setCellValue('K' . ($countLines+1), $products);
+        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
 
         $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
@@ -175,11 +167,10 @@ class ODSFileController extends Controller{
         $sheet->getStyle('J1')->getFont()->setBold(true);
 
         $sheet->getRowDimension($i)->setRowHeight(7.95);
-        $sheet->getStyle(('A11:M'. ($count+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
-
+        $sheet->getStyle(('A11:M'. ($countLines+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
 
         $this->setFileSchemaStyle($spreadsheet);
-        $spreadsheet->getActiveSheet()->getStyle('A1:M'.($count+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $spreadsheet->getActiveSheet()->getStyle('A1:M'.($countLines+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
         return $spreadsheet;
     }
@@ -243,9 +234,9 @@ class ODSFileController extends Controller{
             $sheet->getStyle($cell)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_HAIR);
             $sheet->getStyle($cell)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_HAIR);
             $sheet->getStyle($cell)->getBorders()->getRight()->setBorderStyle(Border::BORDER_HAIR);
-
         }
         $sheet->getStyle('A10:M10')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+
         $textCenter = ['I7:L9', 'A10:M10'];
         foreach ($textCenter as $cell){
             $sheet->getStyle($cell)->getAlignment()->setHorizontal('center');
@@ -294,16 +285,17 @@ class ODSFileController extends Controller{
         if (isset($sort)) array_multisort($sort, SORT_ASC, $purchases);
 
         $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->setActiveSheetIndex(0);
 
         foreach ($purchases as $key => $purchase) {
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('A' . ($key + 1), $key + 1);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('B' . ($key + 1), $purchase['invoice_number']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('C' . ($key + 1), $purchase['due_date']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('D' . ($key + 1), $purchase['issue_date']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1), $purchase['company']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('F' . ($key + 1), $purchase['address']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('G' . ($key + 1), $purchase['NIP']);
-            $spreadsheet->setActiveSheetIndex(0)->setCellValue('H' . ($key + 1), $purchase['brutto']);
+            $sheet->setCellValue('A' . ($key + 1), $key + 1);
+            $sheet->setCellValue('B' . ($key + 1), $purchase['invoice_number']);
+            $sheet->setCellValue('C' . ($key + 1), $purchase['due_date']);
+            $sheet->setCellValue('D' . ($key + 1), $purchase['issue_date']);
+            $sheet->setCellValue('E' . ($key + 1), $purchase['company']);
+            $sheet->setCellValue('F' . ($key + 1), $purchase['address']);
+            $sheet->setCellValue('G' . ($key + 1), $purchase['NIP']);
+            $sheet->setCellValue('H' . ($key + 1), $purchase['brutto']);
         }
 
         $writer = new Ods($spreadsheet);

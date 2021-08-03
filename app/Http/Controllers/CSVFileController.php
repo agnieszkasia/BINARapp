@@ -82,11 +82,12 @@ class CSVFileController extends Controller{
 
 
         $stringDate = $invoices[count($invoices)-1]['due_date'];
+
         $undocumentedSaleDate = $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
-        $firstDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
+        $firstDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-01');
 
         setlocale(LC_ALL, 'pl', 'pl_PL', 'pl_PL.ISO8859-2', 'plk', 'polish', 'Polish');
-        $monthName = strftime('%B', strtotime($undocumentedSaleDate));
+        $monthName = $this->getMonthName($stringDate);
 
         $fp = fopen('php://output', 'a');
 
