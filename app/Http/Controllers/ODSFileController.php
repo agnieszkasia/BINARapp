@@ -30,22 +30,6 @@ class ODSFileController extends Controller{
         }
         elseif ($type == 'KPiR'){
             $spreadsheet = $this->createKPiRSpreadsheet($allSales); //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
-
-            $sheet = $spreadsheet->getActiveSheet();
-            $sheet->getColumnDimension('A')->setWidth(5.16);
-            $sheet->getColumnDimension('B')->setWidth(10.83);
-            $sheet->getColumnDimension('C')->setWidth(12.95);
-            $sheet->getColumnDimension('D')->setWidth(15.91);
-            $sheet->getColumnDimension('E')->setWidth(9.65);
-            $sheet->getColumnDimension('F')->setWidth(0);
-            $sheet->getColumnDimension('G')->setWidth(0);
-            $sheet->getColumnDimension('H')->setWidth(0);
-            $sheet->getColumnDimension('I')->setWidth(13.29);
-            $sheet->getColumnDimension('J')->setWidth(13.29);
-            $sheet->getColumnDimension('K')->setWidth(13.29);
-            $sheet->getColumnDimension('L')->setWidth(19.3);
-            $sheet->getColumnDimension('M')->setWidth(27.85);
-
             $writer = new Xls($spreadsheet);
         }
         $writer->save($filename);
@@ -54,7 +38,6 @@ class ODSFileController extends Controller{
         header('Content-Disposition: attachment; filename='.$filename);
 
         readfile(public_path($filename));
-
         unlink(public_path($filename));
     }
 
@@ -62,7 +45,7 @@ class ODSFileController extends Controller{
         $i = 0;
 
         $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
 
         foreach ($allSales as $key => $sale) {
 
@@ -98,22 +81,30 @@ class ODSFileController extends Controller{
     }
 
     public function createKPiRSpreadsheet($allSales): Spreadsheet{ //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
-        $i = 10;
-
         $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->setActiveSheetIndex(0);
+        $sheet = $spreadsheet->getActiveSheet();
 
         $stringDate = $allSales[count($allSales)-1]['due_date'];
 
         $monthName = $this->getMonthName($stringDate);
+        $year = substr($stringDate, -4, 4);
+        $rows = $this->createKPiRFileSchema($this->setInvoicesData($allSales, $sheet), $sheet, $monthName, $year);
 
-        $this->createKPiRFileSchema($sheet, $monthName);
 
+
+        $this->setFileSchemaStyle($spreadsheet, $rows);
+
+
+        return $spreadsheet;
+    }
+
+    public function setInvoicesData($allSales, $sheet): array{
+
+        $key = 0;
         $service = 0;
         $products = 0;
         $allNetto = 0;
-        $countLines = 0;
-
+        $i=10;
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
@@ -150,36 +141,18 @@ class ODSFileController extends Controller{
                 $allNetto += round($sale['service']/1.23, 2);
             }
             $sheet->getRowDimension($key + 1 + $i)->setRowHeight(7.95);
-
-            $countLines = $key + 1 + $i;
         }
 
-        $sheet->setCellValue('C' . ($countLines+1), 'Razem miesiąc');
-        $sheet->setCellValue('I' . ($countLines+1), $service);
-        $sheet->setCellValue('J' . ($countLines+1), '0');
-        $sheet->setCellValue('K' . ($countLines+1), $products);
-        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
-
-        $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
-        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-        $sheet->getStyle('A1:M3')->getFont()->setSize(10);
-        $sheet->getStyle('J1')->getFont()->setBold(true);
-
-        $sheet->getRowDimension($i)->setRowHeight(7.95);
-        $sheet->getStyle(('A11:M'. ($countLines+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
-
-        $this->setFileSchemaStyle($spreadsheet);
-        $spreadsheet->getActiveSheet()->getStyle('A1:M'.($countLines+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-
-        return $spreadsheet;
+        $countLines = $key + 1 + $i;
+        return array($service, $products, $allNetto, $countLines);
     }
 
-    public function createKPiRFileSchema($sheet, $monthName){
+    public function createKPiRFileSchema($invoicesData, $sheet, $monthName, $year){
+        list($service, $products, $allNetto, $countLines) = $invoicesData;
         $company = session('company');
 
         $sheet->setCellValue('B1', 'Ewidencja przychodów');
-        $sheet->setCellValue('J1', $monthName.' 2021');
+        $sheet->setCellValue('J1', $monthName.' '.$year);
 
         $sheet->setCellValue('B2', $company['companyName'].', '.$company['address']);
         $sheet->setCellValue('B3', 'NIP: '.$company['NIP']);
@@ -221,10 +194,25 @@ class ODSFileController extends Controller{
         $sheet->setCellValue('K10', '7');
         $sheet->setCellValue('L10', '8');
         $sheet->setCellValue('M10', '9');
+
+        $sheet->setCellValue('C' . ($countLines+1), 'Razem miesiąc');
+        $sheet->setCellValue('I' . ($countLines+1), $service);
+        $sheet->setCellValue('J' . ($countLines+1), '0');
+        $sheet->setCellValue('K' . ($countLines+1), $products);
+        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
+
+        return $countLines;
     }
 
-    public function setFileSchemaStyle($spreadsheet){
+    public function setFileSchemaStyle($spreadsheet, $rows){
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $sheet = $spreadsheet->setActiveSheetIndex(0);
+
+        $sheet->getStyle('A1:M3')->getFont()->setSize(10);
+        $sheet->getStyle('J1')->getFont()->setBold(true);
+
+        $sheet->getStyle(('A11:M'. ($rows+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
 
         $borders = ['A4:A9', 'B4:B9', 'C4:C9', 'D4:D9', 'E4:E9', 'F4:F9', 'G4:G9', 'H4:H9',
             'I4:K4', 'I5:I8', 'J5:J8', 'K5:K8', 'I9', 'J9', 'K10', 'L4:L8', 'L9', 'M4:M9'];
@@ -241,6 +229,22 @@ class ODSFileController extends Controller{
         foreach ($textCenter as $cell){
             $sheet->getStyle($cell)->getAlignment()->setHorizontal('center');
         }
+
+        $sheet->getStyle('A1:M'.($rows+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+        $sheet->getColumnDimension('A')->setWidth(5.16);
+        $sheet->getColumnDimension('B')->setWidth(10.83);
+        $sheet->getColumnDimension('C')->setWidth(12.95);
+        $sheet->getColumnDimension('D')->setWidth(15.91);
+        $sheet->getColumnDimension('E')->setWidth(9.65);
+        $sheet->getColumnDimension('F')->setWidth(0);
+        $sheet->getColumnDimension('G')->setWidth(0);
+        $sheet->getColumnDimension('H')->setWidth(0);
+        $sheet->getColumnDimension('I')->setWidth(13.29);
+        $sheet->getColumnDimension('J')->setWidth(13.29);
+        $sheet->getColumnDimension('K')->setWidth(13.29);
+        $sheet->getColumnDimension('L')->setWidth(19.3);
+        $sheet->getColumnDimension('M')->setWidth(27.85);
     }
 
     public function mergeSales($sales){
