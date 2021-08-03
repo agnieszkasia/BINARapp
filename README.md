@@ -3,7 +3,9 @@ This is a tax settlement program for a specific company. Allows to:
 * create JPK(.csv) files for monthly settlements
 * create JPK (.xml) files for monthly settlements
 * create .ods files for monthly settlements
-	
+* create .xls files for monthly settlements
+
+
 ## Technologies
 Project is created with:
 * PHP 8.0.2
@@ -20,7 +22,7 @@ Project is created with:
 * Adding undocumented sales via the form
 * Adding purchase invoices via the form
 * Generating tax settlements files (.csv, .xml, .ods)
-* Generating revenue and expense ledger file (.ods)
+* Generating revenue and expense ledger file (.xls)
 
 ![Welcome Page](./images/1.jpg)
 
