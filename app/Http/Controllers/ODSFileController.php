@@ -41,45 +41,6 @@ class ODSFileController extends Controller{
         unlink(public_path($filename));
     }
 
-    public function createDZSVSpreadsheet2($allSales, $detailed): Spreadsheet{ //DZSV - Dzienne Zestawienie Sprzedaży Vat
-        $i = 0;
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        foreach ($allSales as $key => $sale) {
-
-            if ($sale['brutto'] !== null && !isset($sale['service'])) {
-                $sheet->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
-
-                if ($detailed == 'true'){
-                    $sheet->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana - " . $sale['products_names']);
-                }elseif ($detailed == 'false') {
-                    $sheet->setCellValue('C' . ($key + 1 + $i), "Sprzedaż nieudokumentowana");
-                }
-
-                $spreadsheet->setActiveSheetIndex(0)->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
-            } elseif (isset($sale['products']) && $sale['products'] !== 0) {
-                $sheet->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
-                $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['products']);
-            } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
-
-            if (isset($sale['service']) && $sale['service'] !== "0") {
-                $i++;
-                $sheet->setCellValue('A' . ($key + 1 + $i), $key + 1 + $i);
-                $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
-                $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
-                $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['service']);
-            }
-        }
-        return $spreadsheet;
-    }
-
     public function createDZSVSpreadsheet($allSales,$detailed): Spreadsheet{ //DZSV - Dzienne Zestawienie Sprzedaży Vat
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -99,6 +60,8 @@ class ODSFileController extends Controller{
         $service = 0;
         $products = 0;
         $allNetto = 0;
+        $allBrutto = 0;
+        $allVAT = 0;
         $i=11;
 
         foreach ($allSales as $key => $sale) {
@@ -114,12 +77,26 @@ class ODSFileController extends Controller{
                 }
 
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+
+                $allBrutto += round($sale['brutto'], 2);
+                $allNetto += round($sale['brutto']/1.23, 2);
+                $allVAT += round($sale['brutto']-$sale['brutto']/1.23, 2);
+
             } elseif (isset($sale['products']) && $sale['products'] !== 0) {
                 $sheet->setCellValue('A' . ($key + 1 + $i), $key - 10 + $i);
                 $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['products']);
+                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['products']/1.23,2));
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['products']-round($sale['products']/1.23,2));
+                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['products']/1.23,2));
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['products']-round($sale['products']/1.23,2));
+
+                $allBrutto += round($sale['products'], 2);
+                $allNetto += round($sale['products']/1.23, 2);
+                $allVAT += round($sale['products']-$sale['products']/1.23, 2);
+
             } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
 
             if (isset($sale['service']) && $sale['service'] !== "0") {
@@ -129,17 +106,25 @@ class ODSFileController extends Controller{
                 $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['service']);
+                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['service']/1.23,2));
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['service']-round($sale['service']/1.23,2));
+                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['service']/1.23,2));
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['service']-round($sale['service']/1.23,2));
+                $allBrutto += round($sale['service'], 2);
+                $allNetto += round($sale['service']/1.23, 2);
+                $allVAT += round($sale['service']-$sale['service']/1.23, 2);
+
             }
             $sheet->getRowDimension($key + 1 + $i)->setRowHeight(7.95);
 
         }
 
         $countLines = $key + 1 + $i;
-        return array($service, $products, $allNetto, $countLines);
+        return array($service, $products, $allBrutto, $allNetto, $allVAT, $countLines);
     }
 
     public function createDZSVFileSchema($invoicesData, $sheet, $monthName, $year){
-        list($service, $products, $allNetto, $countLines) = $invoicesData;
+        list($service, $products, $allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
         $company = session('company');
 
         $sheet->setCellValue('B1', 'Dzienne zestawienia sprzedaży VAT ');
@@ -198,10 +183,11 @@ class ODSFileController extends Controller{
         $sheet->setCellValue('N11', '14');
 
         $sheet->setCellValue('C' . ($countLines+1), 'RAZEM');
-//        $sheet->setCellValue('I' . ($countLines+1), $service);
-//        $sheet->setCellValue('J' . ($countLines+1), '0');
-//        $sheet->setCellValue('K' . ($countLines+1), $products);
-//        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
+        $sheet->setCellValue('E' . ($countLines+1), $allBrutto);
+        $sheet->setCellValue('J' . ($countLines+1), $allNetto);
+        $sheet->setCellValue('K' . ($countLines+1), $allVAT);
+        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
+        $sheet->setCellValue('M' . ($countLines+1), $allVAT);
 
         return $countLines;
     }
@@ -221,11 +207,6 @@ class ODSFileController extends Controller{
 
         foreach ($borders as $cell){
             $spreadsheet->getActiveSheet()->mergeCells($cell);
-
-//            $sheet->getStyle($cell)->getBorders()->getTop()->setBorderStyle(Border::BORDER_HAIR);
-//            $sheet->getStyle($cell)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_HAIR);
-//            $sheet->getStyle($cell)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_HAIR);
-//            $sheet->getStyle($cell)->getBorders()->getRight()->setBorderStyle(Border::BORDER_HAIR);
         }
 
         $spreadsheet->getActiveSheet()->mergeCells('H5:K5');
@@ -468,26 +449,148 @@ class ODSFileController extends Controller{
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
+        $this->createRZVFileSchema($sheet, 'month', 'year');
+        $this->setRZVFileStyle($spreadsheet,count($purchases));
+
         foreach ($purchases as $key => $purchase) {
-            $sheet->setCellValue('A' . ($key + 1), $key + 1);
-            $sheet->setCellValue('B' . ($key + 1), $purchase['invoice_number']);
-            $sheet->setCellValue('C' . ($key + 1), $purchase['due_date']);
-            $sheet->setCellValue('D' . ($key + 1), $purchase['issue_date']);
-            $sheet->setCellValue('E' . ($key + 1), $purchase['company']);
-            $sheet->setCellValue('F' . ($key + 1), $purchase['address']);
-            $sheet->setCellValue('G' . ($key + 1), $purchase['NIP']);
-            $sheet->setCellValue('H' . ($key + 1), $purchase['brutto']);
+            $sheet->setCellValue('A' . ($key + 12), $key + 1);
+            $sheet->setCellValue('B' . ($key + 12), $purchase['invoice_number']);
+            $sheet->setCellValue('C' . ($key + 12), $purchase['due_date']);
+            $sheet->setCellValue('D' . ($key + 12), $purchase['issue_date']);
+            $sheet->setCellValue('E' . ($key + 12), $purchase['company']);
+            $sheet->setCellValue('F' . ($key + 12), $purchase['address']);
+            $sheet->setCellValue('G' . ($key + 12), $purchase['NIP']);
+            $sheet->setCellValue('H' . ($key + 12), $purchase['brutto']);
         }
 
-        $writer = new Ods($spreadsheet);
-        $writer->save('RZV.ods');
+        $writer = new Xls($spreadsheet);
+        $writer->save('RZV.xls');
 
         $finfo = new finfo(FILEINFO_MIME);
-        header('Content-Type: ' . $finfo->file(public_path('RZV.ods')));
-        header('Content-Disposition: attachment; filename="RZV.ods"');
+        header('Content-Type: ' . $finfo->file(public_path('RZV.xls')));
+        header('Content-Disposition: attachment; filename="RZV.xls"');
 
-        readfile(public_path("RZV.ods"));
+        readfile(public_path("RZV.xls"));
 
-        unlink(public_path('RZV.ods'));
+        unlink(public_path('RZV.xls'));
+    }
+
+    public function createRZVFileSchema($sheet, $monthName, $year){
+//        list($service, $products, $allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
+        $company = session('company');
+
+        $sheet->setCellValue('D1', 'REJESTR ZAKUPÓW VAT');
+        $sheet->setCellValue('G1', $monthName.' '.$year);
+
+        $sheet->setCellValue('D2', $company['companyName']);
+        $sheet->setCellValue('D3', $company['address']);
+        $sheet->setCellValue('D4', 'NIP: '.$company['NIP']);
+
+        $sheet->setCellValue('A5', 'Lp');
+        $sheet->setCellValue('B5', "Numer\nfaktury");
+
+        $sheet->setCellValue('C5', "Data\notrzymania\nfaktury\nksięgowania");
+        $sheet->setCellValue('D5', "Data\nwysta-\nwienia\nfaktury");
+        $sheet->setCellValue('E5', "Sprzedawca");
+        $sheet->setCellValue('E7', "Nazwa\n(imię i nazwisko)");
+        $sheet->setCellValue('F7', "Adres\n(siedziba)");
+        $sheet->setCellValue('G7', "Number NIP");
+
+        $sheet->setCellValue('H5', "Wartość\nzakupu\nbrutto");
+        $sheet->setCellValue('H10', 'zł | gr');
+
+        $sheet->setCellValue('I5', 'Zakupy od których przysługuje odlicz. Podatku naliczonego  VAT');
+
+        $sheet->setCellValue('I6', '0%');
+        $sheet->setCellValue('I7', 'Wartość');
+        $sheet->setCellValue('I8', 'Netto');
+        $sheet->setCellValue('I10', 'zł | gr');
+        $sheet->setCellValue('J8', 'VAT');
+        $sheet->setCellValue('J10', 'zł | gr');
+
+        $sheet->setCellValue('K6', '5%');
+        $sheet->setCellValue('K7', 'Wartość');
+        $sheet->setCellValue('K8', 'Netto');
+        $sheet->setCellValue('K10', 'zł | gr');
+        $sheet->setCellValue('L8', 'VAT');
+        $sheet->setCellValue('L10', 'zł | gr');
+
+        $sheet->setCellValue('M6', '22%');
+        $sheet->setCellValue('M7', 'Wartość');
+        $sheet->setCellValue('M8', 'Netto');
+        $sheet->setCellValue('M10', 'zł | gr');
+        $sheet->setCellValue('N8', 'VAT');
+        $sheet->setCellValue('N10', 'zł | gr');
+
+        $sheet->setCellValue('O5', 'UwVATagi');
+
+        $sheet->setCellValue('A11', '1');
+        $sheet->setCellValue('B11', '2');
+        $sheet->setCellValue('C11', '3');
+        $sheet->setCellValue('D11', '4');
+        $sheet->setCellValue('E11', '5');
+        $sheet->setCellValue('F11', '6');
+        $sheet->setCellValue('G11', '7');
+        $sheet->setCellValue('H11', '8');
+        $sheet->setCellValue('I11', '9');
+        $sheet->setCellValue('J11', '10');
+        $sheet->setCellValue('K11', '11');
+        $sheet->setCellValue('L11', '12');
+        $sheet->setCellValue('M11', '13');
+        $sheet->setCellValue('N11', '14');
+        $sheet->setCellValue('O11', '15');
+
+//        $sheet->setCellValue('C' . ($countLines+1), 'RAZEM');
+//        $sheet->setCellValue('E' . ($countLines+1), $allBrutto);
+//        $sheet->setCellValue('J' . ($countLines+1), $allNetto);
+//        $sheet->setCellValue('K' . ($countLines+1), $allVAT);
+//        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
+//        $sheet->setCellValue('M' . ($countLines+1), $allVAT);
+
+//        return $countLines;
+    }
+
+    public function setRZVFileStyle($spreadsheet, $rows){
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $sheet = $spreadsheet->setActiveSheetIndex(0);
+
+        $sheet->getStyle('E1')->getFont()->setSize(8);
+
+//        $sheet->getStyle(('A5:O'. ($rows+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+        $sheet->getStyle('A5:O10')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+
+        $borders = ['A5:A10', 'B5:B10', 'C5:C10', 'D5:D10', 'E5:G6', 'E7:E10', 'F7:F10', 'G7:G10', 'H5:H9',
+            'I5:N5', 'I6:J6', 'K6:L6', 'M6:N6', 'I7:J7', 'K7:L7', 'M7:N7',
+            'I8:I9', 'J8:J9', 'K8:K9', 'L8:L9', 'M8:M9', 'N8:N9', 'O5:O10'];
+
+        foreach ($borders as $cell){
+            $spreadsheet->getActiveSheet()->mergeCells($cell);
+        }
+
+        $sheet->getStyle('A5:O10')->getAlignment()->setHorizontal('center');
+
+        $sheet->getStyle('A1:N'.($rows+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+        $sheet->getColumnDimension('A')->setWidth(8.47);
+        $sheet->getColumnDimension('B')->setWidth(11.26);
+        $sheet->getColumnDimension('C')->setWidth(70.93);
+        $sheet->getColumnDimension('D')->setWidth(16.59);
+        $sheet->getColumnDimension('E')->setWidth(16.59);
+        $sheet->getColumnDimension('F')->setWidth(4.23);
+        $sheet->getColumnDimension('G')->setWidth(4.23);
+        $sheet->getColumnDimension('H')->setWidth(6.01);
+        $sheet->getColumnDimension('I')->setWidth(6.01);
+        $sheet->getColumnDimension('J')->setWidth(10.66);
+        $sheet->getColumnDimension('K')->setWidth(10.66);
+        $sheet->getColumnDimension('L')->setWidth(10.66);
+        $sheet->getColumnDimension('M')->setWidth(10.66);
+        $sheet->getColumnDimension('N')->setWidth(14.39);
+
+        $sheet->getRowDimension('1')->setRowHeight(12.77);
+        $sheet->getRowDimension('2')->setRowHeight(12.77);
+        $sheet->getRowDimension('3')->setRowHeight(12.77);
+        $sheet->getRowDimension('4')->setRowHeight(12.77);
+
     }
 }
