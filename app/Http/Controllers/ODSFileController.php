@@ -6,7 +6,8 @@ use finfo;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Writer\Ods;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class ODSFileController extends Controller{
@@ -219,6 +220,7 @@ class ODSFileController extends Controller{
         }
 
         $sheet->getStyle('A1:N'.($rows+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('E12:M'.($rows+1))->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
         $sheet->getColumnDimension('A')->setWidth(8.47);
         $sheet->getColumnDimension('B')->setWidth(11.26);
@@ -240,6 +242,7 @@ class ODSFileController extends Controller{
         $sheet->getRowDimension('3')->setRowHeight(12.77);
         $sheet->getRowDimension('4')->setRowHeight(12.77);
 
+        $this->setPageFormat($sheet, 'landscape',0.46, 0.32, 0.59, 0.49);
     }
 
     public function createKPiRSpreadsheet($allSales): Spreadsheet{ //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
@@ -382,6 +385,8 @@ class ODSFileController extends Controller{
             $sheet->getStyle($cell)->getBorders()->getRight()->setBorderStyle(Border::BORDER_HAIR);
         }
         $sheet->getStyle('A10:M10')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+        $sheet->getStyle('E11:L'.($rows+1))->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
 
         $textCenter = ['I7:L9', 'A10:M10'];
         foreach ($textCenter as $cell){
@@ -403,6 +408,8 @@ class ODSFileController extends Controller{
         $sheet->getColumnDimension('K')->setWidth(13.29);
         $sheet->getColumnDimension('L')->setWidth(19.3);
         $sheet->getColumnDimension('M')->setWidth(27.85);
+
+        $this->setPageFormat($sheet, 'portrait',0.79, 0.79, 0.3, 0.37);
     }
 
     public function mergeSales($sales){
@@ -449,19 +456,14 @@ class ODSFileController extends Controller{
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
-        $this->createRZVFileSchema($sheet, 'month', 'year');
-        $this->setRZVFileStyle($spreadsheet,count($purchases));
+        $stringDate = $purchases[count($purchases)-1]['due_date'];
 
-        foreach ($purchases as $key => $purchase) {
-            $sheet->setCellValue('A' . ($key + 12), $key + 1);
-            $sheet->setCellValue('B' . ($key + 12), $purchase['invoice_number']);
-            $sheet->setCellValue('C' . ($key + 12), $purchase['due_date']);
-            $sheet->setCellValue('D' . ($key + 12), $purchase['issue_date']);
-            $sheet->setCellValue('E' . ($key + 12), $purchase['company']);
-            $sheet->setCellValue('F' . ($key + 12), $purchase['address']);
-            $sheet->setCellValue('G' . ($key + 12), $purchase['NIP']);
-            $sheet->setCellValue('H' . ($key + 12), $purchase['brutto']);
-        }
+        $monthName = $this->getMonthName($stringDate);
+        $year = substr($stringDate, -4, 4);
+
+        $this->createRZVFileSchema($this->setRZVInvoicesData($purchases, $sheet), $sheet, $monthName, $year);
+
+        $this->setRZVFileStyle($spreadsheet,count($purchases));
 
         $writer = new Xls($spreadsheet);
         $writer->save('RZV.xls');
@@ -475,8 +477,42 @@ class ODSFileController extends Controller{
         unlink(public_path('RZV.xls'));
     }
 
-    public function createRZVFileSchema($sheet, $monthName, $year){
-//        list($service, $products, $allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
+    public function setRZVInvoicesData($purchases, $sheet): array{
+
+        $allNetto = 0;
+        $allBrutto = 0;
+        $allVAT = 0;
+
+        foreach ($purchases as $key => $purchase) {
+
+            $brutto = round($purchase['brutto'],2);
+            $netto = round($brutto/1.23,2);
+
+            $vat = $purchase['brutto'] - round($purchase['brutto']/1.23,2);
+            $sheet->setCellValue('A' . ($key + 12), $key + 1);
+            $sheet->setCellValue('B' . ($key + 12), $purchase['invoice_number']);
+            $sheet->setCellValue('C' . ($key + 12), $purchase['due_date']);
+            $sheet->setCellValue('D' . ($key + 12), $purchase['issue_date']);
+            $sheet->setCellValue('E' . ($key + 12), $purchase['company']);
+            $sheet->setCellValue('F' . ($key + 12), $purchase['address']);
+            $sheet->setCellValue('G' . ($key + 12), $purchase['NIP']);
+            $sheet->setCellValue('H' . ($key + 12), $brutto);
+            $sheet->setCellValue('M' . ($key + 12), $netto);
+            $sheet->setCellValue('N' . ($key + 12), $vat);
+            $sheet->setCellValue('O' . ($key + 12), $vat);
+
+            $allBrutto += $brutto;
+            $allNetto += $netto;
+            $allVAT += $vat;
+
+            $sheet->getRowDimension($key + 12)->setRowHeight(9.37);
+        }
+
+        return array($allBrutto, $allNetto, $allVAT, count($purchases));
+    }
+
+    public function createRZVFileSchema($invoicesData, $sheet, $monthName, $year){
+        list($allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
         $company = session('company');
 
         $sheet->setCellValue('D1', 'REJESTR ZAKUPÓW VAT');
@@ -494,7 +530,7 @@ class ODSFileController extends Controller{
         $sheet->setCellValue('E5', "Sprzedawca");
         $sheet->setCellValue('E7', "Nazwa\n(imię i nazwisko)");
         $sheet->setCellValue('F7', "Adres\n(siedziba)");
-        $sheet->setCellValue('G7', "Number NIP");
+        $sheet->setCellValue('G7', "Numer NIP");
 
         $sheet->setCellValue('H5', "Wartość\nzakupu\nbrutto");
         $sheet->setCellValue('H10', 'zł | gr');
@@ -522,7 +558,7 @@ class ODSFileController extends Controller{
         $sheet->setCellValue('N8', 'VAT');
         $sheet->setCellValue('N10', 'zł | gr');
 
-        $sheet->setCellValue('O5', 'UwVATagi');
+        $sheet->setCellValue('O5', 'VAT');
 
         $sheet->setCellValue('A11', '1');
         $sheet->setCellValue('B11', '2');
@@ -540,14 +576,17 @@ class ODSFileController extends Controller{
         $sheet->setCellValue('N11', '14');
         $sheet->setCellValue('O11', '15');
 
-//        $sheet->setCellValue('C' . ($countLines+1), 'RAZEM');
-//        $sheet->setCellValue('E' . ($countLines+1), $allBrutto);
-//        $sheet->setCellValue('J' . ($countLines+1), $allNetto);
-//        $sheet->setCellValue('K' . ($countLines+1), $allVAT);
-//        $sheet->setCellValue('L' . ($countLines+1), $allNetto);
-//        $sheet->setCellValue('M' . ($countLines+1), $allVAT);
+        $sheet->setCellValue('E' . ($countLines+12), 'Razem miesiąc');
+        $sheet->setCellValue('H' . ($countLines+12), $allBrutto);
+        $sheet->setCellValue('I' . ($countLines+12), 0);
+        $sheet->setCellValue('J' . ($countLines+12), 0);
+        $sheet->setCellValue('K' . ($countLines+12), 0);
+        $sheet->setCellValue('L' . ($countLines+12), 0);
+        $sheet->setCellValue('M' . ($countLines+12), $allNetto);
+        $sheet->setCellValue('N' . ($countLines+12), $allVAT);
+        $sheet->setCellValue('O' . ($countLines+12), $allVAT);
 
-//        return $countLines;
+        return $countLines;
     }
 
     public function setRZVFileStyle($spreadsheet, $rows){
@@ -555,10 +594,10 @@ class ODSFileController extends Controller{
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
-        $sheet->getStyle('E1')->getFont()->setSize(8);
+        $sheet->getStyle('D1:G4')->getFont()->setSize(9);
 
-//        $sheet->getStyle(('A5:O'. ($rows+1)))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
-        $sheet->getStyle('A5:O10')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+        $sheet->getStyle('A5:O'.($rows+12))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_HAIR);
+        $sheet->getStyle('H12:O'.($rows+12))->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
         $borders = ['A5:A10', 'B5:B10', 'C5:C10', 'D5:D10', 'E5:G6', 'E7:E10', 'F7:F10', 'G7:G10', 'H5:H9',
             'I5:N5', 'I6:J6', 'K6:L6', 'M6:N6', 'I7:J7', 'K7:L7', 'M7:N7',
@@ -568,29 +607,42 @@ class ODSFileController extends Controller{
             $spreadsheet->getActiveSheet()->mergeCells($cell);
         }
 
-        $sheet->getStyle('A5:O10')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A5:O11')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:O'.($rows+12))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-        $sheet->getStyle('A1:N'.($rows+1))->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getColumnDimension('A')->setWidth(5.48);
+        $sheet->getColumnDimension('B')->setWidth(21.58);
+        $sheet->getColumnDimension('C')->setWidth(11.8);
+        $sheet->getColumnDimension('D')->setWidth(11.8);
+        $sheet->getColumnDimension('E')->setWidth(44.5);
+        $sheet->getColumnDimension('F')->setWidth(41.72);
+        $sheet->getColumnDimension('G')->setWidth(15.25);
+        $sheet->getColumnDimension('H')->setWidth(9.27);
+        $sheet->getColumnDimension('I')->setWidth(8.85);
+        $sheet->getColumnDimension('J')->setWidth(8.85);
+        $sheet->getColumnDimension('K')->setWidth(8.85);
+        $sheet->getColumnDimension('L')->setWidth(8.85);
+        $sheet->getColumnDimension('M')->setWidth(11.38);
+        $sheet->getColumnDimension('N')->setWidth(11.38);
+        $sheet->getColumnDimension('O')->setWidth(8.85);
 
-        $sheet->getColumnDimension('A')->setWidth(8.47);
-        $sheet->getColumnDimension('B')->setWidth(11.26);
-        $sheet->getColumnDimension('C')->setWidth(70.93);
-        $sheet->getColumnDimension('D')->setWidth(16.59);
-        $sheet->getColumnDimension('E')->setWidth(16.59);
-        $sheet->getColumnDimension('F')->setWidth(4.23);
-        $sheet->getColumnDimension('G')->setWidth(4.23);
-        $sheet->getColumnDimension('H')->setWidth(6.01);
-        $sheet->getColumnDimension('I')->setWidth(6.01);
-        $sheet->getColumnDimension('J')->setWidth(10.66);
-        $sheet->getColumnDimension('K')->setWidth(10.66);
-        $sheet->getColumnDimension('L')->setWidth(10.66);
-        $sheet->getColumnDimension('M')->setWidth(10.66);
-        $sheet->getColumnDimension('N')->setWidth(14.39);
+        $sheet->getRowDimension('1')->setRowHeight(12.23);
+        $sheet->getRowDimension('2')->setRowHeight(12.23);
+        $sheet->getRowDimension('3')->setRowHeight(12.23);
+        $sheet->getRowDimension('4')->setRowHeight(12.23);
 
-        $sheet->getRowDimension('1')->setRowHeight(12.77);
-        $sheet->getRowDimension('2')->setRowHeight(12.77);
-        $sheet->getRowDimension('3')->setRowHeight(12.77);
-        $sheet->getRowDimension('4')->setRowHeight(12.77);
+        $this->setPageFormat($sheet, 'landscape',0.49, 0.35, 0.35, 0.49);
+    }
 
+    public function setPageFormat($sheet, $orientation, $leftMargin, $rightMargin, $topMargin, $bottomMargin){
+        if ($orientation == 'landscape') $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+        if ($orientation == 'portrait') $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+
+        $sheet->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
+
+        $sheet->getPageMargins()->setLeft($leftMargin);
+        $sheet->getPageMargins()->setRight($rightMargin);
+        $sheet->getPageMargins()->setTop($topMargin);
+        $sheet->getPageMargins()->setBottom($bottomMargin);
     }
 }
