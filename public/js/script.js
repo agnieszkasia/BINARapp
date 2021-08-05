@@ -1,4 +1,7 @@
-$('thead').on('click', '.addRow', function (){
+let thead = $('thead');
+let tbody = $('tbody');
+
+thead.on('click', '.addRow', function (){
     var tr = "<tr id='group[ ]'>" +
         "<td><input type='text' name='due_date[ ]' class='form-control'></td>" +
         "<td><input type='text' name='products_names[ ]' class='form-control'></td>" +
@@ -10,11 +13,11 @@ $('thead').on('click', '.addRow', function (){
     $('tbody').append(tr);
 });
 
-$('tbody').on('click', '.deleteRow', function (){
+tbody.on('click', '.deleteRow', function (){
     $(this).parent().parent().remove();
 })
 
-$('thead').on('click', '.addPurchaseRow', function (){
+thead.on('click', '.addPurchaseRow', function (){
     var tr = "<tr>" +
         "<td><input type='text' name='issue_date[ ]' class='form-control'></td>" +
         "<td><input type='text' name='due_date[ ]' class='form-control'></td>" +
@@ -27,9 +30,9 @@ $('thead').on('click', '.addPurchaseRow', function (){
         "                            </datalist>" +
         "<td><textarea type='text' rows='1' name='company[ ]' class='form-control'></textarea></td>" +
         "<td><textarea type='text' rows='1' name='address[ ]' class='form-control'></textarea></td>" +
+        "<td id='brutto'><input type='text' name='brutto[ ]' class='form-control'></td>" +
         "<td><input type='text' name='netto[ ]' class='form-control'></td>" +
         "<td><input type='text' name='vat[ ]' class='form-control'></td>" +
-        "<td><input type='text' name='brutto[ ]' class='form-control'></td>" +
         "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
         "</tr>"
 
@@ -37,11 +40,11 @@ $('thead').on('click', '.addPurchaseRow', function (){
 
 });
 
-$('tbody').on('click', '.deletePurchaseRow', function (){
+tbody.on('click', '.deletePurchaseRow', function (){
     $(this).parent().parent().remove();
 })
 
-$('thead').on('click', '.addLink', function (){
+thead.on('click', '.addLink', function (){
     var tr = "<tr id='group[ ]'>" +
         "<td><input type='text' name='link[ ]' class='form-control'></td>" +
         "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
@@ -50,7 +53,7 @@ $('thead').on('click', '.addLink', function (){
     $('tbody').append(tr);
 });
 
-$('tbody').on('click', '.deleteLink', function (){
+tbody.on('click', '.deleteLink', function (){
     $(this).parent().parent().remove();
 })
 
@@ -62,7 +65,6 @@ $('#form').click(function (){
     $('#dataOrigin').attr('name', 'formSales');
 
     $("input").prop('required',true);
-
 })
 
 $('#file').click(function (){
@@ -73,14 +75,11 @@ $('#file').click(function (){
     $('#dataOrigin').attr('name', 'fileSales');
 
     $("input").prop('required',true);
-
 })
 
-
-
-$('tbody').on('change', 'input', function (){
-    var company = $(this).parent().next("td").children();
-    var address = $(this).parent().next("td").next('td').children();
+tbody.on('change', 'input', function (){
+    let company = $(this).parent().next("td").children();
+    let address = $(this).parent().next("td").next('td').children();
 
     let nip = $(this).val();
     const companies= $("#hdnSession").data('value');
@@ -95,23 +94,22 @@ $('tbody').on('change', 'input', function (){
             if(value[1].length >30){
                 address.attr('rows', '2');
             }
-
         }
     })
 });
 
+tbody.on('change', 'input', function (){
+    let netto = $(this).parent().next("td").children();
+    let vat = $(this).parent().next("td").next("td").children();
 
-$('#brutto').on('change', 'input', function (){
-    var netto = $(this).parent().next("td").children();
-    var vat = $(this).parent().next("td").next('td').children();
+    let brutto = $(this);
+    let bruttoValue = brutto.val();
 
-    let brutto = $(this).val();
-    console.log(brutto);
-
-    let nettoValue = (brutto/1.23).toFixed(2)
-    netto.val(nettoValue);
-    vat.val((brutto-nettoValue).toFixed(2));
-
+    if (brutto.parent().attr("id") === 'brutto') {
+        let nettoValue = (bruttoValue/1.23).toFixed(2)
+        netto.val(nettoValue);
+        vat.val((bruttoValue-nettoValue).toFixed(2));
+    }
 });
 
 function checkFile(sender) {
