@@ -13,6 +13,7 @@
                 <div class="fs-6 mt-2 ">
                     @if(session('warnings')!== 0) <div class="mx-2 text-warning">Faktury do sprawdzenia: {{session('warnings')}} </div>@endif
                     @if(session('gtu')!== 0) <div class="mx-2 text-danger">Faktury z kodem GTU: {{session('gtu')}}  </div>@endif
+                    @if(session('duplicate')!== 0) <div class="mx-2 text-primary">Faktury z nie wpisać ponownie: {{session('duplicate')}}  </div>@endif
                 </div>
 
                 <input type="hidden" name="invoices" value="{{json_encode(session('invoices'))}}">
@@ -49,6 +50,7 @@
                 <tr class="
                     @if(isset($invoice['warning']) && !isset($invoice['gtu']))table-warning fw-bold
                     @elseif(isset($invoice['gtu'])) table-danger fw-bold
+                    @elseif(isset($invoice['duplicate'])) table-primary fw-bold
                     @endif">
                     <td>{{$invoice['issue_date']}}</td>
                     <td>{{$invoice['due_date']}}</td>

@@ -72,6 +72,7 @@ class TaxSettlementController extends Controller{
     public function readInvoicesFiles(){
         $values = null;
         $gtuCode = array();
+        $duplicate = array();
 
         $filesPaths = $_FILES['file']['tmp_name'];
 
@@ -93,7 +94,10 @@ class TaxSettlementController extends Controller{
                         if (str_contains($cell->getValue(), 'GTU') or str_contains($cell->getValue(), 'GTO') or
                             str_contains($cell->getValue(), 'gtu') or str_contains($cell->getValue(), 'gto')) {
                             $gtuCode[$key] = 'GTU';
-//                            $gtu++;
+                        }
+                        if (str_contains($cell->getValue(), 'nie wpisać') or str_contains($cell->getValue(), 'nie wpisac') or
+                            str_contains($cell->getValue(), 'nie  wpisac') or str_contains($cell->getValue(), 'nie  wpisać')) {
+                            $duplicate[$key] = 'duplicate';
                         }
                     }
                     $j++;
@@ -101,7 +105,7 @@ class TaxSettlementController extends Controller{
             }
             $reader->close();
         }
-        return array($values, $gtuCode);
+        return array($values, $gtuCode, $duplicate);
     }
 
     public function addInvoices(Request $request){
@@ -122,7 +126,7 @@ class TaxSettlementController extends Controller{
         $invoices = null;
 
         $this->checkFilesInput();
-        list($values, $gtuCode) = $this->readInvoicesFiles();
+        list($values, $gtuCode, $duplicate) = $this->readInvoicesFiles();
 
         foreach ($values as $key => $invoice) {
             $invoices[$key]['issue_date'] = $values[$key][1][6];
@@ -178,6 +182,7 @@ class TaxSettlementController extends Controller{
             $invoices[$key]['brutto'] = $values[$key][34][9];
 
             if (isset($gtuCode[$key])) $invoices[$key]['gtu'] = $gtuCode[$key];
+            if (isset($duplicate[$key])) $invoices[$key]['duplicate'] = $duplicate[$key];
         }
 
         $warnings = 0;
@@ -194,10 +199,12 @@ class TaxSettlementController extends Controller{
         }
 
         $gtu = count($gtuCode);
+        $duplicate = count($duplicate);
 
         Session::put('invoices', $invoices);
         Session::put('warnings', $warnings);
         Session::put('gtu', $gtu);
+        Session::put('duplicate', $duplicate);
 
         return view('show_invoices');
      }
@@ -516,7 +523,7 @@ class TaxSettlementController extends Controller{
 
         if ($request->has('generateDetailedDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
             $controller = new ODSFileController();
-            $controller->generateSalesFile('true', 'DZSV', 'DZSV-szcz.ods');
+            $controller->generateSalesFile('true', 'DZSV', 'DZSV-szcz.xls');
         }
 
         if ($request->has('generateDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat
