@@ -8,7 +8,6 @@ use DOMDocument;
 class XMLFileController extends Controller{
     public function generateXMLFile($request, $company){
 
-
         $invoices = session('invoices');
         $purchases = session('purchases');
 
@@ -23,7 +22,7 @@ class XMLFileController extends Controller{
 
         $file = new DOMDocument('1.0', 'UTF-8');
 
-        $year = substr($invoices[count($invoices)-1]['due_date'],6,4);
+        $year = substr($invoices[count($invoices)-1]['due_date'],5,4);
         $month = (int)substr($invoices[count($invoices)-1]['due_date'],3,2);
 
         /* Format XML to save indented tree rather than one line */
@@ -129,6 +128,10 @@ class XMLFileController extends Controller{
         $email = $file->createElement("Email", $company['mail']);
         $entityType->appendChild($email);
 
+        /* tag - Email */
+        $phoneNumber = $file->createElement("Telefon", $company['phoneNumber']);
+        $entityType->appendChild($phoneNumber);
+
         /* tag - Deklaracja */
         $declaration = $file->createElement("Deklaracja");
         $JPK->appendChild($declaration);
@@ -180,7 +183,6 @@ class XMLFileController extends Controller{
 
         $this->getSalesInvoicesToXMLFormat($invoices, $request['salesVat'], $register, $file);
         $this->getPurchaseInvoicesToXMLFormat($purchases, $request['purchasesVat'], $register, $file);
-
 
         /*download file */
         $filename = 'XML - zlozenie po raz pierwszy - ' . '.xml';
@@ -236,8 +238,7 @@ class XMLFileController extends Controller{
             $salesRow->appendChild($nip);
 
             /* tag - NazwaKontrahenta */
-            $invoice['company'] = str_replace('&', '&amp;', $invoice['company']);
-//            if(str_contains($invoice['company'], "&")) dd($invoice['company']);
+            $invoice['company'] = htmlspecialchars( $invoice['company'], ENT_NOQUOTES, 'UTF-8', false);
             $company = $file->createElement("NazwaKontrahenta", $invoice['company']);
             $salesRow->appendChild($company);
 

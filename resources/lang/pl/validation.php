@@ -187,6 +187,7 @@ return [
         'NIP' => 'NIP',
         'birthDate' => 'Data urodzenia',
         'mail' => 'Email',
+        'phoneNumber' => 'Numer telefonu',
         'file' => 'Pliki Faktur VAT',
         'due_date.*' => 'Data Sprzedaży',
         'products_names.*' => 'Nazwa Produktu',

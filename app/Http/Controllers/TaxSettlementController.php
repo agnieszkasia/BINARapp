@@ -56,6 +56,7 @@ class TaxSettlementController extends Controller{
             'address' => ['required', 'string', 'max:255', 'min:2'],
             'birthDate' => ['required', 'string','regex:/19[0-9]{2}|200[0,1,2,3]-[0-9]{2}-[0-9]{2}/u', 'max:255'],
             'mail' => ['required', 'string', 'email', 'max:255'],
+            'phoneNumber' => ['required', 'string','regex:/^[0-9]{9}/u', 'size:9'],
             'NIP' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
             'taxOfficeCode' => ['required', 'string'],
             'file' => ['required'],
@@ -119,6 +120,7 @@ class TaxSettlementController extends Controller{
         $company['birthDate'] = $request['birthDate'];
         $company['mail'] = $request['mail'];
         $company['NIP'] = $request['NIP'];
+        $company['phoneNumber'] = $request['phoneNumber'];
         $company['taxOfficeCode'] = substr($request['taxOfficeCode'],0,4);
 
         Session::put('company', $company);

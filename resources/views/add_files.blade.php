@@ -86,6 +86,18 @@
                 </span>
                 @enderror
 
+                <label for="phoneNumber" class=" mt-4">Numer telefonu</label><input type="text" id="phoneNumber" name="phoneNumber" class="form-control @error('phoneNumber') is-invalid @enderror"
+                        @if(old('phoneNumber')) value="{{old('phoneNumber')}}"
+                        @elseif(isset($company['phoneNumber']))
+                        value="{{$company['phoneNumber']}}"
+                        @endif>
+
+                @error('phoneNumber')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+
                 <label for="NIP" class=" mt-4">NIP</label><input type="text" id="NIP" name="NIP" class="form-control @error('NIP') is-invalid @enderror"
                         @if(old('NIP')) value="{{old('NIP')}}"
                         @elseif(isset($company['NIP']))
