@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>BINARapp</title>
 
     <!-- Fonts -->
@@ -19,11 +18,9 @@
 
 </head>
 <body class="bg-gray">
-<div class="justify-content-center">
-    @yield('content')
-
-</div>
-
+    <div class="justify-content-center">
+        @yield('content')
+    </div>
 @yield('script')
 </body>
 </html>

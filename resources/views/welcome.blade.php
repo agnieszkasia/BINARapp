@@ -6,11 +6,9 @@
 
         <title>BINARapp</title>
 
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-        <!-- Styles -->
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
         <link rel="stylesheet" href="{{asset('css/style.css')}}">
 
@@ -18,17 +16,16 @@
 
     </head>
     <body class="bg-black m-auto">
-    <div class="justify-content-center vh-100 d-flex justify-content-center">
-        <div class="pt-3 m-auto">
-            <div class="m-auto display-1 text-warning mb-3">
-                BINAR<span class="text-white-50">app</span>
-            </div>
+        <div class="justify-content-center vh-100 d-flex justify-content-center">
+            <div class="pt-3 m-auto">
+                <div class="m-auto display-1 text-warning mb-3">
+                    BINAR<span class="text-white-50">app</span>
+                </div>
 
-            <div class="text-center">
-                <a type="submit" class="btn btn-next fw-bold " href="{{ url('/add_files') }}">DODAJ FAKTURY</a>
+                <div class="text-center">
+                    <a type="submit" class="btn btn-next fw-bold " href="{{ url('/add_files') }}">DODAJ FAKTURY</a>
+                </div>
             </div>
         </div>
-    </div>
-
     </body>
 </html>

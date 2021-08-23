@@ -3,22 +3,17 @@
 @section('content')
         <form action="{{route('add_correction_invoice')}}" method="POST">
             @csrf
-
             <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
                 DODAJ FAKTURĘ KORYGUJĄCĄ
-
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
                     <a class="btn btn-next" href="{{ url('/show') }}">WSTECZ</a>
-
                     <button type="submit" class="btn btn-next">DODAJ</button>
                 </div>
 
                 <div class="bg-white col-12  ">
                     <div class="bg-warning col-1-5 p-1"></div>
                 </div>
-
             </div>
-
 
             <table class="table table-light mt-0">
                 <thead class="table-dark">
@@ -35,7 +30,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr>
                         <td>
                             <input type="text" name="issue_date" class="form-control @error('issue_date') is-invalid @enderror"
@@ -84,7 +78,6 @@
 
                         <input type="hidden" id="hdnSession" data-value="{{json_encode(session('companiesData'))}}" />
 
-
                         <td>
                             <input type="text" name="NIP" id="nipId" list="companiesData" class="form-control @error('NIP') is-invalid @enderror"
                                    @if(old('NIP'))
@@ -98,7 +91,6 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
-
                         </td>
 
                         <td>
@@ -165,10 +157,8 @@
                             @enderror
                         </td>
                     </tr>
-
                 </tbody>
             </table>
         </form>
-
 @endsection
 
