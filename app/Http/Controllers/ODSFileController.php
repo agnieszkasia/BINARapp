@@ -55,6 +55,7 @@ class ODSFileController extends Controller{
         $this->setDZSVFileStyle($spreadsheet, $rows);
         return $spreadsheet;
     }
+
     public function setDZSVInvoicesData($allSales, $sheet, $detailed): array{
 
         $key = 0;
@@ -78,6 +79,12 @@ class ODSFileController extends Controller{
                 }
 
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+
+                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['brutto']/1.23,2));
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['brutto']-round($sale['brutto']/1.23,2));
+                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['brutto']/1.23,2));
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['brutto']-round($sale['brutto']/1.23,2));
+
 
                 $allBrutto += round($sale['brutto'], 2);
                 $allNetto += round($sale['brutto']/1.23, 2);
