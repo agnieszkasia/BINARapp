@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use DOMDocument;
 
-class XMLFileController extends Controller{
-    public function generateXMLFile($request, $company){
-
+class XMLFileController extends Controller
+{
+    public function generateXMLFile($request, $company)
+    {
         $invoices = session('invoices');
         $purchases = session('purchases');
 
@@ -194,8 +195,8 @@ class XMLFileController extends Controller{
         unlink($filename);
     }
 
-    public function addUndocumentedSalesToInvoices($request, $invoices){
-
+    public function addUndocumentedSalesToInvoices($request, $invoices)
+    {
         $stringDate = $invoices[count($invoices)-1]['due_date'];
         $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
 
@@ -217,12 +218,8 @@ class XMLFileController extends Controller{
         return $invoices;
     }
 
-    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file){
-
-//dd($invoices);
-
-//        dd(session('invoices'));
-
+    public function getSalesInvoicesToXMLFormat($invoices, $salesVat, $register, $file)
+    {
         foreach ($invoices as $key => $invoice) {
 
             /* tag - SprzedazWiersz */
@@ -260,7 +257,6 @@ class XMLFileController extends Controller{
                 $salesRow->appendChild($gtu);
             }
 
-
             /* tag - K_19 */
             $netto = $file->createElement("K_19", $invoice['netto']);
             $salesRow->appendChild($netto);
@@ -268,9 +264,7 @@ class XMLFileController extends Controller{
             /* tag - K_20 */
             $vat = $file->createElement("K_20", $invoice['vat']);
             $salesRow->appendChild($vat);
-
         }
-
         /* tag - SprzedazCtrl */
         $salesCtrl = $file->createElement("SprzedazCtrl");
         $register->appendChild($salesCtrl);
@@ -282,12 +276,11 @@ class XMLFileController extends Controller{
         /* tag - PodatekNalezny */
         $totalVAT = $file->createElement("PodatekNalezny", $salesVat);
         $salesCtrl->appendChild($totalVAT);
-
     }
 
-    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file){
+    public function getPurchaseInvoicesToXMLFormat($purchases, $purchasesVat, $register, $file)
+    {
         foreach ($purchases as $key => $purchase) {
-
             /* tag - ZakupWiersz */
             $purchaseRow = $file->createElement("ZakupWiersz");
             $register->appendChild($purchaseRow);
@@ -336,6 +329,5 @@ class XMLFileController extends Controller{
         /* tag - PodatekNaliczony */
         $totalVAT = $file->createElement("PodatekNaliczony", $purchasesVat);
         $purchaseCtrl->appendChild($totalVAT);
-
     }
 }

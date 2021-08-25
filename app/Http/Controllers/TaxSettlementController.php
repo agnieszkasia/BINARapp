@@ -9,17 +9,18 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
 
-class TaxSettlementController extends Controller{
-
-    public function showWelcomePage(){
+class TaxSettlementController extends Controller
+{
+    public function showWelcomePage()
+    {
         Session::forget(['data', 'lineCount', 'company', 'invoices',
             'warnings', 'gtu', 'salesCount', 'sales', 'purchases', 'purchasesCount']);
 
         return view('welcome');
     }
 
-    public function showAddFilesPage(){
-
+    public function showAddFilesPage()
+    {
         $filename = public_path('files/KodyUrzedowSkarbowych.xsd');
         $xml = simplexml_load_file($filename);
         $data = array();
@@ -40,7 +41,8 @@ class TaxSettlementController extends Controller{
         return view('add_files', compact('company'));
     }
 
-    function convertDataFromXmlToArray($xml, $lineCount): array{
+    function convertDataFromXmlToArray($xml, $lineCount): array
+    {
         $data = array();
         for ($i = 0; $i < $lineCount; $i++) {
             $data[$i] = (string)$xml->enumeration[$i]['value']." ".(string)$xml->enumeration[$i]->documentation;
@@ -48,7 +50,8 @@ class TaxSettlementController extends Controller{
         return $data;
     }
 
-    public function validateInvoices($request){
+    public function validateInvoices($request)
+    {
         $request->validate([
             'companyName' => ['required', 'string', 'max:255', 'min:2'],
             'firstname' => ['required','string', 'max:255', 'min:2'],
@@ -63,14 +66,16 @@ class TaxSettlementController extends Controller{
         ]);
     }
 
-    public function checkFilesInput(){
+    public function checkFilesInput()
+    {
         if ($_FILES['file']['tmp_name'][0] == "") {
             return Redirect::back()->withErrors(['Nie wybrano żadnych plików']);
         }
         return null;
     }
 
-    public function readInvoicesFiles(){
+    public function readInvoicesFiles()
+    {
         $values = null;
         $gtuCode = array();
         $duplicate = array();
@@ -109,8 +114,8 @@ class TaxSettlementController extends Controller{
         return array($values, $gtuCode, $duplicate);
     }
 
-    public function addInvoices(Request $request){
-
+    public function addInvoices(Request $request)
+    {
         $this->validateInvoices($request);
 
         $company['companyName'] = $request['companyName'];
@@ -211,17 +216,18 @@ class TaxSettlementController extends Controller{
         return view('show_invoices');
      }
 
-    public function show(){
-
+    public function show()
+    {
         return view('show_invoices');
     }
 
-    public function showAddCorrectionInvoicePage(){
+    public function showAddCorrectionInvoicePage()
+    {
         return view('add_correction_invoice');
     }
 
-    public function addCorrectionInvoice(Request $request){
-
+    public function addCorrectionInvoice(Request $request)
+    {
         $invoices = session('invoices');
 
         $invoice['issue_date'] = $request['issue_date'];
@@ -250,15 +256,16 @@ class TaxSettlementController extends Controller{
         return $this->show();
     }
 
-    public function showAddSalesPage(){
+    public function showAddSalesPage()
+    {
         if (session('salesCount') == null) Session::put('salesCount', ['']);
         if (session('sales') == null) Session::put('sales', ['']);
 
         return view('add_sales');
     }
 
-    public function addSales(){
-
+    public function addSales()
+    {
         $sales = [''];
         if ($_FILES['link']['tmp_name'][0] !== '') {
             $sales = $this->readSalesStatementFile();
@@ -271,7 +278,8 @@ class TaxSettlementController extends Controller{
         return $this->showAddSalesFormPage();
     }
 
-    public function readSalesStatementFile(): array{
+    public function readSalesStatementFile(): array
+    {
         $sales = array();
 
         $filesPaths = $_FILES['link']['tmp_name'];
@@ -307,7 +315,8 @@ class TaxSettlementController extends Controller{
         return $sales;
     }
 
-    public function getUndocumentedOrdersData($file): array{
+    public function getUndocumentedOrdersData($file): array
+    {
         $order = array();
 
         foreach ($file as $orders) {
@@ -321,7 +330,8 @@ class TaxSettlementController extends Controller{
         return $order;
     }
 
-    public function getItems($file): array{
+    public function getItems($file): array
+    {
         $items = array();
         foreach ($file as $sales) {
             foreach ($sales as $key=>$sale) {
@@ -334,7 +344,8 @@ class TaxSettlementController extends Controller{
     }
 
 
-    public function readCSV($csvFile, $array){
+    public function readCSV($csvFile, $array)
+    {
         $file_handle = fopen($csvFile, 'r');
 
         while (!feof($file_handle)) {
@@ -347,14 +358,16 @@ class TaxSettlementController extends Controller{
         return $line_of_text;
     }
 
-    public function showAddSalesFormPage(){
+    public function showAddSalesFormPage()
+    {
         if (session('salesCount') == null) Session::put('salesCount', ['']);
         if (session('sales') == null) Session::put('sales', ['']);
 
         return view('add_sales_form');
     }
 
-    public function addSalesForm(Request $request){
+    public function addSalesForm(Request $request)
+    {
         $sales = array();
 
         Session::put('sales', $request['due_date']);
@@ -365,8 +378,6 @@ class TaxSettlementController extends Controller{
             'quantity.*' => ['required', 'integer'],
             'products.*' => ['required', 'regex:/^\d{0,8}((\.|\,)\d{1,4})?$/u', 'max:255'],
         ]);
-
-
 
         if (isset($request['quantity'][0])) {
             foreach ($request['due_date'] as $key => $sale) {
@@ -397,8 +408,8 @@ class TaxSettlementController extends Controller{
         return $this->showAddPurchasesPage();
     }
 
-    public function showAddPurchasesPage(){
-
+    public function showAddPurchasesPage()
+    {
         $companiesData = $this->readCSV(public_path('files/DaneFirm.csv'), array('delimiter' => ';'));
         Session::put('companiesData', $companiesData);
 
@@ -408,8 +419,8 @@ class TaxSettlementController extends Controller{
         return view('add_purchases');
     }
 
-    public function addPurchases(Request $request){
-
+    public function addPurchases(Request $request)
+    {
         Session::put('purchases', $request['issue_date']);
 
         $request->validate([
@@ -426,7 +437,7 @@ class TaxSettlementController extends Controller{
 
         $purchases = array();
 
-        if (isset($request['issue_date'])) {
+        if (isset($request['issue_date'])){
             foreach ($request['issue_date'] as $key => $item) {
 
                 if ($request['issue_date'][$key][0] == '0') $issueDate = substr($request['issue_date'][$key], 1);
@@ -446,16 +457,14 @@ class TaxSettlementController extends Controller{
                 $purchases[$key]['brutto'] = str_replace(",", ".", $request['brutto'][$key]);
             }
         }
-
         Session::put('purchases', $purchases);
         Session::put('purchasesCount', count($purchases));
 
         return $this->showSummaryPage();
     }
 
-    public function showSummaryPage(){
-
-
+    public function showSummaryPage()
+    {
         $sales = session('sales');
         $invoices = session('invoices');
         $purchases = session('purchases');
@@ -509,40 +518,28 @@ class TaxSettlementController extends Controller{
             'salesNetto', 'salesVat', 'salesBrutto'));
     }
 
-    public function generateFile(Request $request){
-
+    public function generateFile(Request $request)
+    {
         $company = Session::get('company');
 
         if ($request->has('generateCSV')) {
             $controller = new CSVFileController();
             $controller->generateCSVFile($request, $company);
-        }
-
-        if ($request->has('generateXML')) {
+        } elseif ($request->has('generateXML')) {
             $controller = new XMLFileController();
             $controller->generateXMLFile($request, $company);
-        }
-
-        if ($request->has('generateDetailedDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
+        } elseif ($request->has('generateDetailedDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat - szczegóły
             $controller = new ODSFileController();
             $controller->generateSalesFile('true', 'DZSV', 'DZSV-szcz.xls');
-        }
-
-        if ($request->has('generateDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat
+        } elseif ($request->has('generateDZSV')) { //DZSV - Dzienne Zestawienie Sprzedaży Vat
             $controller = new ODSFileController();
             $controller->generateSalesFile('false', 'DZSV', 'DZSV.xls');
-        }
-
-        if ($request->has('generateRZV')) {
+        } elseif ($request->has('generateRZV')) {
             $controller = new ODSFileController();
             $controller->generateRZVFile();
-        }
-
-        if ($request->has('generateKPiR')) { //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
+        } elseif ($request->has('generateKPiR')) { //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
             $controller = new ODSFileController();
             $controller->generateSalesFile('false', 'KPiR', 'KPiR.xls');
         }
     }
-
-
 }

@@ -4,20 +4,19 @@ namespace App\Http\Controllers;
 use DateTime;
 
 class CSVFileController extends Controller{
-    public function generateCSVFile($request, $company){
 
+    public function generateCSVFile($request, $company)
+    {
         header('Content-type: application/csv');
         header('Content-Disposition: attachment; filename=CSV.csv');
         header("Content-Transfer-Encoding: UTF-8");
 
         $lines = array();
         $purchaseLines = array();
-
         $invoices = session('invoices');
-
         $vat = 0;
 
-        foreach ($invoices as $key => $invoice) {
+        foreach ($invoices as $key => $invoice){
             $invoice['issue_date'];
 
             $issueDateTime = DateTime::createFromFormat('d.m.Y', $invoice['issue_date']);
@@ -33,7 +32,6 @@ class CSVFileController extends Controller{
 
             $invoice['company'] = str_replace("\n", " ", str_replace("\"", "", $invoice['company']));
 
-
             $lines[] = ";;;;;;;;;;;;" . ($key + 1) . ";" .
                 $invoice['NIP'] . ";" .
                 $invoice['company'] . ";" .
@@ -46,7 +44,6 @@ class CSVFileController extends Controller{
         }
 
         $purchases = session('purchases');
-
         $sort = null;
         foreach ($purchases as $key => $purchase) {
             $sort[$key] = strtotime($purchase['issue_date']);
@@ -55,7 +52,6 @@ class CSVFileController extends Controller{
         if (isset($sort)) array_multisort($sort, SORT_ASC, $purchases);
 
         foreach ($purchases as $key => $purchase) {
-
             $issueDateTime = DateTime::createFromFormat('d.m.Y', $purchase['issue_date']);
             $purchase['issue_date'] = $issueDateTime->format('Y-m-d');
 
@@ -80,7 +76,6 @@ class CSVFileController extends Controller{
         $undefinedSalesVat = str_replace(".", ",", $request['undefinedSalesVat']);
         $salesVat = str_replace(".", ",", $request['salesVat']);
 
-
         $stringDate = $invoices[count($invoices)-1]['due_date'];
 
         $undocumentedSaleDate = $lastDayOfMonth = date_format(date_create_from_format('d.m.Y', $stringDate), 'Y-m-t');
@@ -101,7 +96,6 @@ class CSVFileController extends Controller{
         }
 
         $data .= ";;;;;;;;;;;;" . (count($invoices) + 1) . ";brak;sprzedaz bezrachunkowa miesiąc ".$monthName.";brak;brak;;".$undocumentedSaleDate.";;;;;;;;;;" . $undefinedSalesNetto . ";" . $undefinedSalesVat . ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;" . PHP_EOL;
-
         $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . (count($invoices) + 1) . ';' . $salesVat . ';;;;;;;;;;;;;;;;;' . PHP_EOL;
 
         foreach ($purchaseLines as $line) {
@@ -110,9 +104,7 @@ class CSVFileController extends Controller{
         $purchaseVat = str_replace(".", ",", $request['purchasesVat']);
         $data .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . count($purchases) . ';' . $purchaseVat;
 
-
         fwrite($fp, print_r($data, TRUE));
-
         fclose($fp);
     }
 }
