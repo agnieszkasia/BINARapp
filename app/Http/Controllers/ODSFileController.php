@@ -10,9 +10,10 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-class ODSFileController extends Controller{
-
-    public function generateSalesFile($detailed, $type, $filename){
+class ODSFileController extends Controller
+{
+    public function generateSalesFile($detailed, $type, $filename)
+    {
         $invoices = session('invoices');
         $sales = session('sales');
 
@@ -42,7 +43,9 @@ class ODSFileController extends Controller{
         unlink(public_path($filename));
     }
 
-    public function createDZSVSpreadsheet($allSales,$detailed): Spreadsheet{ //DZSV - Dzienne Zestawienie Sprzedaży Vat
+    //DZSV - Dzienne Zestawienie Sprzedaży Vat
+    public function createDZSVSpreadsheet($allSales,$detailed): Spreadsheet
+    {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
@@ -56,7 +59,8 @@ class ODSFileController extends Controller{
         return $spreadsheet;
     }
 
-    public function setDZSVInvoicesData($allSales, $sheet, $detailed): array{
+    public function setDZSVInvoicesData($allSales, $sheet, $detailed): array
+    {
         $key = 0;
         $service = 0;
         $products = 0;
@@ -65,7 +69,6 @@ class ODSFileController extends Controller{
         $allVAT = 0;
         $i=11;
 
-//        dd($allSales);
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
@@ -128,7 +131,8 @@ class ODSFileController extends Controller{
         return array($service, $products, $allBrutto, $allNetto, $allVAT, $countLines);
     }
 
-    public function createDZSVFileSchema($invoicesData, $sheet, $monthName, $year){
+    public function createDZSVFileSchema($invoicesData, $sheet, $monthName, $year)
+    {
         list($service, $products, $allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
         $company = session('company');
 
@@ -197,7 +201,8 @@ class ODSFileController extends Controller{
         return $countLines;
     }
 
-    public function setDZSVFileStyle($spreadsheet, $rows){
+    public function setDZSVFileStyle($spreadsheet, $rows)
+    {
         $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $sheet = $spreadsheet->setActiveSheetIndex(0);
@@ -249,7 +254,9 @@ class ODSFileController extends Controller{
         $this->setPageFormat($sheet, 'landscape',0.46, 0.32, 0.59, 0.49);
     }
 
-    public function createKPiRSpreadsheet($allSales): Spreadsheet{ //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
+    //KPiR - Księga przychodów i rozchodów - podatek ryczałtowy
+    public function createKPiRSpreadsheet($allSales): Spreadsheet
+    {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
@@ -263,15 +270,14 @@ class ODSFileController extends Controller{
         return $spreadsheet;
     }
 
-    public function setKPiRInvoicesData($allSales, $sheet): array{
-
+    public function setKPiRInvoicesData($allSales, $sheet): array
+    {
         $key = 0;
         $service = 0;
         $products = 0;
         $allNetto = 0;
         $i=10;
         foreach ($allSales as $key => $sale) {
-
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
                 $sheet->setCellValue('A' . ($key + 1 + $i), $key - 9 + $i);
                 $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
@@ -312,7 +318,8 @@ class ODSFileController extends Controller{
         return array($service, $products, $allNetto, $countLines);
     }
 
-    public function createKPiRFileSchema($invoicesData, $sheet, $monthName, $year){
+    public function createKPiRFileSchema($invoicesData, $sheet, $monthName, $year)
+    {
         list($service, $products, $allNetto, $countLines) = $invoicesData;
         $company = session('company');
 
@@ -369,7 +376,8 @@ class ODSFileController extends Controller{
         return $countLines;
     }
 
-    public function setKPiRFileSchemaStyle($spreadsheet, $rows){
+    public function setKPiRFileSchemaStyle($spreadsheet, $rows)
+    {
         $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $sheet = $spreadsheet->setActiveSheetIndex(0);
@@ -416,7 +424,8 @@ class ODSFileController extends Controller{
         $this->setPageFormat($sheet, 'portrait',0.79, 0.79, 0.3, 0.37);
     }
 
-    public function mergeSales($sales){
+    public function mergeSales($sales)
+    {
         foreach ($sales as $key => $sale) {
             if (isset($sales[$key - 1])) $previousSale = $sales[$key - 1];
 
@@ -449,7 +458,9 @@ class ODSFileController extends Controller{
         return $sales;
     }
 
-    public function generateRZVFile(){ //RZV - Rejestr Zakupów Vat
+    //RZV - Rejestr Zakupów Vat
+    public function generateRZVFile()
+    {
         $purchases = session('purchases');
 
         foreach ($purchases as $key => $purchase) {
@@ -481,14 +492,13 @@ class ODSFileController extends Controller{
         unlink(public_path('RZV.xls'));
     }
 
-    public function setRZVInvoicesData($purchases, $sheet): array{
-
+    public function setRZVInvoicesData($purchases, $sheet): array
+    {
         $allNetto = 0;
         $allBrutto = 0;
         $allVAT = 0;
 
         foreach ($purchases as $key => $purchase) {
-
             $brutto = round($purchase['brutto'],2);
             $netto = round($brutto/1.23,2);
 
@@ -515,7 +525,8 @@ class ODSFileController extends Controller{
         return array($allBrutto, $allNetto, $allVAT, count($purchases));
     }
 
-    public function createRZVFileSchema($invoicesData, $sheet, $monthName, $year){
+    public function createRZVFileSchema($invoicesData, $sheet, $monthName, $year)
+    {
         list($allBrutto, $allNetto, $allVAT, $countLines) = $invoicesData;
         $company = session('company');
 
@@ -593,7 +604,8 @@ class ODSFileController extends Controller{
         return $countLines;
     }
 
-    public function setRZVFileStyle($spreadsheet, $rows){
+    public function setRZVFileStyle($spreadsheet, $rows)
+    {
         $spreadsheet->getDefaultStyle()->getFont()->setSize(6);
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $sheet = $spreadsheet->setActiveSheetIndex(0);
@@ -638,7 +650,8 @@ class ODSFileController extends Controller{
         $this->setPageFormat($sheet, 'landscape',0.49, 0.35, 0.35, 0.49);
     }
 
-    public function setPageFormat($sheet, $orientation, $leftMargin, $rightMargin, $topMargin, $bottomMargin){
+    public function setPageFormat($sheet, $orientation, $leftMargin, $rightMargin, $topMargin, $bottomMargin)
+    {
         if ($orientation == 'landscape') $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
         if ($orientation == 'portrait') $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
 
