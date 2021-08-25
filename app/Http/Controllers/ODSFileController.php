@@ -57,7 +57,6 @@ class ODSFileController extends Controller{
     }
 
     public function setDZSVInvoicesData($allSales, $sheet, $detailed): array{
-
         $key = 0;
         $service = 0;
         $products = 0;
@@ -66,6 +65,7 @@ class ODSFileController extends Controller{
         $allVAT = 0;
         $i=11;
 
+//        dd($allSales);
         foreach ($allSales as $key => $sale) {
 
             if ($sale['brutto'] !== null && !isset($sale['service'])) {
@@ -79,52 +79,49 @@ class ODSFileController extends Controller{
                 }
 
                 $sheet->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+                $sheet->setCellValue('J' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['vat']);
+                $sheet->setCellValue('L' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['vat']);
 
-                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['brutto']/1.23,2));
-                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['brutto']-round($sale['brutto']/1.23,2));
-                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['brutto']/1.23,2));
-                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['brutto']-round($sale['brutto']/1.23,2));
-
-
-                $allBrutto += round($sale['brutto'], 2);
-                $allNetto += round($sale['brutto']/1.23, 2);
-                $allVAT += round($sale['brutto']-$sale['brutto']/1.23, 2);
+                $allBrutto += $sale['brutto'];
+                $allNetto += $sale['netto'];
+                $allVAT += $sale['vat'];
 
             } elseif (isset($sale['products']) && $sale['products'] !== 0) {
                 $sheet->setCellValue('A' . ($key + 1 + $i), $key - 10 + $i);
                 $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['products']);
-                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['products']/1.23,2));
-                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['products']-round($sale['products']/1.23,2));
-                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['products']/1.23,2));
-                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['products']-round($sale['products']/1.23,2));
+                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+                $sheet->setCellValue('J' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['vat']);
+                $sheet->setCellValue('L' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['vat']);
 
-                $allBrutto += round($sale['products'], 2);
-                $allNetto += round($sale['products']/1.23, 2);
-                $allVAT += round($sale['products']-$sale['products']/1.23, 2);
+                $allBrutto += $sale['brutto'];
+                $allNetto += $sale['netto'];
+                $allVAT += $sale['vat'];
 
             } elseif (isset($sale['products']) && $sale['products'] == 0) $i--;
 
-            if (isset($sale['service']) && $sale['service'] !== "0") {
+            if (isset($sale['service']) && $sale['service'] !== "0" &&  $sale['products'] == "0") {
                 $i++;
                 $sheet->setCellValue('A' . ($key + 1 + $i), $key  - 10 + $i);
                 $sheet->setCellValue('B' . ($key + 1 + $i), $sale['issue_date']);
                 $sheet->setCellValue('C' . ($key + 1 + $i), $sale['company'] . " " . $sale['address'] . " " . $sale['NIP']);
                 $sheet->setCellValue('D' . ($key + 1 + $i), $sale['invoice_number']);
-                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['service']);
-                $sheet->setCellValue('J' . ($key + 1 + $i), round($sale['service']/1.23,2));
-                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['service']-round($sale['service']/1.23,2));
-                $sheet->setCellValue('L' . ($key + 1 + $i), round($sale['service']/1.23,2));
-                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['service']-round($sale['service']/1.23,2));
-                $allBrutto += round($sale['service'], 2);
-                $allNetto += round($sale['service']/1.23, 2);
-                $allVAT += round($sale['service']-$sale['service']/1.23, 2);
+                $sheet->setCellValue('E' . ($key + 1 + $i), $sale['brutto']);
+                $sheet->setCellValue('J' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('K' . ($key + 1 + $i), $sale['vat']);
+                $sheet->setCellValue('L' . ($key + 1 + $i), $sale['netto']);
+                $sheet->setCellValue('M' . ($key + 1 + $i), $sale['vat']);
+                $allBrutto += $sale['brutto'];
+                $allNetto += $sale['netto'];
+                $allVAT += $sale['vat'];
 
             }
             $sheet->getRowDimension($key + 1 + $i)->setRowHeight(7.95);
-
         }
 
         $countLines = $key + 1 + $i;

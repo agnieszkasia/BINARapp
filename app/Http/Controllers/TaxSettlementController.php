@@ -300,9 +300,9 @@ class TaxSettlementController extends Controller
 
 
                         $products = $item[6] * $item[7];
-                        $sales[$i]['netto'] = (int)round($products - ($products * 0.23), 2);
-                        $sales[$i]['vat'] = (int)round($products * 0.23, 2);
-                        $sales[$i]['brutto'] = (int)$products;
+                        $sales[$i]['netto'] = (float)round($products - ($products / 1.23), 2);
+                        $sales[$i]['vat'] = (float)round($products / 1.23, 2);
+                        $sales[$i]['brutto'] = (float)$products;
                         $sales[$i]['quantity'] = $item[6];
                         $sales[$i]['products'] = $item[7];
 
@@ -497,9 +497,9 @@ class TaxSettlementController extends Controller
 
         if (isset($sales[0]['due_date'])) {
             foreach ($sales as $sale) {
-                $undefinedSalesNetto += (float)$sale['netto'];
-                $undefinedSalesVat += (float)$sale['vat'];
-                $undefinedSalesBrutto += (float)$sale['brutto'];
+                $undefinedSalesNetto += $sale['netto'];
+                $undefinedSalesVat += $sale['vat'];
+                $undefinedSalesBrutto += $sale['brutto'];
             }
         }
 
