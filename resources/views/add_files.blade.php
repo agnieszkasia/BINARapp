@@ -71,13 +71,13 @@
             </span>
             @enderror
 
-            <label for="mail" class=" mt-4">Email</label><input type="email" id="mail" name="mail" class="form-control @error('mail') is-invalid @enderror"
-                    @if(old('mail')) value="{{old('mail')}}"
-                    @elseif(isset($company['mail']))
-                        value="{{$company['mail']}}"
+            <label for="email" class=" mt-4">Email</label><input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                    @if(old('email')) value="{{old('mail')}}"
+                    @elseif(isset($company['email']))
+                        value="{{$company['email']}}"
                     @endif>
 
-            @error('mail')
+            @error('email')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
@@ -95,10 +95,10 @@
             </span>
             @enderror
 
-            <label for="NIP" class=" mt-4">NIP</label><input type="text" id="NIP" name="NIP" class="form-control @error('NIP') is-invalid @enderror"
-                    @if(old('NIP')) value="{{old('NIP')}}"
-                    @elseif(isset($company['NIP']))
-                        value="{{$company['NIP']}}"
+            <label for="nip" class=" mt-4">NIP</label><input type="text" id="nip" name="nip" class="form-control @error('nip') is-invalid @enderror"
+                    @if(old('nip')) value="{{old('nip')}}"
+                    @elseif(isset($company['nip']))
+                        value="{{$company['nip']}}"
                     @endif>
 
             @error('NIP')

@@ -30,7 +30,7 @@
                 </thead>
                 <tbody class="table-light">
 
-                @foreach(session('sales') as $key=>$products)
+                @foreach($sales as $key=>$products)
                     <tr>
                         <td>
                             <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"

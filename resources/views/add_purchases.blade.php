@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('summary')}}" method="POST">
+    <form action="{{route('add_purchases')}}" method="POST">
         @csrf
 
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
@@ -33,14 +33,14 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach(session('purchases') as $key=>$purchases)
+            @foreach($purchases as $key=>$purchase)
                 <tr>
                     <td>
                         <input type="text" name="issue_date[ ]" class="form-control @error('issue_date.'.$key) is-invalid @enderror"
                                 @if(old('issue_date.'.$key))
                                     value="{{old('issue_date.'.$key)}}"
-                                @elseif(isset($purchases['issue_date']))
-                                    value="{{$purchases['issue_date']}}"
+                                @elseif(isset($purchase['issue_date']))
+                                    value="{{$purchase['issue_date']}}"
                                 @endif>
 
                         @error('issue_date.'.$key)
@@ -54,8 +54,8 @@
                         <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
                                 @if(old('due_date.'.$key))
                                     value="{{old('due_date.'.$key)}}"
-                                @elseif(isset($purchases['due_date']))
-                                    value="{{$purchases['due_date']}}"
+                                @elseif(isset($purchase['due_date']))
+                                    value="{{$purchase['due_date']}}"
                                 @endif>
 
                         @error('due_date.'.$key)
@@ -69,8 +69,8 @@
                         <input type="text" name="invoice_number[ ]" class="form-control @error('invoice_number.'.$key) is-invalid @enderror"
                                 @if(old('invoice_number.'.$key))
                                     value="{{old('invoice_number.'.$key)}}"
-                                @elseif(isset($purchases['invoice_number']))
-                                    value="{{$purchases['invoice_number']}}"
+                                @elseif(isset($purchase['invoice_number']))
+                                    value="{{$purchase['invoice_number']}}"
                                 @endif>
 
                         @error('invoice_number.'.$key)
@@ -86,8 +86,8 @@
                         <input type="text" name="NIP[ ]" id="nipId" list="companiesData" class="form-control @error('NIP.'.$key) is-invalid @enderror"
                                @if(old('NIP.'.$key))
                                value="{{old('NIP.'.$key)}}"
-                               @elseif(isset($purchases['NIP']))
-                               value="{{$purchases['NIP']}}"
+                               @elseif(isset($purchase['NIP']))
+                               value="{{$purchase['NIP']}}"
                             @endif>
 
                         @error('NIP.'.$key)
@@ -104,7 +104,7 @@
                     </td>
 
                     <td>
-                        <textarea type="text" rows="1" name="company[ ]" id="companyId" class="form-control @error('company.'.$key) is-invalid @enderror" >@if(old('company.'.$key)){{old('company.'.$key)}}@elseif(isset($purchases['company'])){{$purchases['company']}}@endif</textarea>
+                        <textarea type="text" rows="1" name="company[ ]" id="companyId" class="form-control @error('company.'.$key) is-invalid @enderror" >@if(old('company.'.$key)){{old('company.'.$key)}}@elseif(isset($purchase['company'])){{$purchase['company']}}@endif</textarea>
 
                         @error('company.'.$key)
                         <span class="invalid-feedback" role="alert">
@@ -114,7 +114,7 @@
                     </td>
 
                     <td>
-                        <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">@if(old('address.'.$key)){{old('address.'.$key)}}@elseif(isset($purchases['address'])){{$purchases['address']}}@endif</textarea>
+                        <textarea type="text" rows="1" name="address[ ]" class="form-control @error('address.'.$key) is-invalid @enderror">@if(old('address.'.$key)){{old('address.'.$key)}}@elseif(isset($purchase['address'])){{$purchase['address']}}@endif</textarea>
 
                         @error('address.'.$key)
                         <span class="invalid-feedback" role="alert">
@@ -126,8 +126,8 @@
                     <td id="brutto">
                         <input type="text" name="brutto[ ]" class="form-control @error('brutto.'.$key) is-invalid @enderror"
                                @if(old('brutto.'.$key)) value="{{old('brutto.'.$key)}}"
-                               @elseif(isset($purchases['brutto']))
-                               value="{{$purchases['brutto']}}"
+                               @elseif(isset($purchase['brutto']))
+                               value="{{$purchase['brutto']}}"
                             @endif>
 
                         @error('brutto.'.$key)
@@ -141,8 +141,8 @@
                         <input type="text" name="netto[ ]" class="form-control @error('netto.'.$key) is-invalid @enderror"
                                 @if(old('netto.'.$key))
                                     value="{{old('netto.'.$key)}}"
-                                @elseif(isset($purchases['netto']))
-                                    value="{{$purchases['netto']}}"
+                                @elseif(isset($purchase['netto']))
+                                    value="{{$purchase['netto']}}"
                                 @endif>
 
                         @error('netto.'.$key)
@@ -156,8 +156,8 @@
                         <input type="text" name="vat[ ]" class="form-control @error('vat.'.$key) is-invalid @enderror"
                                 @if(old('vat.'.$key))
                                     value="{{old('vat.'.$key)}}"
-                                @elseif(isset($purchases['vat']))
-                                    value="{{$purchases['vat']}}"
+                                @elseif(isset($purchase['vat']))
+                                    value="{{$purchase['vat']}}"
                                 @endif>
 
                         @error('vat.'.$key)

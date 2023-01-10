@@ -1,9 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models\InvoicesPostions;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Service extends InvoicePosition
 {

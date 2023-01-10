@@ -4,11 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSaleInvoicesTable extends Migration
+class CreateCorrectiveInvoicesTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
-        Schema::create('sale_invoices', function (Blueprint $table) {
+        Schema::create('corrective_invoices', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number');
             $table->date('issue_date');
@@ -21,8 +26,13 @@ class CreateSaleInvoicesTable extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
-        Schema::dropIfExists('sale_invoices');
+        Schema::dropIfExists('corrective_invoices');
     }
 }

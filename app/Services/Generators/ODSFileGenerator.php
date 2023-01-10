@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Generators;
 
 use finfo;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-class ODSFileController extends Controller
+class ODSFileGenerator
 {
     public function generateSalesFile($detailed, $type, $filename)
     {

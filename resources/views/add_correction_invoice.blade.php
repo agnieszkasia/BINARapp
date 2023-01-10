@@ -6,7 +6,7 @@
             <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
                 DODAJ FAKTURĘ KORYGUJĄCĄ
                 <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                    <a class="btn btn-next" href="{{ url('/show') }}">WSTECZ</a>
+                    <a class="btn btn-next" href="{{ route('show_sale_invoices') }}">WSTECZ</a>
                     <button type="submit" class="btn btn-next">DODAJ</button>
                 </div>
 
@@ -114,14 +114,14 @@
                         </td>
 
                         <td>
-                            <input type="text" name="netto" class="form-control @error('netto') is-invalid @enderror"
-                                    @if(old('netto'))
-                                        value="{{old('netto')}}"
-                                    @elseif(isset($purchases['netto']))
-                                        value="{{$purchases['netto']}}"
+                            <input type="text" name="net" class="form-control @error('net') is-invalid @enderror"
+                                    @if(old('net'))
+                                        value="{{old('net')}}"
+                                    @elseif(isset($purchases['net']))
+                                        value="{{$purchases['net']}}"
                                     @endif>
 
-                            @error('netto')
+                            @error('net')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -144,10 +144,10 @@
                         </td>
 
                         <td>
-                            <input type="text" name="brutto" class="form-control @error('brutto') is-invalid @enderror"
-                                   @if(old('brutto')) value="{{old('brutto')}}"
-                                   @elseif(isset($purchases['brutto']))
-                                   value="{{$purchases['brutto']}}"
+                            <input type="text" name="gross" class="form-control @error('gross') is-invalid @enderror"
+                                   @if(old('gross')) value="{{old('gross')}}"
+                                   @elseif(isset($purchases['gross']))
+                                   value="{{$purchases['gross']}}"
                                 @endif>
 
                             @error('brutto')

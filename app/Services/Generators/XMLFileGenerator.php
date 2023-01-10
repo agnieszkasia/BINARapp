@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Generators;
 
 use Carbon\Carbon;
 use DOMDocument;
 
-class XMLFileController extends Controller
+class XMLFileGenerator
 {
     public function generateXMLFile($request, $company)
     {

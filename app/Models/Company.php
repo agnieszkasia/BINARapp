@@ -1,10 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Models\Invoices\SaleInvoice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
@@ -17,8 +18,8 @@ class Company extends Model
         'nip'
     ];
 
-    public function saleInvoices(): BelongsToMany
+    public function saleInvoices(): HasMany
     {
-        return $this->belongsToMany(SaleInvoice::class);
+        return $this->hasMany(SaleInvoice::class);
     }
 }

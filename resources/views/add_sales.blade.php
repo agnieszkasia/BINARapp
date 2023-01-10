@@ -1,13 +1,13 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('add_sales_form')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('add_undocumented_sales')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             DODAJ SPRZEDAŻ NIEUDOKUMENTOWANĄ
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                <a class="btn btn-next" href="{{ url('/show') }}">WSTECZ</a>
+                <a class="btn btn-next" href="{{ route('show_sale_invoices') }}">WSTECZ</a>
                 <button type="submit" class="btn btn-next" name="fileSales" id="dataOrigin">DALEJ</button>
             </div>
 
