@@ -44,20 +44,4 @@ class InvoiceService
 
         return $saleInvoice;
     }
-
-    public function validate($request)
-    {
-        $request->validate([
-            'companyName' => ['required', 'string', 'max:255', 'min:2'],
-            'firstname' => ['required','string', 'max:255', 'min:2'],
-            'lastname' => ['required', 'string', 'max:255', 'min:2'],
-            'address' => ['required', 'string', 'max:255', 'min:2'],
-            'birthDate' => ['required', 'string','regex:/19[0-9]{2}|200[0,1,2,3]-[0-9]{2}-[0-9]{2}/u', 'max:255'],
-            'mail' => ['required', 'string', 'email', 'max:255'],
-            'phoneNumber' => ['required', 'string','regex:/^[0-9]{9}/u', 'size:9'],
-            'NIP' => ['required', 'string', 'regex:/[0-9]{10}/u', 'size:10'],
-            'taxOfficeCode' => ['required', 'string'],
-            'file' => ['required'],
-        ]);
-    }
 }

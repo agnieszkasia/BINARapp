@@ -38,9 +38,8 @@ class FormController extends Controller
         Request              $request
     ): RedirectResponse
     {
-        $invoiceService->validate($request);
-
-        $userService->addFromForm($request);
+        $userService->validate($request);
+        $userService->create($request);
 
         $saleInvoiceFilePaths = $_FILES['file']['tmp_name'];
 

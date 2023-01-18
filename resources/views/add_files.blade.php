@@ -23,25 +23,25 @@
             </span>
             @enderror
 
-            <label for="firstname" class=" mt-4">Imię</label><input type="text" id="firstname" name="firstname" class="form-control @error('firstname') is-invalid @enderror"
-                    @if(old('firstname')) value="{{old('firstname')}}"
-                    @elseif(isset($company['firstname']))
-                    value="{{$company['firstname']}}"
+            <label for="firstName" class=" mt-4">Imię</label><input type="text" id="firstName" name="firstname" class="form-control @error('firstName') is-invalid @enderror"
+                    @if(old('firstName')) value="{{old('firstName')}}"
+                    @elseif(isset($company['firstName']))
+                    value="{{$company['firstName']}}"
                     @endif>
 
-            @error('firstname')
+            @error('firstName')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
             @enderror
 
-            <label for="lastname" class=" mt-4">Nazwisko</label><input type="text" id="lastname" name="lastname" class="form-control @error('lastname') is-invalid @enderror"
-                    @if(old('lastname')) value="{{old('lastname')}}"
-                    @elseif(isset($company['lastname']))
-                        value="{{$company['lastname']}}"
+            <label for="lastName" class=" mt-4">Nazwisko</label><input type="text" id="lastName" name="lastName" class="form-control @error('lastName') is-invalid @enderror"
+                    @if(old('lastName')) value="{{old('lastName')}}"
+                    @elseif(isset($company['lastName']))
+                        value="{{$company['lastName']}}"
                     @endif>
 
-            @error('lastname')
+            @error('lastName')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
