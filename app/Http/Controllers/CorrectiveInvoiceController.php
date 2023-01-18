@@ -15,7 +15,7 @@ class CorrectiveInvoiceController extends Controller
 
     public function create(CorrectiveInvoiceService $correctiveInvoiceService, CompanyService $companyService, Request $request)
     {
-        //TODO: check that all data are provided
+        $correctiveInvoiceService->validate($request);
 
         $companyService->createFromForm($request);
         $correctiveInvoiceService->create($request);

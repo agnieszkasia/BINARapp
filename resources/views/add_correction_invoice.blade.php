@@ -79,14 +79,14 @@
                         <input type="hidden" id="hdnSession" data-value="{{json_encode(session('companiesData'))}}" />
 
                         <td>
-                            <input type="text" name="NIP" id="nipId" list="companiesData" class="form-control @error('NIP') is-invalid @enderror"
-                                   @if(old('NIP'))
-                                   value="{{old('NIP')}}"
-                                   @elseif(isset($purchases['NIP']))
-                                   value="{{$purchases['NIP']}}"
+                            <input type="text" name="nip" id="nipId" list="companiesData" class="form-control @error('nip') is-invalid @enderror"
+                                   @if(old('nip'))
+                                   value="{{old('nip')}}"
+                                   @elseif(isset($purchases['nip']))
+                                   value="{{$purchases['nip']}}"
                                 @endif>
 
-                            @error('NIP')
+                            @error('nip')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -150,7 +150,7 @@
                                    value="{{$purchases['gross']}}"
                                 @endif>
 
-                            @error('brutto')
+                            @error('gross')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
