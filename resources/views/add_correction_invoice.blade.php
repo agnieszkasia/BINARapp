@@ -94,9 +94,9 @@
                         </td>
 
                         <td>
-                            <textarea type="text" rows="1" name="company" id="companyId" class="form-control @error('company') is-invalid @enderror" >@if(old('company')){{old('company')}}@elseif(isset($purchases['company'])){{$purchases['company']}}@endif</textarea>
+                            <textarea type="text" rows="1" name="name" id="companyId" class="form-control @error('name') is-invalid @enderror" >@if(old('name')){{old('name')}}@elseif(isset($purchases['name'])){{$purchases['name']}}@endif</textarea>
 
-                            @error('company')
+                            @error('name')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

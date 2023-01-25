@@ -1,14 +1,14 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('add_purchases')}}" method="POST">
+    <form action="{{route('add_purchase_invoices')}}" method="POST">
         @csrf
 
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             DODAJ FAKTURY ZAKUPU
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                <a class="btn btn-next" href="{{ url('/add_sales_form') }}">WSTECZ</a>
+                <a class="btn btn-next" href="{{ route('show_undocumented_sales') }}">WSTECZ</a>
                 <button type="submit" class="btn btn-next">PODSUMOWANIE</button>
             </div>
 

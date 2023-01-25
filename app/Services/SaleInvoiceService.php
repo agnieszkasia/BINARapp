@@ -3,13 +3,15 @@
 namespace App\Services;
 
 use App\Models\Invoices\SaleInvoice;
-use App\Models\InvoicesPostions\Product;
-use App\Models\InvoicesPostions\Service;
+use App\Models\InvoicesPositions\Product;
+use App\Models\InvoicesPositions\Service;
 use DateTime;
 
-class InvoiceService
+class SaleInvoiceService
 {
-    public function create($values, $company)
+    private $type = 'sale_invoice';
+
+    public function createNewSaleInvoice($values, $company)
     {
         $saleInvoice = new SaleInvoice();
         $saleInvoice->setAttribute('invoice_number', $values[5][6]);
@@ -23,9 +25,9 @@ class InvoiceService
 
         for ($i = 19; $i <= 33; $i++) {
             if (!empty($values[$i][1]) && ($values[$i][4] == 'szt' || str_contains($values[$i][4], 'm'))) {
-                $invoicePosition = new Product();
+                $invoicePosition = new Product($this->type);
             } elseif (!empty($values[$i][1]) && str_contains($values[$i][4], 'usł')) {
-                $invoicePosition = new Service();
+                $invoicePosition = new Service($this->type);
             } else {
                 unset($invoicePosition);
             }

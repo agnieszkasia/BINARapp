@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('add_undocumented_sales')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('import_allegro_sales')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             DODAJ SPRZEDAŻ NIEUDOKUMENTOWANĄ

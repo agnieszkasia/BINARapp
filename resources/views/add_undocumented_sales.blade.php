@@ -1,14 +1,14 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('add_purchases')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('add_undocumented_sales')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             DODAJ SPRZEDAŻ NIEUDOKUMENTOWANĄ
 
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
                 <a class="btn btn-next" onclick="return confirm('Czy na pewno chcesz przejść do poprzedniej strony? ' +
-                 'Wprowadzone zmiany zostaną utracone')" href="{{ url('/add_sales') }}">WSTECZ</a>
+                 'Wprowadzone zmiany zostaną utracone')" href="{{ route('create_allegro_sales') }}">WSTECZ</a>
                 <button type="submit" class="btn btn-next" name="fileSales" id="dataOrigin">DALEJ</button>
             </div>
 
@@ -33,8 +33,8 @@
                 @foreach($sales as $key=>$products)
                     <tr>
                         <td>
-                            <input type="text" name="due_date[ ]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
-                                    @if(old('due_date.'.$key)) value="{{old('due_date.'.$key)}}"
+                            <input type="text" name="undocumented_sales[][due_date]" class="form-control @error('due_date.'.$key) is-invalid @enderror"
+                                    @if(old('undocumented_sales.'.$key.'.due_date')) value="{{old('undocumented_sales.'.$key.'.due_date')}}"
                                     @elseif(isset($products['due_date']))
                                     value="{{$products['due_date']}}"
                                     @endif>
@@ -72,10 +72,10 @@
                             @enderror
                         </td>
                         <td>
-                            <input type="text" name="products[ ]" class="form-control @error('products.'.$key) is-invalid @enderror"
-                                    @if(old('products.'.$key)) value="{{old('products.'.$key)}}"
-                                    @elseif(isset($products['products']))
-                                    value="{{$products['products']}}"
+                            <input type="text" name="undocumented_sales[][gross]" class="form-control @error('undocumented_sales.'.$key.'.gross') is-invalid @enderror"
+                                    @if(old('undocumented_sales.'.$key.'.gross')) value="{{old('undocumented_sales.'.$key.'.gross')}}"
+                                    @elseif(isset($products['gross']))
+                                    value="{{$products['gross']}}"
                                     @endif>
 
                             @error('products.'.$key)

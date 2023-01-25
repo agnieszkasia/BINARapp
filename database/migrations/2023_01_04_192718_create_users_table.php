@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('nip');
             $table->integer('phone_number');
             $table->string('tax_office_code');
+            $table->string('password');
             $table->timestamps();
         });
     }

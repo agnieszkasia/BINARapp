@@ -17,6 +17,7 @@ class CreateInvoicePositionsTable extends Migration
             $table->float('vat');
             $table->float('vat_rate');
             $table->integer('invoice_id');
+            $table->enum('type', ['sale_invoice', 'purchase_invoice', 'undocumented_sale']);
             $table->timestamps();
         });
     }

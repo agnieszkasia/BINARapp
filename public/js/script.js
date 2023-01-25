@@ -1,16 +1,20 @@
 let thead = $('thead');
 let tbody = $('tbody');
 
+var id = 0;
+
 thead.on('click', '.addRow', function (){
-    var tr = "<tr id='group[ ]'>" +
-        "<td><input type='text' name='due_date[ ]' class='form-control'></td>" +
-        "<td><input type='text' name='products_names[ ]' class='form-control'></td>" +
-        "<td><input type='text' name='quantity[ ]' class='form-control'></td>" +
-        "<td><input type='text' name='products[ ]' class='form-control'></td>" +
+    var tr = "<tr id='group[]'>" +
+        "<td><input type='text' name='undocumented_sales["+id+"][due_date]' class='form-control'></td>" +
+        "<td><input type='text' name='undocumented_sales["+id+"][products_names]' class='form-control'></td>" +
+        "<td><input type='text' name='undocumented_sales["+id+"][quantity]' class='form-control'></td>" +
+        "<td><input type='text' name='undocumented_sales["+id+"][gross]' class='form-control'></td>" +
         "<th><a href='javascript:void(0)' class='btn btn-next deleteRow'>Usuń</a> </th>" +
         "</tr>"
 
     $('tbody').append(tr);
+
+    id++;
 });
 
 tbody.on('click', '.deleteRow', function (){

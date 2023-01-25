@@ -5,7 +5,7 @@
         PODSUMOWANIE
         <div class="d-flex float-right justify-content-between mx-5 mb-3">
             <div>
-                <a class="btn btn-next" href="{{ url('/add_purchases') }}">WSTECZ</a>
+                <a class="btn btn-next" href="{{ route('show_purchase_invoices') }}">WSTECZ</a>
             </div>
             <div>
                 <div class="d-flex float-right justify-content-end">

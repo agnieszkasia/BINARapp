@@ -3,7 +3,6 @@
 namespace App\Models\Invoices;
 
 use App\Models\Company;
-use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

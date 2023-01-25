@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PurchaseInvoiceStoreRequest;
 use App\Models\Company;
 use App\Models\Invoices\PurchaseInvoice;
+use App\Services\CompanyService;
+use App\Services\PurchaseInvoiceService;
+use App\Services\Transformers\PurchaseInvoiceRequestTransformer;
 use Illuminate\Http\Request;
 
 class PurchaseInvoiceController extends Controller
@@ -16,29 +20,20 @@ class PurchaseInvoiceController extends Controller
         return view('add_purchases', ['companiesData' => $companiesData, 'purchases' => $purchases]);
     }
 
-    public function create(Request $request)
-    {
-        if (isset($request['issue_date'])){
-            foreach ($request['issue_date'] as $key => $item) {
+    public function create(
+        PurchaseInvoiceRequestTransformer $purchaseInvoiceRequestTransformer,
+//        PurchaseInvoiceStoreRequest $request,
+        Request $request,
+        PurchaseInvoiceService $purchaseInvoiceService,
+        CompanyService $companyService
+    ) {
+        $purchasesInvoicesData = $purchaseInvoiceRequestTransformer->transform($request);
 
-                if ($request['issue_date'][$key][0] == '0') $issueDate = substr($request['issue_date'][$key], 1);
-                else $issueDate = $request['issue_date'][$key];
-                $purchases[$key]['issue_date'] = $issueDate;
-
-                if ($request['due_date'][$key][0] == '0') $dueDate = substr($request['due_date'][$key], 1);
-                else $dueDate = $request['due_date'][$key];
-                $purchases[$key]['due_date'] = $dueDate;
-
-                $purchases[$key]['invoice_number'] = $request['invoice_number'][$key];
-                $purchases[$key]['company'] = $request['company'][$key];
-                $purchases[$key]['address'] = $request['address'][$key];
-                $purchases[$key]['NIP'] = $request['NIP'][$key];
-                $purchases[$key]['netto'] = str_replace(",", ".", $request['netto'][$key]);
-                $purchases[$key]['vat'] = str_replace(",", ".", $request['vat'][$key]);
-                $purchases[$key]['brutto'] = str_replace(",", ".", $request['brutto'][$key]);
-            }
+        foreach ($purchasesInvoicesData as $purchasesInvoice) {
+            $company = $companyService->createNewCompany($purchasesInvoice);
+            $purchaseInvoiceService->create($purchasesInvoice, $company);
         }
 
-        return redirect()->route('show_summary');
+        return redirect()->route('summary');
     }
 }

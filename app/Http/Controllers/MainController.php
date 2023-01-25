@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoices\CorrectiveInvoice;
-use App\Models\Invoices\SaleInvoice;
+use App\Services\Generators\CSVFileGenerator;
+use App\Services\Generators\ODSFileGenerator;
+use App\Services\Generators\XMLFileGenerator;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class MainController extends Controller
@@ -15,8 +17,6 @@ class MainController extends Controller
 
     public function generateFile(Request $request)
     {
-        $company = Session::get('company');
-
         if ($request->has('generateCSV')) {
             $controller = new CSVFileGenerator();
             $controller->generateCSVFile($request, $company);

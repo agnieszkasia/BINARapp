@@ -3,22 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Services\Readers\SaleStatementFileReader;
+use App\Services\UndocumentedSaleService;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AllegroSalesStatementFileController extends Controller
 {
-    public function index(): View
+    public function create(): View
     {
         return view('add_sales');
     }
 
-    public function create(SaleStatementFileReader $saleStatementFileReader): RedirectResponse
+    public function store(
+        SaleStatementFileReader $saleStatementFileReader,
+        UndocumentedSaleService $undocumentedSalesService
+    ): RedirectResponse
     {
         if ($_FILES['link']['tmp_name'][0] !== '') {
-            $saleStatementFileReader->getDataFromFile($_FILES['link']['tmp_name']);
+            $sales = $saleStatementFileReader->getDataFromFile($_FILES['link']['tmp_name']);
+        } else {
+            $sales = [];
         }
 
-        return redirect()->route('show_undocumented_sales_form');
+        foreach ($sales as $sale) {
+            $undocumentedSalesService->createNewUndocumentedSale($sale);
+        }
+
+        return redirect()->route('show_undocumented_sales');
     }
 }

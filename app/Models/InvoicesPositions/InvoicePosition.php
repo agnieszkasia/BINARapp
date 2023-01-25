@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\InvoicesPostions;
+namespace App\Models\InvoicesPositions;
 
-use App\Models\Invoice;
+use App\Models\Invoices\Invoice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

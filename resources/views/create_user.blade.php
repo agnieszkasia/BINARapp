@@ -1,10 +1,10 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('send')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('store_user')}}" method="POST" enctype="multipart/form-data">
     @csrf
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-3">
-            DODAJ PLIKI FAKTUR
+            DANE UŻYTKOWNIKA
             <div class="d-flex float-right justify-content-end mx-5">
                 <button type="submit" class="btn btn-next ">Dalej</button>
             </div>
@@ -23,7 +23,7 @@
             </span>
             @enderror
 
-            <label for="firstName" class=" mt-4">Imię</label><input type="text" id="firstName" name="firstname" class="form-control @error('firstName') is-invalid @enderror"
+            <label for="firstName" class=" mt-4">Imię</label><input type="text" id="firstName" name="firstName" class="form-control @error('firstName') is-invalid @enderror"
                     @if(old('firstName')) value="{{old('firstName')}}"
                     @elseif(isset($company['firstName']))
                     value="{{$company['firstName']}}"
@@ -115,7 +115,7 @@
 
             @error('taxOfficeCode')
             <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
+{{--                <strong>{{ $message }}</strong>--}}
             </span>
             @enderror
 
@@ -124,13 +124,6 @@
                     <option value="{{ session('data')[$i] }}" class="form-control"></option>
                 @endfor
             </datalist>
-
-            <label for="file" class="text-white mt-4">Pliki Faktur VAT</label> <input type="file" id="file" name="file[]" multiple accept=".ods" onchange="checkInvoiceFiles(this);" class="form-control @error('file') is-invalid @enderror" >
-            @error('file')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
         </div>
     </form>
 @endsection

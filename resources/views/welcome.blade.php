@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="text-center">
-                    <a type="submit" class="btn btn-next fw-bold " href="{{ url('/add_files') }}">DODAJ FAKTURY</a>
+                    <a type="submit" class="btn btn-next fw-bold " href="{{ route('create_user') }}">DODAJ FAKTURY</a>
                 </div>
             </div>
         </div>

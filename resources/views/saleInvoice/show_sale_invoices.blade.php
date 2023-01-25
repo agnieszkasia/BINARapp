@@ -1,13 +1,13 @@
 @extends('layout')
 
 @section('content')
-    <form action="{{route('add_sales')}}" method="POST">
+    <form action="{{route('add_sale_invoices')}}" method="POST">
         @csrf
 
         <div class="h3 text-white bg-black text-center pt-4 mb-0 pb-0">
             FAKTURY SPRZEDAŻY
             <div class="d-flex float-right justify-content-between mx-5 mb-3">
-                <a class="btn btn-next" href="{{ url('/add_sales') }}">WSTECZ</a>
+                <a class="btn btn-next" href="{{ route('create_sale_invoice_files') }}">WSTECZ</a>
 
                 <div class="fs-6 mt-2 ">
                     @if(session('warnings')!== 0)
@@ -22,8 +22,8 @@
                 </div>
 
                 <input type="hidden" name="invoices" value="{{json_encode(session('invoices'))}}">
-                <a class="btn btn-next" href="{{ route('show_correction_invoice_form') }}">DODAJ FAKTURĘ KORYGUJĄCĄ</a>
-                <a class="btn btn-next" href="{{ route('add_sales') }}">DALEJ</a>
+                <a class="btn btn-next" href="{{ route('create_correction_invoice') }}">DODAJ FAKTURĘ KORYGUJĄCĄ</a>
+                <a class="btn btn-next" href="{{ route('create_allegro_sales') }}">DALEJ</a>
             </div>
 
             <div class="bg-white col-12 my-1 ">
